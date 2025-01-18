@@ -28,7 +28,7 @@ app.get("/", function (req, res) {
  * View Engine and Templates
  *************************/
 app.set("view engine", "ejs");
-app.set("layout", "./layouts/layout.ejs"); // Path to layout
+app.set("layout", "layouts/layout"); // Path to layout
 
 /* ***********************
  * Local Server Information
@@ -43,3 +43,4 @@ const host = process.env.HOST || "localhost";
 app.listen(port, () => {
   console.log(`App listening on http://${host}:${port}`);
 });
+

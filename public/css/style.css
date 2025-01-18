@@ -1,0 +1,323 @@
+/* General Reset */
+body, html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    height: 100%;
+}
+
+/* Apply the background image to the HTML element */
+html {
+    background-image: url('/images/site/small_check.jpg'); 
+    background-size: auto; 
+    background-position: center center; 
+    background-attachment: fixed; 
+}
+
+/* Body Styling */
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Responsive Design for Larger Screens */
+@media screen and (min-width: 768px) {
+    /* Add margin and padding to create space for the background image */
+    #content-wrapper {
+        margin: 40px auto; 
+        padding: 20px; 
+        background-color: white; 
+    }
+
+    /* Navigation */
+    nav ul {
+        justify-content: center;
+    }
+
+    /* Main Layout for Larger Screens */
+    main {
+        text-align: left;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    /* Call to Action */
+    .cta {
+        flex: 1 1 100%;
+        text-align: center;
+    }
+
+    /* Delorean Section */
+    .delorean-section {
+        justify-content: space-between;
+    }
+
+    .delorean-item {
+        flex: 1 1 calc(25% - 1rem); 
+    }
+    .hero-image {
+        background-image: url('/images/vehicles/delorean.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat; 
+        width: 100%; 
+        height: 100vh; 
+    }
+}
+
+/* Smaller Screens (Max Width: 767px) */
+@media screen and (max-width: 767px) {
+    body {
+        background-color: white;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Header Styling for Small Screens */
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        margin: 0;
+        padding: 0;
+        height: 50px;
+        background-color: #fff;
+        z-index: 2;
+    }
+
+    header .siteName {
+        font-size: 1.5rem;
+        padding-left: 5px;
+        font-weight: bold;
+    }
+
+    header #tools a {
+        font-size: 1rem;
+        text-decoration: none;
+        font-size: 10px;
+        color: black;
+        padding-right: 5px;
+    }
+
+    /* Navigation (Grid Layout Below Header) */
+    nav {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        background-color: #bda5ab;
+        text-align: center;
+        padding: 0;
+        z-index: 1;
+    }
+
+    nav ul {
+        display: contents;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    nav li {
+        margin: 0;
+    }
+
+    nav a {
+        display: block;
+        color: white;
+        text-decoration: none;
+        padding: 0.8rem 0;
+        font-size: 0.9rem;
+    }
+
+    nav a:hover {
+        background-color: #555;
+    }
+
+    /* Content Wrapper Adjustments */
+    #content-wrapper {
+        padding-top: 140px;
+    }
+
+    /*index.ejs*/
+    /* Hero Container */
+    .hero-container {
+        position: relative;
+        height: 200px;
+    }
+
+    /* Hero Heading Styling */
+    .hero-heading {
+        color: black;
+        font-size: 18px;
+        font-weight: bold;
+        margin: 0;
+        text-align: left; 
+        margin-top: 10px; 
+        margin-left: 5px;
+        margin-bottom: 0; 
+    }
+    /* Hero Image Styling */
+    .hero-image {
+        background: url('/images/vehicles/delorean-tn.jpg') no-repeat center center;
+        background-size: contain; 
+        height: 150px;
+        position: relative;
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        margin-top: 5px;
+        border-radius: 10px; 
+        overflow: hidden; 
+    }  
+
+    /* Transparent box positioning */
+    .hero-info {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background-color: rgba(221, 216, 223, 0.5); 
+        padding: 5px;
+        width: 40%; 
+        max-width: 200px; 
+        box-sizing: border-box; 
+    }
+
+    /* Align the text to the left */
+    .hero-info h2,
+    .hero-info p {
+        margin: 0;
+        text-align: left; 
+        padding: 0; 
+        color: black;
+    }
+    .hero-info p {
+        font-size: 12px;
+    }
+
+    .hero-info h2 {
+        font-size: 15px;
+    }
+
+    /* Center the "Own Today" button */
+    .hero-info .own-btn {
+        display: block;
+        width: 80%;
+        text-align: center;
+        padding: 10px;
+        background-color: #564147; /* Button color */
+        color: white;
+        text-decoration: none;
+        border: none;
+        font-size: 15px;
+        margin: 2px;
+        font-weight: bold;
+    }
+
+    .hero-info .own-btn:hover {
+        background-color: #72556f; 
+    }
+
+    footer {
+        background-color: #bda5ab;
+        color: #fff;
+        text-align: right;
+        padding: 10px 0;
+        font-size: 12px;
+        position: relative; 
+        bottom: 0; 
+        width: 100%;
+    }
+    footer .copyright{
+        padding-right: 5px;
+    }
+    .body-text .body-h2,
+    .body-text2 .body-h2-2{
+        font-size: 18px;
+        margin: 0px;
+    }
+    .body-text .body-p{
+        font-size: 12px;
+        padding-bottom: 8px;
+    }
+
+    .body-text2 .body-p-2{
+        font-size: 12px;
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .body-text2 ul{
+        margin: 0;
+    }
+
+    /* Body text container for upgrades */
+    .body-text2 {
+        padding: 10px;
+    }
+
+    .grid-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); 
+        grid-template-rows: repeat(2, auto); 
+        gap: 20px; 
+        list-style-type: none; 
+        padding: 0;
+        margin: 0;
+    }
+
+    .grid-list .body-p-2 {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        background-color: #ed5e93;
+        padding: 10px;
+        height: 100px;
+        text-align: center;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+    
+    .grid-list .body-p-2 img {
+        width: 50%; /* Ensures image takes the full width */
+        object-fit: cover; /* Ensures the image covers the space without distortion */
+        border-radius: 5px 5px 0 0; /* Rounded top corners */
+        margin-bottom: 10px; /* Adds space between image and text */
+        display: block; /* Centers the image */
+        margin-left: auto; /* Centers horizontally */
+        margin-right: auto; /* Centers horizontally */
+    }
+    
+
+    .grid-list .body-p-2 a {
+        text-decoration: underline;
+        color: white; 
+        font-weight: bold;
+    }
+
+    .grid-list .body-p-2 a:hover {
+        color: #72556f;
+        text-decoration: none; 
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
