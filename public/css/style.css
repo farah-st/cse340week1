@@ -1,70 +1,75 @@
 /* General Reset */
-body, html {
+html {
+    background-image: url('/images/site/small_check.jpg');
+    background-size: cover;  /* Make background responsive */
+}
+
+/* Body Styling */
+body {
+    font-family: Arial, Helvetica, sans-serif;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     height: 100%;
 }
 
-/* Apply the background image to the HTML element */
-html {
-    background-image: url('/images/site/small_check.jpg'); 
-    background-size: auto; 
-    background-position: center center; 
-    background-attachment: fixed; 
+/* Header Styling */
+header .siteName {
+    font-size: 1.5rem;
+    padding-left: 5px;
+    font-weight: bold;
 }
 
-/* Body Styling */
-body {
-    font-family: Arial, Helvetica, sans-serif;
+/* Navigation */
+nav {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    background-color: #bda5ab;
+    text-align: center;
+    padding: 0;
+    z-index: 1;
 }
 
-/* Responsive Design for Larger Screens */
-@media screen and (min-width: 768px) {
-    /* Add margin and padding to create space for the background image */
-    #content-wrapper {
-        margin: 40px auto; 
-        padding: 20px; 
-        background-color: white; 
-    }
+nav ul {
+    display: contents;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
 
-    /* Navigation */
-    nav ul {
-        justify-content: center;
-    }
+nav a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 0.8rem 0;
+    font-size: 0.9rem;
+}
 
-    /* Main Layout for Larger Screens */
-    main {
-        text-align: left;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        align-items: center;
-        justify-content: space-between;
-    }
+nav a:hover {
+    background-color: #555;
+}
 
-    /* Call to Action */
-    .cta {
-        flex: 1 1 100%;
-        text-align: center;
-    }
+/* Content Wrapper */
+#content-wrapper {
+    padding: 20px;
+    margin-top: 140px; /* Adjust for mobile header */
+    background-color: white;
+}
 
-    /* Delorean Section */
-    .delorean-section {
-        justify-content: space-between;
-    }
+/* Shared Footer Styling */
+footer {
+    background-color: #bda5ab;
+    color: #fff;
+    text-align: right;
+    padding: 10px 0;
+    font-size: 12px;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
 
-    .delorean-item {
-        flex: 1 1 calc(25% - 1rem); 
-    }
-    .hero-image {
-        background-image: url('/images/vehicles/delorean.jpg');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat; 
-        width: 100%; 
-        height: 100vh; 
-    }
+footer .copyright {
+    padding-right: 5px;
 }
 
 /* Smaller Screens (Max Width: 767px) */
@@ -73,6 +78,8 @@ body {
         background-color: white;
         margin: 0;
         padding: 0;
+        height: 100%;
+        margin: 2px;
     }
 
     /* Header Styling for Small Screens */
@@ -206,8 +213,7 @@ body {
         width: 80%;
         text-align: center;
         padding: 10px;
-        background-color: #564147; /* Button color */
-        color: white;
+        background-color: #564147; 
         text-decoration: none;
         border: none;
         font-size: 15px;
@@ -282,13 +288,13 @@ body {
     }
     
     .grid-list .body-p-2 img {
-        width: 50%; /* Ensures image takes the full width */
-        object-fit: cover; /* Ensures the image covers the space without distortion */
-        border-radius: 5px 5px 0 0; /* Rounded top corners */
-        margin-bottom: 10px; /* Adds space between image and text */
-        display: block; /* Centers the image */
-        margin-left: auto; /* Centers horizontally */
-        margin-right: auto; /* Centers horizontally */
+        width: 50%; 
+        object-fit: cover; 
+        border-radius: 5px 5px 0 0; 
+        margin-bottom: 10px; 
+        display: block; 
+        margin-left: auto; 
+        margin-right: auto; 
     }
     
 
@@ -302,22 +308,200 @@ body {
         color: #72556f;
         text-decoration: none; 
     }
+    #tools {
+        position: absolute;
+        top: 10px; 
+        right: 1px; 
+    }
 }
 
+/* Larger Screens (Min Width: 768px) */
+@media screen and (min-width: 768px) {
+    body {
+        background-color: white;
+        margin: 20px auto; 
+        max-width: 75%;
+        display: flex;
+        flex-direction: column; 
+        justify-content: center; 
+        border: 10px solid #bda5ab; 
+    }
 
+    /* Header Styling */
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        margin: 0;
+        padding: 10px;
+        background-color: #fff;
+        z-index: 2;
+    }
 
+    header .siteName {
+        font-size: 2rem; 
+        font-weight: bold;
+    }
 
+    /* Navigation */
+    nav a {
+        font-size: 20px; 
+    }
 
+    /* Hero Section */
+    .hero-container {
+        height: 400px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-image: url('/images/vehicles/delorean.jpg');
+        background-size: contain;
+        background-position: center;
+        border-radius: 20px;
+        background-repeat: no-repeat;
+        position: relative;
+    }
 
+    .hero-heading {
+        position: absolute;
+        top: 1px; 
+        left: 10px; 
+        color: black;
+        font-size: 36px;
+        font-weight: bold;
+        text-align: left;
+    }
 
+    .hero-info {
+        position: absolute;
+        top: 100px; 
+        left: 10px; 
+        background-color: rgba(221, 216, 223, 0.8); 
+        padding: 5px;
+        width: 300px; 
+        box-sizing: border-box;
+    }
 
+    .hero-info h2 {
+        font-size: 30px;
+        color: #564147;
+        padding: 0px;
+        margin: 5px;
+    }
 
+    .hero-info p {
+        font-size: 20px;
+        color: #564147;
+        margin: 5px;
+        padding-bottom: 2px;
+    }
 
+    .hero-info .own-btn {
+        display: block;
+        width: 90%;
+        padding: 15px;
+        background-color: #564147;
+        color: white;
+        text-decoration: none;
+        font-size: 18px;
+        margin-top: 15px;
+        text-align: center;
+        font-weight: bold;
+    }
 
+    .hero-info .own-btn:hover {
+        background-color: #72556f;
+    }
 
+    /* Larger-grid container using grid */
+    .main-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr ; 
+        grid-template-rows: 1fr;
+        gap: 20px; 
+    }
 
-  
-  
+    /* Keep body-text2 on the left side (1st column) */
+    .main-content .body-text2{
+        grid-column: 1; 
+        grid-row: 1;
+    }
 
+    /* Move main-content to the right side (2nd column) */
+    .main-content .body-text {
+        grid-column: 2; 
+    }
 
+    /* Body Text */
+    .body-text {
+        display: flex;
+        flex-direction: column;
+        width: 100%; 
+    }
 
+    .body-text .body-h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .body-text .body-p {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    /* Body Text 2 */
+    .body-text2 {
+        display: flex;
+        flex-direction: column;
+        width: 100%; 
+    }
+
+    .body-text2 .body-h2-2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    /* Grid List for Upgrades */
+    .grid-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 10px;
+        list-style-type: none; 
+        padding: 0; 
+    }
+
+    .grid-list .body-p-2 {
+        background-color: #ed5e93;
+        padding: 10px;
+        text-align: center;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end; 
+        align-items: center; 
+    }
+
+    /* Remove default link styles */
+    a {
+        text-decoration: underline;
+        color: white;
+
+    }
+    .grid-list .body-p-2 img {  
+        margin-bottom: 10px;
+        object-fit:scale-down;
+        border-radius: 10px;
+    }
+    footer .copyright {
+        padding-right: 5px;
+    }
+
+    #tools a {
+        text-decoration: none;
+        color: black;
+        font-size: 15px;
+    }
+}
