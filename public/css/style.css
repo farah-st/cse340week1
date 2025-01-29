@@ -23,7 +23,7 @@ header .siteName {
 /* Navigation */
 nav {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     background-color: #bda5ab;
     text-align: center;
     padding: 0;
@@ -72,6 +72,67 @@ footer .copyright {
     padding-right: 5px;
 }
 
+/*utilities CSS*/
+ul#inv-display {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 0;
+    text-decoration: none;
+    list-style-type: none;
+}
+  
+ul#inv-display li {
+    width: 30%;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #f9f9f9;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none;
+}
+  
+ul#inv-display li:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+  }
+  
+  ul#inv-display li a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+
+ul#inv-display li a img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  /* Style for name and price section in the classification grid */
+  .namePrice {
+    text-align: center;
+  }
+  
+  .namePrice h2 {
+    font-size: 18px;
+    margin: 10px 0;
+  }
+  
+  .namePrice span {
+    font-size: 16px;
+    font-weight: bold;
+    color: #2a9d8f;
+  }
+  
+
+  .notice {
+    color: red;
+    font-size: 18px;
+    text-align: center;
+    margin-top: 20px;
+  }
+
 /* Smaller Screens (Max Width: 767px) */
 @media screen and (max-width: 767px) {
     body {
@@ -112,7 +173,7 @@ footer .copyright {
     /* Navigation (Grid Layout Below Header) */
     nav {
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(6, 1fr);
         background-color: #bda5ab;
         text-align: center;
         padding: 0;

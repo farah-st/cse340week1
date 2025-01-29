@@ -10,6 +10,8 @@ const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
 const env = require("dotenv").config();
 const app = express();
+const baseController = require("./controllers/baseController")
+const inventoryRoute = require("./routes/inventoryRoute");
 
 /* ***********************
  * Middleware
@@ -20,9 +22,10 @@ app.use(expressLayouts);
 /* ***********************
  * Routes
  *************************/
-app.get("/", function (req, res) {
-  res.render("index", { title: "CSE Motors" });
-});
+app.get("/", baseController.buildHome);
+
+// Inventory routes
+app.use("/inv", inventoryRoute);
 
 /* ***********************
  * View Engine and Templates
