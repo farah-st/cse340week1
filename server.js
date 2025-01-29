@@ -47,3 +47,4 @@ app.listen(port, () => {
   console.log(`App listening on http://${host}:${port}`);
 });
 
+console.log('Connecting to database at:', process.env.DATABASE_URL);
