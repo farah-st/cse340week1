@@ -37,7 +37,7 @@ app.set("layout", "layouts/layout"); // Path to layout
  * Local Server Information
  * Values from .env (environment) file
  *************************/
-const port = process.env.PORT || 1000;
+const port = process.env.PORT || 5501;
 const host = process.env.HOST || "localhost";
 
 /* ***********************
