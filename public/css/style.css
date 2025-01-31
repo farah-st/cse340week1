@@ -131,7 +131,23 @@ ul#inv-display li a img {
     font-size: 18px;
     text-align: center;
     margin-top: 20px;
+}
+
+/*Error message css*/
+.error-message {
+    color: #d32f2f;
+    font-size: 1.2rem;
+    margin: 20px 0;
+    text-align: center;
   }
+  
+  .fun-message {
+    font-size: 1.2rem;
+    color: #4caf50;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
 
 /* Smaller Screens (Max Width: 767px) */
 @media screen and (max-width: 767px) {
