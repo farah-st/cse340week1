@@ -25,6 +25,7 @@ app.use(expressLayouts);
  * Routes
  *************************/
 app.get("/", utilities.handleErrors(baseController.buildHome));
+app.get("/favicon.ico", (req, res) => res.status(204)); 
 
 // Inventory routes
 app.use("/inv", inventoryRoute);
