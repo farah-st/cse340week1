@@ -75,8 +75,30 @@ footer {
     margin: 0;  /* Remove default margin */
     text-align: left;  /* Align the text to the left */
     
+}
+/* Style for "Return to safety" link */
+.returntosafe {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #f44336; 
+    color: white;               
+    text-decoration: none;     
+    border-radius: 5px;         
+    font-size: 16px;         
+    font-weight: bold;         
+    margin-top: 20px;          
+    transition: background-color 0.3s ease;  
   }
-
+  
+  .returntosafe:hover {
+    background-color: #d32f2f;  
+  }
+  
+  .error-message, .fun-message {
+    text-align: center;
+  }
+  
+  
 footer .copyright {
     padding-right: 5px;
 }
