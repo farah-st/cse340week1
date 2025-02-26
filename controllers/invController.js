@@ -49,6 +49,85 @@ invCont.buildDetailView = utilities.handleErrors(async function (req, res) {
   });
 });
 
+/* ***************************
+ *  Render Inventory Management View
+ * ************************** */
+invCont.renderManagement = utilities.handleErrors(async function (req, res) {
+  let nav = await utilities.getNav();
 
+  res.render("./inventory/management", {
+    title: "Inventory Management",
+    nav,
+    message: req.flash("info"), // Display flash messages if available
+  });
+});
+
+/* ***************************
+ *  Render Add Classification View
+ * ************************** */
+invCont.renderAddClassification = async function (req, res) {
+    let nav = await utilities.getNav();
+
+    res.render("inventory/add-classification", {
+        title: "Add Classification",
+        nav,
+        message: req.flash("info"),
+        errors: [],
+    });
+};
+
+/* ***************************
+ *  Handle Adding a Classification
+ * ************************** */
+invCont.addClassification = async function (req, res) {
+    let nav = await utilities.getNav();
+    const { classification_name } = req.body;
+
+    try {
+        // Insert into database
+        const insertResult = await invModel.addClassification(classification_name);
+
+        if (insertResult) {
+            // Regenerate navigation
+            nav = await utilities.getNav();
+
+            // Success message and redirect to management view
+            req.flash("info", "Classification added successfully!");
+            return res.redirect("/inv/");
+        } else {
+            throw new Error("Classification insertion failed.");
+        }
+    } catch (error) {
+        req.flash("error", error.message);
+        res.render("inventory/add-classification", {
+            title: "Add Classification",
+            nav,
+            message: req.flash("error"),
+            errors: [error.message],
+        });
+    }
+};
+
+
+/* ***************************
+ *  Render Add Inventory View
+ * ************************** */
+invCont.renderAddInventory = async function (req, res) {
+  try {
+      let classificationList = await utilities.buildClassificationList(); 
+      let nav = await utilities.getNav();
+      
+      res.render("./inventory/add-inventory", {
+          title: "Add New Vehicle",
+          nav,
+          classificationList, 
+          message: null,
+      });
+  } catch (error) {
+      console.error("Error rendering add-inventory:", error);
+      res.status(500).send("Internal Server Error");
+  }
+};
 
 module.exports = invCont;
+

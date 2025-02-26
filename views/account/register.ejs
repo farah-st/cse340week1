@@ -1,0 +1,46 @@
+<div class="register-page">
+    <div class="register-container">
+        <h2 class="register-title">Sign Up</h2>
+
+        <!-- Display validation errors if present -->
+        <% if (errors) { %>
+            <ul class="notice">
+                <% errors.array().forEach(error => { %>
+                    <li><%= error.msg %></li>
+                <% }) %>
+            </ul>
+        <% } %>
+
+        <form action="/account/register" method="POST" class="register-form">
+            <label for="first_name">First Name:</label>
+            <input type="text" id="first_name" name="account_firstname" required value="<%= locals.account_firstname %>">
+        
+            <label for="last_name">Last Name:</label>
+            <input type="text" id="last_name" name="account_lastname" required value="<%= locals.account_lastname%>">
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="account_email" required value="<%= locals.account_email %>">
+
+        
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="account_password" 
+                required pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$">
+
+            <div class="password-requirements">
+                Password must be at least 12 characters long and include:
+                <ul class="password-ul">
+                    <li>At least one uppercase letter (A-Z)</li>
+                    <li>At least one lowercase letter (a-z)</li>
+                    <li>At least one number (0-9)</li>
+                    <li>At least one special character (!@#$...)</li>
+                </ul>
+            </div>
+
+            <button type="submit" class="register-button">Register</button>
+        </form>        
+    </div>
+</div>
+
+
+
+

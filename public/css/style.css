@@ -20,6 +20,9 @@ header .siteName {
     font-weight: bold;
 }
 
+h1 {
+    padding-left: 10px;
+}
 /* Navigation */
 nav {
     display: grid;
@@ -164,6 +167,200 @@ ul#inv-display li a img {
     text-align: center;
   }
 
+/* Login */
+.parent-container { 
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    min-height: 100vh; /* Changed from height to min-height */
+    padding: 20px; /* Prevents touching screen edges */
+}
+
+/* Login Form */
+.login-form {
+    max-width: 400px;
+    margin: 20px auto; 
+    padding: 20px;
+    background: #d8e2dc; 
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Labels */
+.login-form label {
+    display: block;
+    margin-top: 10px;
+    color: Black;
+    text-align: left; 
+}
+
+/* Inputs */
+.login-form input {
+    width: 90%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 5px;
+    text-align: center; 
+}
+
+/* Buttons */
+.login-form button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #ed5e93;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    max-width: 400px;
+}
+
+.login-form button:hover {
+    background-color: #F49EBE;
+}
+
+/*Registration form */
+.register-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f5f5f5; 
+}
+
+/* Registration-specific container */
+.register-container {
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+
+/* Registration-specific title */
+.register-title {
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+/* Registration form styling */
+.register-form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+/* Label styling */
+.register-form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+/* Input fields */
+.register-form input {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 2px solid #000;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+/*Password*/
+.password-requirements {
+    font-size: 0.9em;
+    color: #555;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    
+}  
+
+.password-ul {
+    list-style-type: none;
+}
+
+
+/* Registration button */
+.register-button {
+    width: 100%;
+    background-color: #ed5e93;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.register-button:hover {
+    background-color: #F49EBE;
+}
+
+.notice {
+    list-style-type: none; 
+    padding: 0; 
+    margin: 0; 
+    color: red; 
+}
+
+.notice li {
+    background-color: #ffe6e6; /* Light red background */
+    padding: 8px;
+    margin-bottom: 5px;
+    border-radius: 5px; /* Rounded corners */
+    font-weight: bold;
+}
+
+.unique-classification-form {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ddd;
+}
+
+.classformbut {
+    background-color: #F49EBE;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.classformbut:hover {
+    background-color: #F27C9A; 
+}
+/* Inventory Management Links */
+.invManag {
+    list-style: none;
+    padding: 0;
+}
+
+.invManag li {
+    margin: 15px;
+}
+
+.invManag a {
+    display: inline-block;
+    padding: 12px 18px;
+    font-size: 1.1rem;
+    color: white;
+    background: #ff6dae;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.3s ease-in-out;
+}
+
+.invManag a:hover {
+    background: #ed5e93;
+}
 
 /* Smaller Screens (Max Width: 767px) */
 @media screen and (max-width: 767px) {
@@ -453,17 +650,17 @@ ul#inv-display li a img {
     ul#inv-display {
         display: flex;
         flex-wrap: wrap;
-        gap: 20px; /* Increased gap for larger spacing */
+        gap: 20px; 
       }
     
       ul#inv-display li {
-        width: 100%; /* Make each item take full width */
+        width: 100%; 
         background-color: #f9f9f9;
         border-radius: 8px;
         overflow: hidden;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         transition: box-shadow 0.3s ease;
-        padding: 20px; /* Increase padding for bigger feel */
+        padding: 20px; 
       }
     
       ul#inv-display li:hover {
@@ -502,7 +699,96 @@ ul#inv-display li a img {
         text-align: center;
         margin-top: 20px;
     }
+
+    /*Login*/
+    .parent-container {
+        flex-direction: column; /* Ensures content stacks properly */
+        min-height: auto; /* Allows content to expand if needed */
+        padding: 40px 20px; /* Extra spacing */
+    }
+
+    .login-form {
+        width: 90%; /* Make it take most of the screen width */
+        padding: 15px;
+    }
+
+    .login-form input, 
+    .login-form button {
+        font-size: 16px;
+    }
+    .password-requirements {
+        width: 280px;
+    }  
+
+    .register-container {
+        width: 300px;
+    }
 }
+
+/*Form for add inventory page*/
+.add-inventory-form {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.add-inventory-form label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.add-inventory-form input{
+    width: 95%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+.add-inventory-form textarea, 
+.add-inventory-form select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.add-inventory-form button {
+    background-color: #ed5e93;
+    color: white;
+    padding: 10px;
+    margin: 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-inventory-form button:hover {
+    background-color: #F49EBE;
+}
+
+#inv_description {
+    width: 95%; 
+    height: 150px; 
+    padding: 10px;
+    border: 1px solid #ccc; 
+    border-radius: 5px; 
+    font-size: 16px;
+    background-color: #f9f9f9;
+    color: #333;
+    resize: vertical; 
+}
+
+label[for="inv_description"] {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
 
 /* large Screens (Min Width: 768px) */
 @media screen and (min-width: 768px) {
@@ -747,5 +1033,13 @@ ul#inv-display li a img {
         transform: scale(1.05);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         text-decoration: none;
-      }
+    }
+
+    .password-requirements {
+        width: 380px;
+    }  
+
+    .register-container {
+        width: 400px;
+    }
 }
