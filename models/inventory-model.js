@@ -84,20 +84,18 @@ async function addInventoryItem(data) {
                                     inv_color, classification_id) 
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *;
     `;
-
     const values = [
       data.inv_make,
       data.inv_model,
       data.inv_year,
       data.inv_description,
-      data.inv_image || "/images/vehicles/no-image.png",
-      data.inv_thumbnail || "/images/vehicles/no-image-tn.png",
+      data.inv_image,
+      data.inv_thumbnail,
       data.inv_price,
       data.inv_miles,
       data.inv_color,
       data.classification_id
     ];
-
     const result = await client.query(sql, values);
     return result.rows[0];
   } catch (error) {
@@ -107,6 +105,7 @@ async function addInventoryItem(data) {
     client.release();
   }
 }
+
 
 /* ***************************
  *  Export all functions

@@ -129,5 +129,55 @@ invCont.renderAddInventory = async function (req, res) {
   }
 };
 
+/* ***************************
+ *  Handle Adding New Inventory
+ * ************************** */
+invCont.addNewInventoryItem = async function (req, res) {
+  try {
+      const { inv_make, inv_model, inv_year, inv_price, classification_id, inv_description, inv_image, inv_thumbnail, inv_miles, inv_color } = req.body;
+      let nav = await utilities.getNav();
+
+      // Validate required fields
+      if (!inv_make || !inv_model || !inv_year || !inv_price || !classification_id) {
+          req.flash("error", "All fields are required.");
+          return res.status(400).render("./inventory/add-inventory", {
+              title: "Add New Vehicle",
+              nav,
+              message: req.flash("error"),
+          });
+      }
+
+      // Insert into database
+      const insertResult = await invModel.addInventoryItem({
+        inv_make,
+        inv_model,
+        inv_year,
+        inv_price,
+        classification_id,
+        inv_description,
+        inv_image,
+        inv_thumbnail,
+        inv_miles,
+        inv_color
+      });
+
+      if (insertResult.rowCount) {
+          req.flash("info", "Vehicle added successfully!");
+          return res.redirect("/inv/");
+      } else {
+          throw new Error("Failed to add the vehicle.");
+      }
+  } catch (error) {
+      console.error("Error adding new inventory:", error);
+      req.flash("error", "Internal server error.");
+      res.status(500).render("./inventory/add-inventory", {
+          title: "Add New Vehicle",
+          nav: await utilities.getNav(),
+          message: req.flash("error"),
+      });
+  }
+};
+
+
 module.exports = invCont;
 
