@@ -3,27 +3,31 @@ const express = require("express");
 const router = express.Router();
 const accountController = require("../controllers/accountController");
 const utilities = require("../utilities");
-const regValidate = require('../utilities/account-validation')
+const regValidate = require("../utilities/account-validation");
 
+// Login view
 router.get("/login", utilities.handleErrors(accountController.buildLogin));
 
-// New Registration Route
+// Registration view
 router.get("/register", utilities.handleErrors(accountController.buildRegister));
 
+// Process registration
 router.post(
-    '/register', 
+    "/register",
     regValidate.registationRules(),
     regValidate.checkRegData,
-    utilities.handleErrors(accountController.registerAccount))
+    utilities.handleErrors(accountController.registerAccount)
+);
 
-// Process the login attempt
-router.post(
-    "/login",
-    (req, res) => {
-      res.status(200).send('login process')
-    }
-  )
+// Process login attempt
+router.post("/login", utilities.handleErrors(accountController.loginAccount));
+
+router.get("/dashboard", utilities.isLoggedIn, (req, res) => {
+  res.render("account/dashboard", { title: "Dashboard", nav });
+});
+
 module.exports = router;
+
 
 
 

@@ -24,7 +24,7 @@ router.post("/add-classification", utilities.classificationValidation, invContro
 
 // Route to render add inventory page
 router.get("/add-inventory", utilities.handleErrors(invController.renderAddInventory));
-router.post("/add-inventory", utilities.handleErrors(invController.addNewInventory));
+router.post("/add-inventory", utilities.handleErrors(invController.addNewInventoryItem));
 
 module.exports = router;
 

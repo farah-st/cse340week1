@@ -1,5 +1,11 @@
 <h1><%= title %></h1>
-
+<% if (messages.length) { %>
+    <% messages.forEach(msg => { %>
+      <div class="alert alert-info"><%= msg %></div>
+    <% }) %>
+  <% } %>
+  
+  
  <div class="container">
     <form action="/account/login" method="POST" class="login-form">
         <label for="email">Email:</label>

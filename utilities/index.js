@@ -149,6 +149,16 @@ Util.buildClassificationList = async function (classification_id = null) {
   }
 };
 
+/* ***************************
+ * Middleware to Check User Login
+ * ************************** */
+Util.isLoggedIn = (req, res, next) => {
+  if (!req.session.account) {
+      req.flash("error", "Please log in first.");
+      return res.redirect("/account/login");
+  }
+  next();
+};
 
 // Ensure all functions are properly exported
 module.exports = Util;

@@ -120,13 +120,14 @@ invCont.renderAddInventory = async function (req, res) {
       res.render("./inventory/add-inventory", {
           title: "Add New Vehicle",
           nav,
-          classificationList, 
+          classificationList: classificationList, 
           message: null,
       });
   } catch (error) {
       console.error("Error rendering add-inventory:", error);
       res.status(500).send("Internal Server Error");
   }
+  console.log("Generated classification list:", classificationList);
 };
 
 /* ***************************
@@ -134,50 +135,74 @@ invCont.renderAddInventory = async function (req, res) {
  * ************************** */
 invCont.addNewInventoryItem = async function (req, res) {
   try {
-      const { inv_make, inv_model, inv_year, inv_price, classification_id, inv_description, inv_image, inv_thumbnail, inv_miles, inv_color } = req.body;
-      let nav = await utilities.getNav();
+    const {
+      inv_make, 
+      inv_model, 
+      inv_year, 
+      inv_price, 
+      classification_id, 
+      inv_description, 
+      inv_image, 
+      inv_thumbnail, 
+      inv_miles, 
+      inv_color
+    } = req.body;
 
-      // Validate required fields
-      if (!inv_make || !inv_model || !inv_year || !inv_price || !classification_id) {
-          req.flash("error", "All fields are required.");
-          return res.status(400).render("./inventory/add-inventory", {
-              title: "Add New Vehicle",
-              nav,
-              message: req.flash("error"),
-          });
-      }
+    let nav = await utilities.getNav();
+    const classificationList = await utilities.buildClassificationList(); // Build classification list
 
-      // Insert into database
-      const insertResult = await invModel.addInventoryItem({
+    // Validate required fields
+    if (!inv_make || !inv_model || !inv_year || !inv_price || !classification_id) {
+      req.flash("error", "All fields are required.");
+      return res.status(400).render("./inventory/add-inventory", {
+        title: "Add New Vehicle",
+        nav,
+        classificationList,  // Ensure classificationList is passed back
+        message: req.flash("error"),
         inv_make,
         inv_model,
         inv_year,
         inv_price,
         classification_id,
         inv_description,
-        inv_image,
-        inv_thumbnail,
         inv_miles,
         inv_color
       });
+    }
 
-      if (insertResult.rowCount) {
-          req.flash("info", "Vehicle added successfully!");
-          return res.redirect("/inv/");
-      } else {
-          throw new Error("Failed to add the vehicle.");
-      }
+    // Insert into database
+    const insertResult = await invModel.addInventoryItem({
+      inv_make,
+      inv_model,
+      inv_year,
+      inv_price,
+      classification_id,
+      inv_description,
+      inv_image,     // If image uploading logic exists, make sure inv_image is handled
+      inv_thumbnail, // Same for thumbnail
+      inv_miles,
+      inv_color
+    });
+
+    // Handle database insert result
+    if (insertResult && insertResult.rowCount > 0) {
+      req.flash("info", "Vehicle added successfully!");
+      return res.redirect("/inv/");
+    } else {
+      throw new Error("Failed to add the vehicle.");
+    }
   } catch (error) {
-      console.error("Error adding new inventory:", error);
-      req.flash("error", "Internal server error.");
-      res.status(500).render("./inventory/add-inventory", {
-          title: "Add New Vehicle",
-          nav: await utilities.getNav(),
-          message: req.flash("error"),
-      });
+    console.error("Error adding new inventory:", error);
+    req.flash("error", "Internal server error.");
+    const classificationList = await utilities.buildClassificationList(); // Rebuild the classification list
+    res.status(500).render("./inventory/add-inventory", {
+      title: "Add New Vehicle",
+      nav: await utilities.getNav(),
+      classificationList, // Make sure it's available on error as well
+      message: req.flash("error"),
+    });
   }
 };
-
 
 module.exports = invCont;
 
