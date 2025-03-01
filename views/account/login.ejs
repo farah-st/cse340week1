@@ -1,21 +1,20 @@
 <h1><%= title %></h1>
 <% if (messages.length) { %>
     <% messages.forEach(msg => { %>
-      <div class="alert alert-info"><%= msg %></div>
+        <div class="alert alert-info"><%= msg %></div>
     <% }) %>
-  <% } %>
-  
-  
- <div class="container">
+<% } %>
+
+<div class="container">
     <form action="/account/login" method="POST" class="login-form">
         <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
+        <input type="email" id="email" name="account_email" required> <!-- Ensure name matches controller -->
     
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
+        <input type="password" id="password" name="account_password" required> <!-- Ensure name matches controller -->
     
         <button type="submit">Login</button>
         <p class="acct">No account? <a href="/account/register">Sign-up</a></p>
     </form>
-</div>    
+</div>
 

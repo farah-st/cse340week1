@@ -9,11 +9,11 @@ async function buildLogin(req, res, next) {
     try {
         let nav = await utilities.getNav();
         let messages = [...req.flash("error"), ...req.flash("success"), ...req.flash("notice")];
- 
+
         res.render("account/login", {
             title: "Login",
             nav,
-            messages,  
+            messages,
         });
     } catch (error) {
         console.error("Error rendering login page:", error);
@@ -100,18 +100,29 @@ async function loginAccount(req, res) {
     let nav = await utilities.getNav();
     const { account_email, account_password } = req.body;
 
+    console.log("Email:", account_email);
+    console.log("Password:", account_password);
+    console.log("Request Body:", req.body);
+
     try {
         // Check if email exists
         const account = await accountModel.getAccountByEmail(account_email);
+        console.log("Account retrieved:", account); // Log the retrieved account
+
         if (!account) {
-            req.flash("error", "Invalid email or password.");
+            //req.flash("error", "Invalid email or password.");
+            req.flash("error", "You're log in!");
             return res.redirect("/account/login");
         }
 
         // Compare hashed password
+        console.log("Stored hashed password:", account.account_password); // Log the stored hashed password
         const isValidPassword = await bcrypt.compare(account_password, account.account_password);
+        console.log("Is valid password:", isValidPassword); // Log the result of the comparison
+
         if (!isValidPassword) {
-            req.flash("error", "Invalid email or password.");
+            //req.flash("error", "Invalid email or password.");
+            req.flash("error", "You're log in!");
             return res.redirect("/account/login");
         }
 
