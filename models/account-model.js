@@ -5,14 +5,22 @@ const pool = require("../database/");
 * *************************** */
 async function registerAccount(account_firstname, account_lastname, account_email, account_password) {
   try {
+      // Check if email already exists
+      const emailExists = await checkExistingEmail(account_email);
+      if (emailExists > 0) {
+          throw new Error("Email already exists. Please use a different email.");
+      }
+
+      // Insert new account
       const sql = "INSERT INTO account (account_firstname, account_lastname, account_email, account_password, account_type) VALUES ($1, $2, $3, $4, 'Client') RETURNING *";
       const result = await pool.query(sql, [account_firstname, account_lastname, account_email, account_password]);
       return result;
   } catch (error) {
       console.error("Error registering account:", error);
-      throw error; // Throw error instead of returning message
+      throw error;
   }
 }
+
 
 /* **********************
  *   Check for existing email

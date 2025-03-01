@@ -17,14 +17,20 @@ module.exports = {
     try {
       const res = await pool.query(text, params);
       if (process.env.NODE_ENV === "development") {
-        console.log("Executed query:", text);
+        console.log("Executed query:", text, "with params:", params);
       }
       return res;
     } catch (error) {
-      console.error("Query error:", { text, error });
-      throw error;
+      console.error("Database Query Error:", {
+        text,
+        params,
+        message: error.message,
+        stack: error.stack,
+      });
+      throw new Error("Database query failed. Please check the logs for details.");
     }
   },
   pool, // Ensures pool.connect() is available
 };
+
 
