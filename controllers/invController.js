@@ -117,17 +117,18 @@ invCont.renderAddInventory = async function (req, res) {
       let classificationList = await utilities.buildClassificationList(); 
       let nav = await utilities.getNav();
       
+      console.log("Generated classification list:", classificationList); // Log before rendering
+
       res.render("./inventory/add-inventory", {
           title: "Add New Vehicle",
           nav,
-          classificationList: classificationList, 
+          classificationList, 
           message: null,
       });
   } catch (error) {
       console.error("Error rendering add-inventory:", error);
       res.status(500).send("Internal Server Error");
   }
-  console.log("Generated classification list:", classificationList);
 };
 
 /* ***************************
@@ -135,54 +136,45 @@ invCont.renderAddInventory = async function (req, res) {
  * ************************** */
 invCont.addNewInventoryItem = async function (req, res) {
   try {
-    const {
-      inv_make, 
-      inv_model, 
-      inv_year, 
-      inv_price, 
-      classification_id, 
-      inv_description, 
-      inv_image, 
-      inv_thumbnail, 
-      inv_miles, 
-      inv_color
-    } = req.body;
-
     let nav = await utilities.getNav();
-    const classificationList = await utilities.buildClassificationList(); // Build classification list
+    const classificationList = await utilities.buildClassificationList();
+
+    // Log request body to debug
+    console.log("Request Body:", req.body);
+
+    // Ensure req.body exists and contains valid properties
+    if (!req.body) {
+      throw new Error("Request body is missing.");
+    }
+
+    // Create the vehicle object with defaults
+    const vehicle = {
+      inv_make: req.body.inv_make || "", // Prevent undefined values
+      inv_model: req.body.inv_model || "",
+      inv_year: req.body.inv_year || "",
+      inv_price: req.body.inv_price || "",
+      classification_id: req.body.classification_id || "",
+      inv_description: req.body.inv_description || "",
+      inv_image: req.body.inv_image || "default-image.jpg",  // Ensure a default image
+      inv_thumbnail: req.body.inv_thumbnail || "default-thumbnail.jpg", // Ensure thumbnail is not null
+      inv_miles: req.body.inv_miles || "",
+      inv_color: req.body.inv_color || "",
+    };
 
     // Validate required fields
-    if (!inv_make || !inv_model || !inv_year || !inv_price || !classification_id) {
+    if (!vehicle.inv_make || !vehicle.inv_model || !vehicle.inv_year || !vehicle.inv_price || !vehicle.classification_id) {
       req.flash("error", "All fields are required.");
       return res.status(400).render("./inventory/add-inventory", {
         title: "Add New Vehicle",
         nav,
-        classificationList,  // Ensure classificationList is passed back
+        classificationList,
         message: req.flash("error"),
-        inv_make,
-        inv_model,
-        inv_year,
-        inv_price,
-        classification_id,
-        inv_description,
-        inv_miles,
-        inv_color
+        ...vehicle, // Repopulate form fields on error
       });
     }
 
     // Insert into database
-    const insertResult = await invModel.addInventoryItem({
-      inv_make,
-      inv_model,
-      inv_year,
-      inv_price,
-      classification_id,
-      inv_description,
-      inv_image,     // If image uploading logic exists, make sure inv_image is handled
-      inv_thumbnail, // Same for thumbnail
-      inv_miles,
-      inv_color
-    });
+    const insertResult = await invModel.addInventoryItem(vehicle);
 
     // Handle database insert result
     if (insertResult && insertResult.rowCount > 0) {
@@ -194,11 +186,10 @@ invCont.addNewInventoryItem = async function (req, res) {
   } catch (error) {
     console.error("Error adding new inventory:", error);
     req.flash("error", "Internal server error.");
-    const classificationList = await utilities.buildClassificationList(); // Rebuild the classification list
     res.status(500).render("./inventory/add-inventory", {
       title: "Add New Vehicle",
       nav: await utilities.getNav(),
-      classificationList, // Make sure it's available on error as well
+      classificationList: await utilities.buildClassificationList(),
       message: req.flash("error"),
     });
   }
