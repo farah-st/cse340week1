@@ -205,4 +205,3 @@ invCont.addNewInventoryItem = async function (req, res) {
 };
 
 module.exports = invCont;
-

@@ -27,7 +27,3 @@ router.get("/dashboard", utilities.isLoggedIn, (req, res) => {
 });
 
 module.exports = router;
-
-
-
-
