@@ -30,6 +30,7 @@ if (!process.env.SESSION_SECRET || !process.env.DATABASE_URL) {
  * Middleware
  *************************/
 app.use(express.static("public"));
+
 app.use(expressLayouts);
 
 // Session Middleware (Handles Cookies)
