@@ -1,4 +1,4 @@
-const pool = require("../database/");
+const { pool } = require("../database/index"); // Destructure to get pool
 
 /* ***************************
  *  Get all classification data
@@ -75,37 +75,40 @@ async function addClassification(classification_name) {
 /* ***************************
  *  Insert New Inventory Item into Database
  * ************************** */
-async function addInventoryItem(data) {
-  const client = await pool.connect();
+async function addInventoryItem(vehicle) {
   try {
     const sql = `
-      INSERT INTO public.inventory (inv_make, inv_model, inv_year, inv_description, 
-                                    inv_image, inv_thumbnail, inv_price, inv_miles, 
-                                    inv_color, classification_id) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *;
+      INSERT INTO inventory 
+        (inv_make, inv_model, inv_year, inv_description, inv_price, inv_miles, inv_color, classification_id, inv_image, inv_thumbnail)
+      VALUES 
+        ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING inv_id;
     `;
-    const values = [
-      data.inv_make,
-      data.inv_model,
-      data.inv_year,
-      data.inv_description,
-      data.inv_image,
-      data.inv_thumbnail,
-      data.inv_price,
-      data.inv_miles,
-      data.inv_color,
-      data.classification_id
+
+    const params = [
+      vehicle.inv_make,
+      vehicle.inv_model,
+      vehicle.inv_year,
+      vehicle.inv_description,
+      vehicle.inv_price,
+      vehicle.inv_miles,
+      vehicle.inv_color,
+      vehicle.classification_id,
+      vehicle.inv_image || "default-image.jpg",
+      vehicle.inv_thumbnail || "default-thumbnail.jpg"
     ];
-    const result = await client.query(sql, values);
-    return result.rows[0];
+
+    console.log("Executing SQL:", sql);
+    console.log("With Parameters:", params);
+
+    const result = await pool.query(sql, params);
+
+    return result; // Check if result.rowCount > 0 in invController
   } catch (error) {
-    console.error("Error adding inventory:", error);
-    throw error;
-  } finally {
-    client.release();
+    console.error("Database Insert Error:", error);
+    throw error; // This will be caught in invController
   }
 }
-
 
 /* ***************************
  *  Export all functions
