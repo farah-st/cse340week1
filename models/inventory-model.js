@@ -9,7 +9,7 @@ async function getClassifications() {
     return result.rows;
   } catch (error) {
     console.error("Error fetching classifications:", error);
-    throw error;
+    throw new Error("Error fetching classifications.");
   }
 }
 
@@ -29,7 +29,7 @@ async function getInventoryByClassificationId(classification_id) {
     return result.rows;
   } catch (error) {
     console.error("Error fetching inventory by classification ID:", error);
-    throw error;
+    throw new Error("Error fetching inventory by classification ID.");
   }
 }
 
@@ -43,7 +43,7 @@ async function getVehicleById(invId) {
     return result.rows.length > 0 ? result.rows[0] : null;
   } catch (error) {
     console.error("Database error:", error);
-    throw error;
+    throw new Error("Error fetching vehicle details.");
   }
 }
 
@@ -66,7 +66,7 @@ async function addClassification(classification_name) {
     return result.rows[0];
   } catch (error) {
     console.error("Error inserting classification:", error);
-    throw error;
+    throw new Error("Error inserting classification.");
   } finally {
     client.release();
   }
@@ -103,10 +103,11 @@ async function addInventoryItem(vehicle) {
 
     const result = await pool.query(sql, params);
 
-    return result; // Check if result.rowCount > 0 in invController
+    // Return only the inv_id from the inserted row
+    return result.rows[0].inv_id;
   } catch (error) {
     console.error("Database Insert Error:", error);
-    throw error; // This will be caught in invController
+    throw new Error("Error inserting inventory item. Please check logs for details.");
   }
 }
 
@@ -120,7 +121,3 @@ module.exports = {
   addClassification,
   addInventoryItem
 };
-
-
-
-

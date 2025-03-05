@@ -48,29 +48,31 @@ validate.registrationRules = () => {
       })
       .withMessage("Password does not meet requirements."),
   ];
-}
+};
 
-
-  /* ******************************
+/* ******************************
  * Check data and return errors or continue to registration
  * ***************************** */
 validate.checkRegData = async (req, res, next) => {
-    const { account_firstname, account_lastname, account_email } = req.body
-    let errors = []
-    errors = validationResult(req)
+    const { account_firstname, account_lastname, account_email } = req.body;
+    let errors = validationResult(req);
+
     if (!errors.isEmpty()) {
-      let nav = await utilities.getNav()
-      res.render("account/register", {
-        errors,
-        title: "Registration",
-        nav,
-        account_firstname,
-        account_lastname,
-        account_email,
-      })
-      return
+        let nav = await utilities.getNav();
+        
+        // Use req.flash() to add error messages
+        req.flash("error", errors.array().map(error => error.msg).join(", "));
+        
+        return res.render("account/register", {
+            title: "Registration",
+            nav,
+            account_firstname,
+            account_lastname,
+            account_email,
+            message: req.flash("error"), // Display error messages
+        });
     }
-    next()
-  }
-  
-  module.exports = validate
+    next();
+};
+
+module.exports = validate;

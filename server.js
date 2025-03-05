@@ -16,7 +16,9 @@ const accountRoute = require("./routes/accountRoute");
 const utilities = require("./utilities");
 const session = require("express-session");
 const pool = require('./database/');
-const bodyParser = require("body-parser")
+const flash = require("connect-flash");
+const bodyParser = require("body-parser");
+
 
 /* ********************************
  * Validate Environment Variables
@@ -51,15 +53,16 @@ app.use(session({
 }));
 
 // Express Messages Middleware
-app.use(require('connect-flash')());
+app.use(flash());
 
+// Middleware to set flash messages to res.locals
 app.use((req, res, next) => {
-  res.locals.messages = require('express-messages')(req, res);
+  res.locals.messages = req.flash(); // This will allow you to access all flash messages
   next();
 });
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 /* ***********************
  * Routes
@@ -71,7 +74,14 @@ app.get("/favicon.ico", (req, res) => res.status(204));
 app.use("/inv", inventoryRoute);
 
 // Account routes
-app.use("/account", require("./routes/accountRoute"));
+app.use("/account", accountRoute);
+
+// Example route for inventory management
+app.get('/inv', (req, res) => {
+  req.flash('info', 'Welcome to the inventory management page!'); // Set a flash message
+  const message = req.flash('info'); // Retrieve flash messages
+  res.render('inventory/management', { message }); // Render the management page
+});
 
 // File Not Found Route - must be last route in list
 app.use((req, res, next) => {
@@ -98,15 +108,30 @@ const host = process.env.HOST || "localhost";
 app.use(async (err, req, res, next) => {
   let nav = await utilities.getNav();
   console.error(`Error at "${req.originalUrl}": ${err.message}`);
-  
-  let message = err.status === 404 
-    ? err.message 
-    : 'Oh no! There was a crash. Maybe try a different route?';
+
+  let title = err.status === 404 ? "Page Not Found" : "Server Error";
+  let message =
+    err.status === 404
+      ? err.message
+      : "Oh no! There was a crash. Maybe try a different route?";
+
+  // Include flash messages in the error response
+  let messages = req.flash();
 
   res.status(err.status || 500).render("errors/error", {
-    title: err.status || 'Server Error',
+    title,
     message,
-    nav
+    nav,
+    messages, // Pass messages to the error view
+  });
+});
+
+// Ensure this is **AFTER** all routes
+app.use((req, res) => {
+  res.status(404).render("errors/error", {
+    title: "Page Not Found",
+    message: "The page you are looking for does not exist.",
+    nav: utilities.getNav(),
   });
 });
 
@@ -115,6 +140,27 @@ app.use(async (err, req, res, next) => {
  *************************/
 app.listen(port, () => {
   console.log(`App listening on http://${host}:${port}`);
+});
+
+/* ***********************
+ * year
+ *************************/
+app.use(async (err, req, res, next) => {
+  let nav = await utilities.getNav();
+  console.error(`Error at "${req.originalUrl}": ${err.message}`);
+  
+  let message = err.status === 404 
+    ? err.message 
+    : 'Oh no! There was a crash. Maybe try a different route?';
+
+  let year = new Date().getFullYear(); // Get current year
+
+  res.status(err.status || 500).render("errors/error", {
+    title: err.status || 'Server Error',
+    message,
+    nav,
+    year // Pass year to the view
+  });
 });
 
 console.log(`Connecting to database: ${process.env.DATABASE_URL ? '[DATABASE_URL_PRESENT]' : '[DATABASE_URL_MISSING]'}`);

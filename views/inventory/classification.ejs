@@ -1,9 +1,17 @@
 <% if (title) { %>
-    <h1><%= title %></h1>
-    <% } else {
-      res.redirect('/')
-    } %>
+  <h1><%= title %></h1>
+<% } else { %>
+  <script>window.location.href = '/';</script> <!-- Redirect to home if title is not defined -->
+<% } %>
 
-    <%# messages() %>
+<!-- Display any messages if available -->
+<% if (messages && messages.length) { %>
+  <div class="messages">
+      <% messages.forEach(function(msg) { %>
+          <p class="message"><%= msg %></p>
+      <% }); %>
+  </div>
+<% } %>
 
-    <%- grid %>
+<!-- Render the grid content -->
+<%- grid %>

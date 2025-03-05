@@ -1,22 +1,43 @@
-<h1>Add New Classification</h1>
-<% if (message) { %>
-    <p class="flash-message"><%= message %></p>
-<% } %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Classification</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Link to custom styles -->
+</head>
+<body>
 
-<% if (errors && errors.length > 0) { %>
-    <ul class="error-messages">
-        <% errors.forEach(error => { %>
-            <li><%= error %></li>
-        <% }) %>
-    </ul>
-<% } %>
+    <div class="classification-container">
+        <h1>Add New Classification</h1>
+        
+        <!-- Flash message for success or status -->
+        <% if (message) { %>
+            <p class="flash-message"><%= message %></p>
+        <% } %>
 
-<form id="classificationForm" class="unique-classification-form" action="/inv/add-classification" method="POST">
-    <label for="classification_name">Classification Name:</label>
-   <input type="text" id="classification_name" name="classification_name" required pattern="^[A-Za-z0-9]+$"
-           title="No spaces or special characters allowed">
+        <!-- Error message display -->
+        <% if (errors && errors.length > 0) { %>
+            <ul class="error-messages">
+                <% errors.forEach(error => { %>
+                    <li><%= error %></li>
+                <% }) %>
+            </ul>
+        <% } %>
 
-   <button class="classformbut" type="submit">Add</button>
-</form>
+        <!-- Add Classification Form -->
+        <form id="classificationForm" class="unique-classification-form" action="/inv/add-classification" method="POST">
+            <label for="classification_name">Classification Name:</label>
+            <input type="text" id="classification_name" name="classification_name" required 
+                   pattern="^[A-Za-z0-9]+$" 
+                   title="Only alphanumeric characters are allowed (no spaces or special characters).">
+
+            <button class="classformbut" type="submit">Add</button>
+        </form>
+    </div>
+
+    <script src="/js/script.js"></script> <!-- Link to custom scripts -->
+</body>
+</html>
 
 

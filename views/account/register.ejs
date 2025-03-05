@@ -1,32 +1,37 @@
 <div class="register-page">
     <div class="register-container">
-        <%- messages() %>
-        <h2 class="register-title">Sign Up</h2>
-
-        <!-- Display validation errors if present -->
-        <% if (errors) { %>
-            <ul class="notice">
-                <% errors.array().forEach(error => { %>
-                    <li><%= error.msg %></li>
-                <% }) %>
-            </ul>
+        <% if (Array.isArray(messages) && messages.length > 0) { %>
+            <div class="alert alert-success">
+                <% messages.forEach(function(message) { %>
+                    <p><%= message %></p>
+                <% }); %>
+            </div>
         <% } %>
-
+        <% if (Array.isArray(errors) && errors.length > 0) { %>
+            <div class="alert alert-danger">
+                <% errors.forEach(function(error) { %>
+                    <p><%= error %></p>
+                <% }); %>
+            </div>
+        <% } %>         
         <form action="/account/register" method="POST" class="register-form">
-            <label for="first_name">First Name:</label>
-            <input type="text" id="first_name" name="account_firstname" required value="<%= locals.account_firstname %>">
-        
-            <label for="last_name">Last Name:</label>
-            <input type="text" id="last_name" name="account_lastname" required value="<%= locals.account_lastname%>">
-
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="account_email" required value="<%= locals.account_email %>">
-
-        
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="account_password" 
-                required pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$">
-
+            <div class="form-group">
+                <label for="first_name">First Name:</label>
+                <input type="text" id="first_name" name="account_firstname" class="form-control" required value="<%= locals.account_firstname || '' %>" aria-required="true">
+            </div>
+            <div class="form-group">
+                <label for="last_name">Last Name:</label>
+                <input type="text" id="last_name" name="account_lastname" class="form-control" required value="<%= locals.account_lastname || '' %>" aria-required="true">
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="account_email" class="form-control" required value="<%= locals.account_email || '' %>" aria-required="true">
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="account_password" class="form-control" required pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$" aria-required="true">
+                <input type="checkbox" id="showPassword" onclick="togglePassword()"> Show Password
+            </div>
             <div class="password-requirements">
                 Password must be at least 12 characters long and include:
                 <ul class="password-ul">
@@ -36,8 +41,15 @@
                     <li>At least one special character (!@#$...)</li>
                 </ul>
             </div>
-
-            <button type="submit" class="register-button">Register</button>
+            <button type="submit" class="register-button btn btn-primary">Register</button>
         </form>        
     </div>
 </div>
+
+<script>
+    function togglePassword() {
+        const passwordField = document.getElementById("password");
+        const showPasswordCheckbox = document.getElementById("showPassword");
+        passwordField.type = showPasswordCheckbox.checked ? "text" : "password";
+    }
+</script>

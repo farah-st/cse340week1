@@ -1,6 +1,18 @@
-<h1><%= title %></h1>
-<p class="error-message"><%- message %></p>
-<p class="fun-message">Looks like something went wrong! But hey, even the Death Star had design flaws! 🚀</p>
-<a class="returntosafe" href="/">Return to safety</a>
+<title><%= title || "Error" %></title>
 
-<% const d = new Date(); let year = d.getFullYear(); %>
+<div class="error-container">
+    <h1><%= title || "An error occurred" %></h1>
+    <p class="error-message"><%- message || "Something went wrong." %></p>
+    
+    <p class="fun-message">
+        Looks like something went wrong! But hey, even the Death Star had design flaws! 🚀
+    </p>
+
+    <a class="returntosafe" href="/" title="Return to Home Page">Return to safety</a>
+</div>
+
+<% console.log({ title, message, nav }); %>
+
+<script src="/js/script.js"></script>
+
+

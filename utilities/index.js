@@ -3,6 +3,13 @@ const { body, validationResult } = require("express-validator");
 
 const Util = {};
 
+const { JSDOM } = require('jsdom');
+const createDOMPurify = require('dompurify');
+
+// Create a virtual window for DOMPurify
+const window = new JSDOM('').window;
+const DOMPurify = createDOMPurify(window);
+
 /* ************************
  * Constructs the nav HTML unordered list
  ************************** */
@@ -11,18 +18,18 @@ Util.getNav = async function () {
     let data = await invModel.getClassifications();
     let list = "<ul>";
     list += '<li><a href="/" title="Home page">Home</a></li>';
-    
+
     data.forEach((row) => {
-      list += "<li>";
-      list += `<a href="/inv/type/${row.classification_id}" title="See our inventory of ${row.classification_name} vehicles">${row.classification_name}</a>`;
-      list += "</li>";
+      list += `<li>
+                <a href="/inv/type/${row.classification_id}" title="See our inventory of ${DOMPurify.sanitize(row.classification_name)} vehicles">${DOMPurify.sanitize(row.classification_name)}</a>
+              </li>`;
     });
 
     list += "</ul>";
     return list;
   } catch (error) {
     console.error("Error building navigation:", error);
-    throw error;
+    throw new Error("Navigation construction failed");
   }
 };
 
@@ -38,37 +45,42 @@ Util.handleErrors = (fn) => (req, res, next) =>
  * Build the classification view HTML
  * ************************************ */
 Util.buildClassificationGrid = async function (data) {
-  let grid = ""; 
+  try {
+    let grid = "";
 
-  if (data.length > 0) {
-    grid = '<ul id="inv-display">';
-    data.forEach((vehicle) => {
-      const tnImage = vehicle.inv_thumbnail; 
-      const fullImage = tnImage.replace("-tn", ""); 
+    if (data.length > 0) {
+      grid = '<ul id="inv-display">';
+      data.forEach((vehicle) => {
+        const tnImage = vehicle.inv_thumbnail;
+        const fullImage = tnImage.replace("-tn", "");
 
-      grid += `<li>
-        <a href="../../inv/detail/${vehicle.inv_id}" title="View ${vehicle.inv_make} ${vehicle.inv_model} details">
-          <img src="${tnImage}" 
-               srcset="${tnImage} 768w, ${fullImage} 1200w"
-               sizes="(max-width: 768px) 100vw, (min-width: 769px) 50vw"
-               alt="Image of ${vehicle.inv_make} ${vehicle.inv_model} on CSE Motors" />
-        </a>
-        <div class="namePrice">
-          <hr />
-          <h2>
-            <a href="../../inv/detail/${vehicle.inv_id}" title="View ${vehicle.inv_make} ${vehicle.inv_model} details">
-              ${vehicle.inv_make} ${vehicle.inv_model}
-            </a>
-          </h2>
-          <span>$${new Intl.NumberFormat("en-US").format(vehicle.inv_price)}</span>
-        </div>
-      </li>`;
-    });
-    grid += "</ul>";
-  } else {
-    grid = '<p class="notice">Sorry, no matching vehicles could be found.</p>';
+        grid += `<li>
+          <a href="../../inv/detail/${vehicle.inv_id}" title="View ${DOMPurify.sanitize(vehicle.inv_make)} ${DOMPurify.sanitize(vehicle.inv_model)} details">
+            <img src="${tnImage}" 
+                 srcset="${tnImage} 768w, ${fullImage} 1200w"
+                 sizes="(max-width: 768px) 100vw, (min-width: 769px) 50vw"
+                 alt="Image of ${DOMPurify.sanitize(vehicle.inv_make)} ${DOMPurify.sanitize(vehicle.inv_model)} on CSE Motors" />
+          </a>
+          <div class="namePrice">
+            <hr />
+            <h2>
+              <a href="../../inv/detail/${vehicle.inv_id}" title="View ${DOMPurify.sanitize(vehicle.inv_make)} ${DOMPurify.sanitize(vehicle.inv_model)} details">
+                ${DOMPurify.sanitize(vehicle.inv_make)} ${DOMPurify.sanitize(vehicle.inv_model)}
+              </a>
+            </h2>
+            <span>$${new Intl.NumberFormat("en-US").format(vehicle.inv_price)}</span>
+          </div>
+        </li>`;
+      });
+      grid += "</ul>";
+    } else {
+      grid = '<p class="notice">Sorry, no matching vehicles could be found.</p>';
+    }
+    return grid;
+  } catch (error) {
+    console.error("Error building classification grid:", error);
+    return '<p class="notice">An error occurred while loading vehicles.</p>';
   }
-  return grid;
 };
 
 /* ************************
@@ -130,15 +142,10 @@ Util.buildClassificationList = async function (classification_id = null) {
 
     let classificationList = '<select name="classification_id" id="classificationList" required>';
     
-    // Make "Choose a Classification" the default non-selectable placeholder
     classificationList += "<option value='' disabled selected>Choose a Classification</option>";
 
     data.forEach((row) => {
-      classificationList += `<option value="${row.classification_id}"`;
-      if (classification_id != null && row.classification_id == classification_id) {
-        classificationList += " selected";
-      }
-      classificationList += `>${row.classification_name}</option>`;
+      classificationList += `<option value="${row.classification_id}"${classification_id === row.classification_id ? ' selected' : ''}>${row.classification_name}</option>`;
     });
 
     classificationList += "</select>";
@@ -162,4 +169,3 @@ Util.isLoggedIn = (req, res, next) => {
 
 // Ensure all functions are properly exported
 module.exports = Util;
-
