@@ -1,15 +1,16 @@
-const { Pool } = require("pg");
+const { Pool } = require('pg');
 require("dotenv").config();
 
 /* ***************
  * Connection Pool
  * SSL Object needed for local testing of app
- * But will cause problems in production environment
- * If - else will make determination which to use
+ * but will allow self-signed certificates in production
  * *************** */
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: true } : false,
+  ssl: process.env.NODE_ENV === "production" 
+       ? { rejectUnauthorized: false }  // Allow self-signed in production
+       : false, // No SSL for development
 });
 
 const queryWithRetry = async (text, params, retries = 3) => {
