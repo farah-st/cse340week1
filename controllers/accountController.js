@@ -5,10 +5,28 @@ const accountModel = require("../models/account-model");
 /* ****************************************
  *  Deliver login view
  * *************************************** */
+// async function buildLogin(req, res, next) {
+//     try {
+//         let nav = await utilities.getNav();
+//         let messages = [...req.flash("error"), ...req.flash("success"), ...req.flash("notice")];
+
+//         res.render("account/login", {
+//             title: "Login",
+//             nav,
+//             messages,
+//         });
+//     } catch (error) {
+//         console.error("Error rendering login page:", error);
+//         next(error);
+//     }
+// }
+
 async function buildLogin(req, res, next) {
     try {
         let nav = await utilities.getNav();
         let messages = [...req.flash("error"), ...req.flash("success"), ...req.flash("notice")];
+
+        console.log("Flash messages at login render:", messages); // Debugging line
 
         res.render("account/login", {
             title: "Login",
@@ -20,7 +38,6 @@ async function buildLogin(req, res, next) {
         next(error);
     }
 }
-
 
 /* ****************************************
  *  Deliver registration view
@@ -63,6 +80,7 @@ async function registerAccount(req, res) {
         // If there are errors, render the register view with errors
         if (errors.length > 0) {
             req.flash("notice", errors);
+            console.log("Current Flash Messages:", req.flash());
             return res.status(400).render("account/register", {
                 title: "Registration",
                 nav,
@@ -148,6 +166,7 @@ async function loginAccount(req, res) {
         const isValidPassword = await bcrypt.compare(account_password, account.account_password);
         if (!isValidPassword) {
             req.flash("error", "Invalid email or password.");
+            console.log("Current Flash Messages:", req.flash());
             return res.redirect("/account/login");
         }
 
@@ -160,6 +179,7 @@ async function loginAccount(req, res) {
         };
 
         req.flash("success", `Welcome back, ${account.account_firstname}!`);
+        console.log("Current Flash Messages:", req.flash());
         return res.redirect("/"); // Redirect to home page
     } catch (error) {
         console.error("Login error:", error);

@@ -1,5 +1,6 @@
 const invModel = require("../models/inventory-model");
 const utilities = require("../utilities/index");
+const multer = require("multer");
 
 const invCont = {};
 
@@ -139,32 +140,33 @@ invCont.renderAddInventory = async function (req, res) {
 /* ***************************
  *  Handle Adding New Inventory
  * ************************** */
+// Set storage engine for multer to save files to 'uploads' directory
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/images/vehicles'); // Define where to store the file
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname); // To avoid file name conflicts
+  }
+});
+
+const upload = multer({ storage: storage }).single("inv_image");
+
+// Route to handle image upload for the 'add new inventory' form
 invCont.addNewInventoryItem = async function (req, res) {
+  console.log("Inside the route handler");
+
   try {
-    const {
-      inv_make,
-      inv_model,
-      inv_year,
-      inv_price,
-      classification_id,
-      inv_description,
-      inv_image,
-      inv_thumbnail,
-      inv_miles,
-      inv_color,
-    } = req.body;
+    // Ensure the upload middleware runs first
+    upload(req, res, async function (err) {
+      if (err) {
+        console.error("Multer error:", err);
+        req.flash("error", "File upload failed.");
+        return res.redirect("/inv/add-inventory");
+      }
 
-    let nav = await utilities.getNav();
-    const classificationList = await utilities.buildClassificationList(); // Build classification list
-
-    // Validate required fields
-    if (!inv_make || !inv_model || !inv_year || !inv_price || !classification_id) {
-      req.flash("error", "All fields are required.");
-      return res.status(400).render("./inventory/add-inventory", {
-        title: "Add New Vehicle",
-        nav,
-        classificationList,  // Ensure classificationList is passed back
-        message: req.flash("error"),
+      // Extract form data
+      const {
         inv_make,
         inv_model,
         inv_year,
@@ -172,39 +174,49 @@ invCont.addNewInventoryItem = async function (req, res) {
         classification_id,
         inv_description,
         inv_miles,
-        inv_color
+        inv_color,
+      } = req.body;
+
+      console.log("Vehicle data received:", req.body);
+
+      let imagePath = req.file ? `/images/vehicles/${req.file.filename}` : "default-image.jpg";
+
+      // Ensure classification_id is an integer
+      const parsedClassificationId = parseInt(classification_id, 10);
+      if (isNaN(parsedClassificationId)) {
+        req.flash("error", "Invalid classification ID.");
+        return res.redirect("/inv/add-inventory");
+      }
+
+      // Ensure year is stored as a string
+      const formattedYear = String(inv_year);
+
+      // Add inventory item to database
+      const insertResult = await invModel.addInventoryItem({
+        inv_make,
+        inv_model,
+        inv_year: formattedYear,
+        inv_price: Math.round(inv_price), // Ensure it's an integer
+        classification_id: parsedClassificationId,
+        inv_description,
+        inv_image: imagePath,
+        inv_miles: parseInt(inv_miles, 10),
+        inv_color,
       });
-    }
 
-    // Insert into database
-    const insertResult = await invModel.addInventoryItem({
-      inv_make,
-      inv_model,
-      inv_year,
-      inv_price,
-      classification_id,
-      inv_description,
-      inv_image,     // If image uploading logic exists, make sure inv_image is handled
-      inv_thumbnail, // Same for thumbnail
-      inv_miles,
-      inv_color,
+      if (insertResult) {
+        req.flash("info", "Vehicle added successfully!");
+        return res.redirect("/inv/");
+      } else {
+        throw new Error("Failed to add the vehicle.");
+      }
     });
-
-    // Handle database insert result
-    if (insertResult && insertResult.rowCount && insertResult.rowCount > 0) {
-      req.flash("info", "Vehicle added successfully!");
-      return res.redirect("/inv/");
-    } else {
-      throw new Error("Failed to add the vehicle.");
-    }
   } catch (error) {
     console.error("Error adding new inventory:", error);
     req.flash("error", "Internal server error.");
-    const classificationList = await utilities.buildClassificationList(); // Rebuild the classification list
     res.status(500).render("./inventory/add-inventory", {
       title: "Add New Vehicle",
       nav: await utilities.getNav(),
-      classificationList, // Make sure it's available on error as well
       message: req.flash("error"),
     });
   }

@@ -1,14 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add New Vehicle</title>
-    <link rel="stylesheet" href="/css/styles.css"> <!-- Link to custom styles -->
-</head>
-<body>
-
-    <div class="inventory-container">
+<div class="inventory-container">
         <h1>Add New Vehicle</h1>
 
         <!-- Flash message for success or status -->
@@ -20,35 +10,34 @@
         <form action="/inv/add-inventory" method="post" id="addInventoryForm" class="add-inventory-form" enctype="multipart/form-data">
             <label for="inv_make">Make:</label>
             <input type="text" name="inv_make" id="inv_make" required>
-
+        
             <label for="inv_model">Model:</label>
             <input type="text" name="inv_model" id="inv_model" required>
-
+        
             <label for="inv_year">Year:</label>
             <input type="number" name="inv_year" id="inv_year" min="1900" max="2025" required>
-
+        
             <label for="inv_description">Description:</label>
             <textarea name="inv_description" id="inv_description" required></textarea>
-
+        
             <label for="inv_price">Price:</label>
             <input type="number" name="inv_price" id="inv_price" step="0.01" required>
-
+        
             <label for="inv_miles">Miles:</label>
             <input type="number" name="inv_miles" id="inv_miles" required>
-
+        
             <label for="inv_color">Color:</label>
             <input type="text" name="inv_color" id="inv_color" required>
-
+        
             <label for="classificationList">Classification:</label>
             <%- classificationList %>
-
+        
             <label for="inv_image">Upload Image:</label>
             <input type="file" name="inv_image" id="inv_image" accept="image/*">
-
+        
             <button type="submit">Add Vehicle</button>
         </form>
+        
     </div>
 
     <script src="/js/script.js"></script> <!-- Link to custom scripts -->
-</body>
-</html>

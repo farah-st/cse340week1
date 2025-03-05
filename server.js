@@ -18,6 +18,7 @@ const session = require("express-session");
 const pool = require('./database/');
 const flash = require("connect-flash");
 const bodyParser = require("body-parser");
+const path = require('path');
 
 
 /* ********************************
@@ -46,7 +47,9 @@ app.use(session({
   saveUninitialized: true,
   name: 'sessionId',
   cookie: { 
-    secure: process.env.NODE_ENV === 'production', 
+    /*When deploy in prod change to this*/
+    /*secure: process.env.NODE_ENV === 'production', */
+    secure: false, 
     httpOnly: true, 
     maxAge: 1000 * 60 * 60 * 24 
   }
@@ -56,13 +59,25 @@ app.use(session({
 app.use(flash());
 
 // Middleware to set flash messages to res.locals
-app.use((req, res, next) => {
+ app.use((req, res, next) => {
   res.locals.messages = req.flash(); // This will allow you to access all flash messages
-  next();
-});
+   next();
+ });
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use((req, res, next) => {
+//   res.locals.messages = { 
+//     success: req.flash("success"), 
+//     error: req.flash("error"), 
+//     notice: req.flash("notice") 
+//   };
+//   next();
+// });
+
+/*app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));*/
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 
 /* ***********************
  * Routes
@@ -82,6 +97,9 @@ app.get('/inv', (req, res) => {
   const message = req.flash('info'); // Retrieve flash messages
   res.render('inventory/management', { message }); // Render the management page
 });
+
+// Serve static files like images
+app.use(express.static(path.join(__dirname, 'public')));
 
 // File Not Found Route - must be last route in list
 app.use((req, res, next) => {

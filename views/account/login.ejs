@@ -1,11 +1,25 @@
 <h1><%= title %></h1>
 
-<% if (messages.length) { %>
-    <% messages.forEach(msg => { %>
-      <div class="alert alert-info"><%= msg %></div>
-    <% }) %>
+<% if (messages) { %>
+    <% if (messages.success && messages.success.length) { %>
+      <% messages.success.forEach(msg => { %>
+        <div class="alert alert-success"><%= msg %></div>
+      <% }) %>
+    <% } %>
+  
+    <% if (messages.error && messages.error.length) { %>
+      <% messages.error.forEach(msg => { %>
+        <div class="alert alert-danger"><%= msg %></div>
+      <% }) %>
+    <% } %>
+  
+    <% if (messages.notice && messages.notice.length) { %>
+      <% messages.notice.forEach(msg => { %>
+        <div class="alert alert-warning"><%= msg %></div>
+      <% }) %>
+    <% } %>
 <% } %>
-
+  
 <div class="container">
     <form action="/account/login" method="POST" class="login-form">
         <div class="form-group">

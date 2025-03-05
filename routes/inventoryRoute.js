@@ -31,10 +31,10 @@ router.get("/add-classification", async (req, res) => {
 // Route to process adding a classification
 router.post("/add-classification", utilities.classificationValidation, invController.addClassification);
 
-// Route to render add inventory page
-router.get("/add-inventory", utilities.handleErrors(invController.renderAddInventory));
+// Route to render Add Inventory Page
+router.get('/add-inventory', invController.renderAddInventory);
 
-// Route to process adding new inventory item
-router.post("/add-inventory", utilities.handleErrors(invController.addNewInventoryItem));
+// Route to handle adding a new inventory item (POST request)
+router.post('/add-inventory', invController.addNewInventoryItem);
 
 module.exports = router;
