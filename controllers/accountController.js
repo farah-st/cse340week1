@@ -153,41 +153,43 @@ async function registerAccount(req, res) {
  *  Process Login
  * *************************************** */
 async function loginAccount(req, res) {
-    let nav = await utilities.getNav();
-    const { account_email, account_password } = req.body;
-
     try {
-        // Check if email exists
-        const account = await accountModel.getAccountByEmail(account_email);
-        if (!account || !account.account_password) {
-            req.flash("error", "Invalid email or password.");
-            return res.redirect("/account/login");
-        }
-
-        // Compare hashed password
-        const isValidPassword = await bcrypt.compare(account_password, account.account_password);
-        if (!isValidPassword) {
-            req.flash("error", "Invalid email or password.");
-            console.log("Current Flash Messages:", req.flash());
-            return res.redirect("/account/login");
-        }
-
-        // Store user info in session
-        req.session.account = {
-            id: account.account_id,
-            name: `${account.account_firstname} ${account.account_lastname}`,
-            email: account.account_email,
-            type: account.account_type,
-        };
-
-        req.flash("success", `Welcome back, ${account.account_firstname}!`);
-        console.log("Current Flash Messages:", req.flash());
-        return res.redirect("/"); // Redirect to home page
-    } catch (error) {
-        console.error("Login error:", error);
-        req.flash("error", "Something went wrong, please try again.");
+      const { account_email, account_password } = req.body;
+  
+      // Validate inputs
+      if (!account_email || !account_password) {
+        req.flash("error", "Email and password are required.");
         return res.redirect("/account/login");
+      }
+  
+      // Check if the account exists
+      const account = await accountModel.getAccountByEmail(account_email);
+      if (!account) {
+        req.flash("error", "Invalid email or password.");
+        return res.redirect("/account/login");
+      }
+  
+      // Verify password (assuming bcrypt for password hashing)
+      const isValidPassword = await bcrypt.compare(account_password, account.account_password);
+      if (!isValidPassword) {
+        req.flash("error", "Invalid email or password.");
+        return res.redirect("/account/login");
+      }
+  
+      // Store session data
+      req.session.account = {
+        id: account.account_id,
+        email: account.account_email,
+        firstname: account.account_firstname,
+      };
+  
+      // Redirect to the home page after successful login
+      return res.redirect("/");
+    } catch (error) {
+      console.error("Login Error:", error);
+      req.flash("error", "Something went wrong. Please try again.");
+      return res.redirect("/account/login");
     }
-}
+  }
 
-module.exports = { buildLogin, buildRegister, registerAccount, loginAccount };
+  module.exports = { buildLogin, buildRegister, registerAccount, loginAccount };

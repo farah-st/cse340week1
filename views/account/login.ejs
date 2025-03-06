@@ -1,23 +1,15 @@
 <h1><%= title %></h1>
 
-<% if (messages) { %>
-    <% if (messages.success && messages.success.length) { %>
-      <% messages.success.forEach(msg => { %>
-        <div class="alert alert-success"><%= msg %></div>
-      <% }) %>
-    <% } %>
-  
-    <% if (messages.error && messages.error.length) { %>
-      <% messages.error.forEach(msg => { %>
-        <div class="alert alert-danger"><%= msg %></div>
-      <% }) %>
-    <% } %>
-  
-    <% if (messages.notice && messages.notice.length) { %>
-      <% messages.notice.forEach(msg => { %>
-        <div class="alert alert-warning"><%= msg %></div>
-      <% }) %>
-    <% } %>
+<% if (flash.error && flash.error.length > 0) { %>
+    <div class="alert alert-danger">
+        <%= flash.error[0] %>
+    </div>
+<% } %>
+
+<% if (flash.success && flash.success.length > 0) { %>
+    <div class="alert alert-success">
+        <%= flash.success[0] %>
+    </div>
 <% } %>
 
 <div class="container">

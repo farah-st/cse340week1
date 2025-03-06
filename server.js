@@ -14,12 +14,11 @@ const baseController = require("./controllers/baseController");
 const inventoryRoute = require("./routes/inventoryRoute");
 const accountRoute = require("./routes/accountRoute");
 const utilities = require("./utilities");
-const session = require("express-session");
 const pool = require('./database/');
+const session = require("express-session");
 const flash = require("connect-flash");
 const bodyParser = require("body-parser");
 const path = require('path');
-
 
 /* ********************************
  * Validate Environment Variables
@@ -33,8 +32,9 @@ if (!process.env.SESSION_SECRET || !process.env.DATABASE_URL) {
  * Middleware
  *************************/
 app.use(express.static("public"));
-
 app.use(expressLayouts);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Session Middleware (Handles Cookies)
 app.use(session({
@@ -48,7 +48,7 @@ app.use(session({
   name: 'sessionId',
   cookie: { 
     /*When deploy in prod change to this*/
-    /*secure: process.env.NODE_ENV === 'production',*/
+    secure: process.env.NODE_ENV === 'production',
     /*To run locally */
     secure: false,
     httpOnly: true, 
@@ -56,29 +56,24 @@ app.use(session({
   }
 }));
 
-// Express Messages Middleware
+// Flash Middleware
 app.use(flash());
 
 // Middleware to set flash messages to res.locals
- app.use((req, res, next) => {
+app.use((req, res, next) => {
   res.locals.messages = req.flash(); // This will allow you to access all flash messages
-   next();
- });
+  next();
+});
 
-// app.use((req, res, next) => {
-//   res.locals.messages = { 
-//     success: req.flash("success"), 
-//     error: req.flash("error"), 
-//     notice: req.flash("notice") 
-//   };
-//   next();
-// });
-/*comment */
-/*app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));*/
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
+// Middleware to set flash messages to res.locals
+app.use((req, res, next) => {
+  res.locals.flash = {
+    error: req.flash('error'),
+    success: req.flash('success'),
+    info: req.flash('info'),
+  };
+  next();
+});
 
 /* ***********************
  * Routes
@@ -97,6 +92,20 @@ app.get('/inv', (req, res) => {
   req.flash('info', 'Welcome to the inventory management page!'); // Set a flash message
   const message = req.flash('info'); // Retrieve flash messages
   res.render('inventory/management', { message }); // Render the management page
+});
+
+// Home page route (after login)
+app.get("/", (req, res) => {
+  if (!req.session.account) {
+    return res.redirect("/account/login");  // Redirect to login if not logged in
+  }
+
+  // Render the home page if logged in
+  res.render("home", {
+    title: "Home",
+    user: req.session.account,
+    messages: req.flash() // Pass flash messages
+  });
 });
 
 // Serve static files like images
@@ -135,13 +144,19 @@ app.use(async (err, req, res, next) => {
       : "Oh no! There was a crash. Maybe try a different route?";
 
   // Include flash messages in the error response
-  let messages = req.flash();
+  let flashMessages = {
+    error: req.flash('error'),
+    success: req.flash('success'),
+    info: req.flash('info'),
+  };
+
+  console.log('Flash messages:', flashMessages); // Debugging line
 
   res.status(err.status || 500).render("errors/error", {
     title,
     message,
     nav,
-    messages, // Pass messages to the error view
+    flash: flashMessages, // Pass messages to the error view
   });
 });
 
@@ -159,27 +174,6 @@ app.use((req, res) => {
  *************************/
 app.listen(port, () => {
   console.log(`App listening on http://${host}:${port}`);
-});
-
-/* ***********************
- * year
- *************************/
-app.use(async (err, req, res, next) => {
-  let nav = await utilities.getNav();
-  console.error(`Error at "${req.originalUrl}": ${err.message}`);
-  
-  let message = err.status === 404 
-    ? err.message 
-    : 'Oh no! There was a crash. Maybe try a different route?';
-
-  let year = new Date().getFullYear(); // Get current year
-
-  res.status(err.status || 500).render("errors/error", {
-    title: err.status || 'Server Error',
-    message,
-    nav,
-    year // Pass year to the view
-  });
 });
 
 console.log(`Connecting to database: ${process.env.DATABASE_URL ? '[DATABASE_URL_PRESENT]' : '[DATABASE_URL_MISSING]'}`);
