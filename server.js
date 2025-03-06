@@ -1,6 +1,6 @@
 /* ******************************************
- * This server.js file is the primary file of the 
- * application. It is used to control the project.
+ * This server.js file is the primary file of  
+ * the application. It is used to control the project.
  *******************************************/
 
 /* ***********************
@@ -14,7 +14,7 @@ const baseController = require("./controllers/baseController");
 const inventoryRoute = require("./routes/inventoryRoute");
 const accountRoute = require("./routes/accountRoute");
 const utilities = require("./utilities");
-const pool = require('./database/');
+const pool = require('./database/'); 
 const session = require("express-session");
 const flash = require("connect-flash");
 const bodyParser = require("body-parser");
@@ -47,10 +47,7 @@ app.use(session({
   saveUninitialized: true,
   name: 'sessionId',
   cookie: { 
-    /*When deploy in prod change to this*/
-    secure: process.env.NODE_ENV === 'production',
-    /*To run locally */
-    secure: false,
+    secure: process.env.NODE_ENV === 'production', 
     httpOnly: true, 
     maxAge: 1000 * 60 * 60 * 24 
   }
@@ -59,14 +56,9 @@ app.use(session({
 // Flash Middleware
 app.use(flash());
 
-// Middleware to set flash messages to res.locals
+// Set flash messages to res.locals
 app.use((req, res, next) => {
   res.locals.messages = req.flash(); // This will allow you to access all flash messages
-  next();
-});
-
-// Middleware to set flash messages to res.locals
-app.use((req, res, next) => {
   res.locals.flash = {
     error: req.flash('error'),
     success: req.flash('success'),
@@ -89,9 +81,9 @@ app.use("/account", accountRoute);
 
 // Example route for inventory management
 app.get('/inv', (req, res) => {
-  req.flash('info', 'Welcome to the inventory management page!'); // Set a flash message
-  const message = req.flash('info'); // Retrieve flash messages
-  res.render('inventory/management', { message }); // Render the management page
+  req.flash('info', 'Welcome to the inventory management page!');
+  const message = req.flash('info');
+  res.render('inventory/management', { message });
 });
 
 // Home page route (after login)
@@ -108,8 +100,11 @@ app.get("/", (req, res) => {
   });
 });
 
-// Serve static files like images
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static files like images with optimized caching
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: '30d',  // Set cache expiration for static files
+  etag: true,
+}));
 
 // File Not Found Route - must be last route in list
 app.use((req, res, next) => {
@@ -131,7 +126,6 @@ const host = process.env.HOST || "localhost";
 
 /* ***********************
  * Express Error Handler
- * Place after all other middleware
  *************************/
 app.use(async (err, req, res, next) => {
   let nav = await utilities.getNav();
@@ -143,29 +137,17 @@ app.use(async (err, req, res, next) => {
       ? err.message
       : "Oh no! There was a crash. Maybe try a different route?";
 
-  // Include flash messages in the error response
   let flashMessages = {
     error: req.flash('error'),
     success: req.flash('success'),
     info: req.flash('info'),
   };
 
-  console.log('Flash messages:', flashMessages); // Debugging line
-
   res.status(err.status || 500).render("errors/error", {
     title,
     message,
     nav,
-    flash: flashMessages, // Pass messages to the error view
-  });
-});
-
-// Ensure this is **AFTER** all routes
-app.use((req, res) => {
-  res.status(404).render("errors/error", {
-    title: "Page Not Found",
-    message: "The page you are looking for does not exist.",
-    nav: utilities.getNav(),
+    flash: flashMessages, 
   });
 });
 
