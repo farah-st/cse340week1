@@ -3,7 +3,6 @@ const express = require("express");
 const router = express.Router();
 const accountController = require("../controllers/accountController");
 const utilities = require("../utilities");
-const regValidate = require("../utilities/account-validation");
 
 // Login view
 router.get("/login", utilities.handleErrors(accountController.buildLogin));
@@ -29,13 +28,14 @@ router.post("/register", async (req, res) => {
     errors.push("Password is required.");
   }
 
+  const nav = await utilities.getNav(); // Ensure nav is available
+
   // If there are errors, render the register view with errors
   if (errors.length > 0) {
-    const nav = await utilities.getNav(); // Ensure nav is available
     return res.render("account/register", {
       title: "Register",
       nav,
-      errors, // Pass the errors to the view
+      errors, // ✅ Always pass errors as an array
     });
   }
 
@@ -48,11 +48,11 @@ router.post("/login", utilities.handleErrors(accountController.loginAccount));
 
 // Dashboard route
 router.get("/dashboard", utilities.isLoggedIn, async (req, res) => {
-  let nav = await utilities.getNav(); // Ensure nav is available
+  const nav = await utilities.getNav(); // Ensure nav is available
   res.render("account/dashboard", { title: "Dashboard", nav });
 });
 
-// Logout route (optional)
+// Logout route
 router.get("/logout", utilities.handleErrors(async (req, res) => {
   req.logout((err) => {
     if (err) {

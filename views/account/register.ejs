@@ -1,19 +1,13 @@
 <div class="register-page">
     <div class="register-container">
-        <% if (Array.isArray(messages) && messages.length > 0) { %>
-            <div class="alert alert-success">
-                <% messages.forEach(function(message) { %>
-                    <p><%= message %></p>
-                <% }); %>
-            </div>
-        <% } %>
-        <% if (Array.isArray(errors) && errors.length > 0) { %>
+        <% if (typeof errors !== "undefined" && Array.isArray(errors) && errors.length > 0) { %>
             <div class="alert alert-danger">
                 <% errors.forEach(function(error) { %>
                     <p><%= error %></p>
                 <% }); %>
             </div>
-        <% } %>         
+        <% } %>
+        
         <form action="/account/register" method="POST" class="register-form">
             <div class="form-group">
                 <label for="first_name">First Name:</label>

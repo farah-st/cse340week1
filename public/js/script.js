@@ -1,4 +1,35 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // For login form validation
+    const loginForm = document.getElementById("loginForm");
+    if (loginForm) {
+        loginForm.addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent default submission
+
+            const email = document.getElementById("account_email").value.trim();
+            const password = document.getElementById("account_password").value.trim();
+            const errorMessageElement = document.getElementById("error-message");
+
+            let errorMessage = "";
+
+            if (!email) {
+                errorMessage = "Email is required.";
+            } else if (!/\S+@\S+\.\S+/.test(email)) {
+                errorMessage = "Invalid email format.";
+            }
+
+            if (!password) {
+                errorMessage += (errorMessage ? " " : "") + "Password is required.";
+            }
+
+            if (errorMessage) {
+                errorMessageElement.textContent = errorMessage;
+                errorMessageElement.style.color = "red";
+            } else {
+                loginForm.submit(); // If no errors, proceed with form submission
+            }
+        });
+    }
+
     // For classification form
     const classificationForm = document.getElementById("classificationForm");
     if (classificationForm) {
@@ -38,9 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            // Optionally, you can add more specific validations such as:
-            // - Price should be a positive number
-            // - Year should be within a reasonable range (e.g., 1900 - current year)
+            // Ensure year is within a reasonable range (e.g., 1900 - current year)
             const currentYear = new Date().getFullYear();
             if (year < 1900 || year > currentYear) {
                 event.preventDefault();
@@ -56,6 +85,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
-
 });
+
 

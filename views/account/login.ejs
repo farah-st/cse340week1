@@ -19,9 +19,12 @@
       <% }) %>
     <% } %>
 <% } %>
-  
+
 <div class="container">
-    <form action="/account/login" method="POST" class="login-form">
+    <form id="loginForm" action="/account/login" method="POST" class="login-form" novalidate>
+        <!-- Client-side error messages -->
+        <div id="error-message" class="alert alert-danger" style="display: none;"></div>
+
         <div class="form-group">
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" class="form-control" required>
@@ -44,4 +47,37 @@
         const showPasswordCheckbox = document.getElementById("showPassword");
         passwordField.type = showPasswordCheckbox.checked ? "text" : "password";
     }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const loginForm = document.getElementById("loginForm");
+        const errorMessageDiv = document.getElementById("error-message");
+
+        if (loginForm) {
+            loginForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                const email = document.getElementById("email").value.trim();
+                const password = document.getElementById("password").value.trim();
+                let errorMessage = "";
+
+                if (!email) {
+                    errorMessage = "Email is required.";
+                } else if (!/\S+@\S+\.\S+/.test(email)) {
+                    errorMessage = "Invalid email format.";
+                }
+
+                if (!password) {
+                    errorMessage += (errorMessage ? " " : "") + "Password is required.";
+                }
+
+                if (errorMessage) {
+                    errorMessageDiv.textContent = errorMessage;
+                    errorMessageDiv.style.display = "block";
+                } else {
+                    loginForm.submit();
+                }
+            });
+        }
+    });
 </script>
+

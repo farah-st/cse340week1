@@ -70,38 +70,42 @@ async function registerAccount(req, res) {
     const { account_firstname, account_lastname, account_email, account_password } = req.body;
 
     try {
-        // Validate input
         const errors = [];
+
         if (!account_firstname) errors.push("First name is required.");
         if (!account_lastname) errors.push("Last name is required.");
         if (!account_email) errors.push("Email is required.");
         if (!account_password) errors.push("Password is required.");
 
-        // If there are errors, render the register view with errors
+        // Ensure errors is always an array
+        const flashErrors = req.flash("notice");
+        if (flashErrors.length > 0) {
+            errors.push(...flashErrors);
+        }
+
         if (errors.length > 0) {
-            req.flash("notice", errors);
-            console.log("Current Flash Messages:", req.flash());
+            console.log("Rendering register page with errors:", errors);
             return res.status(400).render("account/register", {
-                title: "Registration",
+                title: "Register",
                 nav,
                 first_name: account_firstname,
                 last_name: account_lastname,
                 email: account_email,
-                errors, // Pass errors array directly
+                errors,  // ✅ Now always an array
             });
         }
 
         // Check if email already exists
         const emailExists = await accountModel.checkExistingEmail(account_email);
-        if (emailExists && emailExists.rows && emailExists.rows.length > 0) {
+        if (emailExists && emailExists.rows.length > 0) {
             req.flash("notice", "Email already exists. Please use a different email.");
             return res.status(400).render("account/register", {
-                title: "Registration",
+                title: "Register",
                 nav,
                 first_name: account_firstname,
                 last_name: account_lastname,
                 email: account_email,
-                errors: req.flash("notice"),
+                errors: req.flash("notice") || [], // ✅ Ensure this is always an array
             });
         }
 
@@ -117,15 +121,13 @@ async function registerAccount(req, res) {
             hashedPassword
         );
 
-        console.log("Registration result:", regResult); // Correct place to log regResult
-
         if (regResult) {
             req.flash("success", `Congratulations, ${account_firstname}! Please log in.`);
             return res.redirect("/account/login");
         } else {
             req.flash("notice", "Sorry, registration failed.");
             return res.status(500).render("account/register", {
-                title: "Registration",
+                title: "Register",
                 nav,
                 first_name: account_firstname,
                 last_name: account_lastname,
@@ -137,12 +139,12 @@ async function registerAccount(req, res) {
         console.error("Registration error:", error);
         req.flash("notice", "An error occurred during registration. Please try again.");
         return res.status(500).render("account/register", {
-            title: "Registration",
+            title: "Register",
             nav,
             first_name: account_firstname,
             last_name: account_lastname,
             email: account_email,
-            errors: req.flash("notice"),
+            errors: req.flash("notice") || [],
         });
     }
 }

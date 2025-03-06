@@ -48,9 +48,9 @@ app.use(session({
   name: 'sessionId',
   cookie: { 
     /*When deploy in prod change to this*/
-    secure: process.env.NODE_ENV === 'production',
+    /*secure: process.env.NODE_ENV === 'production',*/
     /*To run locally */
-    /*secure: false, */
+    secure: false,
     httpOnly: true, 
     maxAge: 1000 * 60 * 60 * 24 
   }

@@ -20,7 +20,7 @@ validate.registrationRules = () => {
       .escape()
       .notEmpty()
       .isLength({ min: 2 })
-      .withMessage("Please provide a last name."), 
+      .withMessage("Please provide a last name."),
 
     body("account_email")
       .trim()
@@ -29,11 +29,11 @@ validate.registrationRules = () => {
       .isEmail()
       .normalizeEmail()
       .withMessage("A valid email is required.")
-      .custom(async (account_email) => {  // Moved duplicate check here
-          const emailExists = await accountModel.checkExistingEmail(account_email);
-          if (emailExists > 0) {
-              throw new Error("Email already exists. Please log in or use a different email.");
-          }
+      .custom(async (account_email) => {
+        const emailExists = await accountModel.checkExistingEmail(account_email);
+        if (emailExists > 0) {
+          throw new Error("Email already exists. Please log in or use a different email.");
+        }
       }),
 
     body("account_password")
@@ -46,7 +46,9 @@ validate.registrationRules = () => {
         minNumbers: 1,
         minSymbols: 1,
       })
-      .withMessage("Password does not meet requirements."),
+      .withMessage(
+        "Password must be at least 12 characters long, including one uppercase, one lowercase, one number, and one symbol."
+      ),
   ];
 };
 
