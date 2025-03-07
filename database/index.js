@@ -2,17 +2,19 @@ const { Pool } = require('pg');
 require("dotenv").config();
 
 /* ***************
- * Connection Pool
- * SSL Object needed for local testing of app
- * but will allow self-signed certificates in production
+ * Connection Pool Setup
  * *************** */
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.NODE_ENV === "production" 
-       ? { rejectUnauthorized: false }  // Allow self-signed in production
+       ? { rejectUnauthorized: false }  // Allow self-signed certs in production
        : false, // No SSL for development
 });
 
+/* ***************
+ * Query with Retry Logic
+ * Retries a query a few times before failing.
+ * *************** */
 const queryWithRetry = async (text, params, retries = 3) => {
   let attempt = 0;
   while (attempt < retries) {
@@ -33,7 +35,7 @@ const queryWithRetry = async (text, params, retries = 3) => {
         });
         throw new Error("Database query failed. Please check the logs for details.");
       }
-      console.log(`Retrying query (${attempt}/${retries})`);
+      console.log(`Retrying query (${attempt}/${retries})...`);
       await new Promise(resolve => setTimeout(resolve, 1000)); // wait 1 second before retry
     }
   }
@@ -41,5 +43,5 @@ const queryWithRetry = async (text, params, retries = 3) => {
 
 module.exports = {
   query: queryWithRetry,
-  pool, // Ensures pool.connect() is available
+  pool, // Expose pool for direct use (if needed)
 };

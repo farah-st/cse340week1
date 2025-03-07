@@ -1,43 +1,61 @@
 <div class="inventory-container">
-        <h1>Add New Vehicle</h1>
+    <h1>Add New Vehicle</h1>
 
-        <!-- Flash message for success or status -->
-        <% if (message) { %>
-            <p class="flash-message"><%= message %></p>
-        <% } %>
+    <!-- Flash message for success or status -->
+    <% if (message) { %>
+        <p class="flash-message"><%= message %></p>
+    <% } %>
 
-        <!-- Add Vehicle Form -->
-        <form action="/inv/add-inventory" method="post" id="addInventoryForm" class="add-inventory-form" enctype="multipart/form-data">
+    <!-- Add Vehicle Form -->
+    <form action="/inv/add-inventory" method="post" id="addInventoryForm" class="add-inventory-form" enctype="multipart/form-data">
+        <div class="form-group">
             <label for="inv_make">Make:</label>
             <input type="text" name="inv_make" id="inv_make" required>
+        </div>
         
+        <div class="form-group">
             <label for="inv_model">Model:</label>
             <input type="text" name="inv_model" id="inv_model" required>
+        </div>
         
+        <div class="form-group">
             <label for="inv_year">Year:</label>
+            <!-- Consider using a dynamic max value, e.g., via a server variable or JS -->
             <input type="number" name="inv_year" id="inv_year" min="1900" max="2025" required>
+        </div>
         
+        <div class="form-group">
             <label for="inv_description">Description:</label>
             <textarea name="inv_description" id="inv_description" required></textarea>
+        </div>
         
+        <div class="form-group">
             <label for="inv_price">Price:</label>
             <input type="number" name="inv_price" id="inv_price" step="0.01" required>
+        </div>
         
+        <div class="form-group">
             <label for="inv_miles">Miles:</label>
             <input type="number" name="inv_miles" id="inv_miles" required>
+        </div>
         
+        <div class="form-group">
             <label for="inv_color">Color:</label>
             <input type="text" name="inv_color" id="inv_color" required>
+        </div>
         
+        <div class="form-group">
             <label for="classificationList">Classification:</label>
             <%- classificationList %>
+        </div>
         
+        <div class="form-group">
             <label for="inv_image">Upload Image:</label>
             <input type="file" name="inv_image" id="inv_image" accept="image/*">
+        </div>
         
-            <button type="submit">Add Vehicle</button>
-        </form>
-        
-    </div>
+        <button type="submit">Add Vehicle</button>
+    </form>
+</div>
 
-    <script src="/js/script.js"></script> <!-- Link to custom scripts -->
+<script src="/js/script.js"></script> <!-- Link to custom scripts -->

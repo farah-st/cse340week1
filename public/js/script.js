@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // For login form validation
+    // Login form validation
     const loginForm = document.getElementById("loginForm");
     if (loginForm) {
         loginForm.addEventListener("submit", function (event) {
@@ -25,17 +25,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 errorMessageElement.textContent = errorMessage;
                 errorMessageElement.style.color = "red";
             } else {
-                loginForm.submit(); // If no errors, proceed with form submission
+                loginForm.submit(); // Submit if validation passes
             }
         });
     }
 
-    // For classification form
+    // Classification form validation
     const classificationForm = document.getElementById("classificationForm");
     if (classificationForm) {
         classificationForm.addEventListener("submit", function (event) {
-            let input = document.getElementById("classification_name").value;
-            let pattern = /^[A-Za-z0-9]+$/;
+            const input = document.getElementById("classification_name").value;
+            // Adjust regex if you want to allow spaces (e.g., /^[A-Za-z0-9 ]+$/)
+            const pattern = /^[A-Za-z0-9]+$/;
 
             if (!pattern.test(input)) {
                 event.preventDefault();
@@ -44,32 +45,32 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // For add inventory form
+    // Add inventory form validation
     const addInventoryForm = document.getElementById("addInventoryForm");
     if (addInventoryForm) {
         addInventoryForm.addEventListener("submit", function (event) {
-            let make = document.getElementById("inv_make").value.trim();
-            let model = document.getElementById("inv_model").value.trim();
-            let year = document.getElementById("inv_year").value;
-            let price = document.getElementById("inv_price").value;
-            let miles = document.getElementById("inv_miles").value;
-            let color = document.getElementById("inv_color").value.trim();
+            const make = document.getElementById("inv_make").value.trim();
+            const model = document.getElementById("inv_model").value.trim();
+            const year = document.getElementById("inv_year").value;
+            const price = document.getElementById("inv_price").value;
+            const miles = document.getElementById("inv_miles").value;
+            const color = document.getElementById("inv_color").value.trim();
 
-            // Basic validation for required fields
+            // Check that all required fields are filled
             if (!make || !model || !year || !price || !miles || !color) {
                 event.preventDefault();
                 alert("All fields must be filled!");
                 return;
             }
 
-            // Additional validation for price and year to ensure they are valid numbers
+            // Validate that price and year are numbers
             if (isNaN(price) || isNaN(year)) {
                 event.preventDefault();
                 alert("Price and Year must be valid numbers.");
                 return;
             }
 
-            // Ensure year is within a reasonable range (e.g., 1900 - current year)
+            // Ensure year is within a reasonable range
             const currentYear = new Date().getFullYear();
             if (year < 1900 || year > currentYear) {
                 event.preventDefault();
@@ -77,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            // Miles should be a valid positive number
+            // Ensure miles is a positive number
             if (isNaN(miles) || miles <= 0) {
                 event.preventDefault();
                 alert("Miles must be a positive number.");
@@ -86,5 +87,3 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
-
-

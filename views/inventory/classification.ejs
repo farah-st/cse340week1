@@ -1,7 +1,8 @@
+<% if (typeof messages === 'undefined') { var messages = []; } %>
 <% if (title) { %>
   <h1><%= title %></h1>
 <% } else { %>
-  <script>window.location.href = '/';</script> <!-- Redirect to home if title is not defined -->
+  <script>window.location.href = '/';</script>
 <% } %>
 
 <!-- Display any messages if available -->
@@ -15,3 +16,4 @@
 
 <!-- Render the grid content -->
 <%- grid %>
+

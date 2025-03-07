@@ -1,11 +1,16 @@
-const { pool } = require("../database/index"); // Destructure to get pool
+const { pool } = require("../database/index");
 
 /* ***************************
  *  Get all classification data
  * ************************** */
 async function getClassifications() {
   try {
-    const result = await pool.query("SELECT classification_id, classification_name FROM public.classification ORDER BY classification_name");
+    const sql = `
+      SELECT classification_id, classification_name 
+      FROM public.classification 
+      ORDER BY classification_name
+    `;
+    const result = await pool.query(sql);
     return result.rows;
   } catch (error) {
     console.error("Error fetching classifications:", error);
@@ -14,18 +19,18 @@ async function getClassifications() {
 }
 
 /* ***************************
- *  Get all inventory items and 
- *  classification_name by classification_id
+ *  Get all inventory items and classification_name by classification_id
  * ************************** */
 async function getInventoryByClassificationId(classification_id) {
   try {
-    const result = await pool.query(
-      `SELECT * FROM public.inventory AS i 
+    const sql = `
+      SELECT i.*, c.classification_name
+      FROM public.inventory AS i 
       JOIN public.classification AS c 
       ON i.classification_id = c.classification_id 
-      WHERE i.classification_id = $1`,
-      [classification_id]
-    );
+      WHERE i.classification_id = $1
+    `;
+    const result = await pool.query(sql, [classification_id]);
     return result.rows;
   } catch (error) {
     console.error("Error fetching inventory by classification ID:", error);
@@ -42,7 +47,7 @@ async function getVehicleById(invId) {
     const result = await pool.query(sql, [invId]);
     return result.rows.length > 0 ? result.rows[0] : null;
   } catch (error) {
-    console.error("Database error:", error);
+    console.error("Database error fetching vehicle details:", error);
     throw new Error("Error fetching vehicle details.");
   }
 }
@@ -61,7 +66,11 @@ async function addClassification(classification_name) {
     }
 
     // Insert new classification
-    const sql = `INSERT INTO public.classification (classification_name) VALUES ($1) RETURNING *`;
+    const sql = `
+      INSERT INTO public.classification (classification_name) 
+      VALUES ($1) 
+      RETURNING *;
+    `;
     const result = await client.query(sql, [classification_name]);
     return result.rows[0];
   } catch (error) {
@@ -78,7 +87,7 @@ async function addClassification(classification_name) {
 async function addInventoryItem(vehicle) {
   try {
     const sql = `
-      INSERT INTO inventory 
+      INSERT INTO public.inventory 
         (inv_make, inv_model, inv_year, inv_description, inv_price, inv_miles, inv_color, classification_id, inv_image, inv_thumbnail)
       VALUES 
         ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
@@ -98,8 +107,10 @@ async function addInventoryItem(vehicle) {
       vehicle.inv_thumbnail || "default-thumbnail.jpg"
     ];
 
-    console.log("Executing SQL:", sql);
-    console.log("With Parameters:", params);
+    if (process.env.NODE_ENV === "development") {
+      console.log("Executing SQL:", sql);
+      console.log("With Parameters:", params);
+    }
 
     const result = await pool.query(sql, params);
 
@@ -111,6 +122,20 @@ async function addInventoryItem(vehicle) {
   }
 }
 
+/* *****************************
+* Return account data using email address
+* ***************************** */
+async function getAccountByEmail (account_email) {
+  try {
+    const result = await pool.query(
+      'SELECT account_id, account_firstname, account_lastname, account_email, account_type, account_password FROM account WHERE account_email = $1',
+      [account_email])
+    return result.rows[0]
+  } catch (error) {
+    return new Error("No matching email found")
+  }
+}
+
 /* ***************************
  *  Export all functions
  * ************************** */
@@ -119,5 +144,6 @@ module.exports = {
   getInventoryByClassificationId,
   getVehicleById,
   addClassification,
-  addInventoryItem
+  addInventoryItem,
+  getAccountByEmail
 };

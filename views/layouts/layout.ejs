@@ -1,8 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<script src="/js/script.js"></script>
-
-
+<% if (typeof title === 'undefined') { var title = "Default Title"; } %>
 <%- include('../partials/head.ejs') %>
 
 <body>
@@ -15,9 +11,4 @@
         </main>
         <%- include('../partials/footer.ejs') %>
     </div>
-    
 </body>
-</html>
-
-
-

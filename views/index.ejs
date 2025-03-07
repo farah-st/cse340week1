@@ -1,6 +1,7 @@
 <div class="hero-container">
   <h1 class="hero-heading">Welcome to CSE Motors!</h1>
 
+  <!-- Display flash messages if available -->
   <% if (messages && messages.notice && messages.notice.length > 0) { %>
     <div class="alert alert-warning">
       <% messages.notice.forEach(function(msg) { %>
@@ -71,6 +72,7 @@
     </ul>  
   </div>
 </div>
+
 
 
 

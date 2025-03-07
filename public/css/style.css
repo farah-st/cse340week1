@@ -1,4 +1,5 @@
 /* General Reset */
+
 html {
     background-image: url('/images/site/small_check.jpg');
     background-size: cover;  /* Make background responsive */
@@ -6,12 +7,15 @@ html {
 
 /* Body Styling */
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    height: 100%;
+    background-color: white;
+    margin: 20px auto; 
+    max-width: 50vh;
+    border: 10px solid #bda5ab;
+    /*display: flex;
+    flex-direction: column;*/
+    /* Remove justify-content to avoid centering all children vertically */
 }
+
 
 /* Header Styling */
 header .siteName {
@@ -23,6 +27,7 @@ header .siteName {
 h1 {
     padding-left: 10px;
 }
+
 /* Navigation */
 nav {
     display: grid;
@@ -65,145 +70,143 @@ footer {
     color: #fff;
     text-align: right;
     padding: 10px 0;
-    font-size: 12px;
-    position: relative;
+    font-size: 15px;
     bottom: 0;
     width: 100%;
     display: flex;
     justify-content: space-between;  /* Space out the content */
     align-items: center;  /* Vertically align items */
+    padding: 10px 0;
 }
 
-.errorMes {
-    margin: 0;  /* Remove default margin */
-    text-align: left;  /* Align the text to the left */
-    
-}
-/* Style for "Return to safety" link */
-.returntosafe {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #f44336; 
-    color: white;               
-    text-decoration: none;     
-    border-radius: 5px;         
-    font-size: 16px;         
-    font-weight: bold;         
-    margin-top: 20px;          
-    transition: background-color 0.3s ease;  
-  }
-  
-  .returntosafe:hover {
-    background-color: #d32f2f;  
-  }
-  
-  .error-message, .fun-message {
-    text-align: center;
-  }
-  
-  
 footer .copyright {
     padding-right: 5px;
 }
 
-/*utilities CSS*/
-ul#inv-display {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding: 0;
-    text-decoration: none;
-    list-style-type: none;
-}
-  
-  ul#inv-display li a {
-    text-decoration: none;
-    color: inherit;
-  }
-  
-
-ul#inv-display li a img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  /* Style for name and price section in the classification grid */
-  .namePrice {
+/* Error and Fun Message Styling */
+.error-message {
+    color: #d32f2f;
+    font-size: 1.2rem;
+    margin: 20px 0;
     text-align: center;
-  }
-  
-  .namePrice h2 {
-    font-size: 18px;
-    margin: 10px 0;
-  }
-  
-  .namePrice span {
-    font-size: 16px;
-    font-weight: bold;
-    color: #2a9d8f;
-  }
-  
+}
 
-  .notice {
+.fun-message {
+    font-size: 1.2rem;
+    color: #4caf50;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Alert Notice Text */
+.alert-notice {
     color: red;
     font-size: 18px;
     text-align: center;
     margin-top: 20px;
 }
 
-/*Error message css*/
-.error-message {
-    color: #d32f2f;
-    font-size: 1.2rem;
-    margin: 20px 0;
-    text-align: center;
-  }
-  
-  .fun-message {
-    font-size: 1.2rem;
-    color: #4caf50;
-    margin-bottom: 20px;
-    text-align: center;
-  }
+/* "Return to Safety" Link Style */
+.returntosafe {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #f44336;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
 
-/* Login */
-.parent-container { 
+.returntosafe:hover {
+    background-color: #d32f2f;
+}
+
+/* Utilities CSS */
+ul#inv-display {
     display: flex;
-    justify-content: center; 
-    align-items: center; 
-    min-height: 100vh; /* Changed from height to min-height */
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 0;
+    list-style-type: none;
+}
+
+ul#inv-display li a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul#inv-display li a img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Classification Grid - Name and Price Section */
+.namePrice {
+    text-align: center;
+}
+
+.namePrice h2 {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.namePrice span {
+    font-size: 16px;
+    font-weight: bold;
+    color: #2a9d8f;
+}
+
+/* Notice List Styling */
+.notice-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.notice-list li {
+    background-color: #ffe6e6; /* Light red background */
+    padding: 8px;
+    margin-bottom: 5px;
+    border-radius: 5px; /* Rounded corners */
+    font-weight: bold;
+}
+
+/* Login Styles */
+.parent-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   
     padding: 20px; /* Prevents touching screen edges */
 }
 
 /* Login Form */
 .login-form {
-    max-width: 400px;
-    margin: 20px auto; 
+    max-width: 800px;
+    margin: 20px auto;
     padding: 20px;
-    background: #d8e2dc; 
+    background: #d8e2dc;
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Labels */
-.login-form label {
-    display: block;
-    margin-top: 10px;
-    color: Black;
-    text-align: left; 
-}
+/* Login Form Labels */
 
-/* Inputs */
+
+/* Login Form Inputs */
 .login-form input {
     width: 90%;
     padding: 10px;
     margin-top: 5px;
     border-radius: 5px;
-    text-align: center; 
+    text-align: center;
 }
 
-/* Buttons */
+/* Login Form Button */
 .login-form button {
     margin-top: 15px;
     padding: 10px 20px;
@@ -219,15 +222,15 @@ ul#inv-display li a img {
     background-color: #F49EBE;
 }
 
-/*Registration form */
+/* Registration Page */
 .register-page {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f5f5f5; 
+    background-color: #f5f5f5;
 }
 
-/* Registration-specific container */
+/* Registration Container */
 .register-container {
     background: #fff;
     padding: 10px;
@@ -236,21 +239,20 @@ ul#inv-display li a img {
     text-align: center;
 }
 
-
-/* Registration-specific title */
+/* Registration Title */
 .register-title {
     font-size: 22px;
     margin-bottom: 15px;
 }
 
-/* Registration form styling */
+/* Registration Form */
 .register-form {
     display: flex;
     flex-direction: column;
     align-items: stretch;
 }
 
-/* Label styling */
+/* Registration Form Labels */
 .register-form label {
     display: block;
     font-weight: bold;
@@ -258,7 +260,7 @@ ul#inv-display li a img {
     text-align: left;
 }
 
-/* Input fields */
+/* Registration Form Inputs */
 .register-form input {
     width: 90%;
     padding: 10px;
@@ -268,7 +270,7 @@ ul#inv-display li a img {
     font-size: 16px;
 }
 
-/*Password*/
+/* Password Requirements */
 .password-requirements {
     font-size: 0.9em;
     color: #555;
@@ -278,15 +280,13 @@ ul#inv-display li a img {
     margin-top: 5px;
     margin-bottom: 15px;
     border-radius: 5px;
-    
-}  
+}
 
 .password-ul {
     list-style-type: none;
 }
 
-
-/* Registration button */
+/* Registration Button */
 .register-button {
     width: 100%;
     background-color: #ed5e93;
@@ -303,22 +303,7 @@ ul#inv-display li a img {
     background-color: #F49EBE;
 }
 
-.notice {
-    list-style-type: none; 
-    padding: 0; 
-    margin: 0; 
-    color: red; 
-}
-
-.notice li {
-    background-color: #ffe6e6; /* Light red background */
-    padding: 8px;
-    margin-bottom: 5px;
-    border-radius: 5px; /* Rounded corners */
-    font-weight: bold;
-    
-}
-
+/* Classification Form Styles */
 .unique-classification-form {
     background-color: #f9f9f9;
     padding: 20px;
@@ -336,8 +321,9 @@ ul#inv-display li a img {
 }
 
 .classformbut:hover {
-    background-color: #F27C9A; 
+    background-color: #F27C9A;
 }
+
 /* Inventory Management Links */
 .invManag {
     list-style: none;
@@ -367,10 +353,9 @@ ul#inv-display li a img {
 @media screen and (max-width: 767px) {
     body {
         background-color: white;
-        margin: 0;
+        margin: 2px; /* Single margin definition */
         padding: 0;
         height: 100%;
-        margin: 2px;
     }
 
     /* Header Styling for Small Screens */
@@ -393,9 +378,8 @@ ul#inv-display li a img {
     }
 
     header #tools a {
-        font-size: 1rem;
         text-decoration: none;
-        font-size: 10px;
+        font-size: 10px; /* Kept the smaller size for mobile */
         color: black;
         padding-right: 5px;
     }
@@ -438,73 +422,68 @@ ul#inv-display li a img {
         padding-top: 140px;
     }
 
-    /*index.ejs*/
-    /* Hero Container */
+    /* Hero Section */
     .hero-container {
         position: relative;
         height: 200px;
     }
 
-    /* Hero Heading Styling */
     .hero-heading {
         color: black;
         font-size: 18px;
         font-weight: bold;
-        margin: 0;
-        text-align: left; 
-        margin-top: 10px; 
-        margin-left: 5px;
-        margin-bottom: 0; 
+        margin: 10px 0 0 5px;
+        text-align: left;
     }
-    /* Hero Image Styling */
+
     .hero-image {
         background: url('/images/vehicles/delorean-tn.jpg') no-repeat center center;
-        background-size: contain; 
+        background-size: contain;
         height: 150px;
         position: relative;
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
         margin-top: 5px;
-        border-radius: 10px; 
-        overflow: hidden; 
-    }  
+        border-radius: 10px;
+        overflow: hidden;
+    }
 
-    /* Transparent box positioning */
+    /* Transparent Info Box in Hero */
     .hero-info {
         position: absolute;
         top: 10px;
         left: 10px;
-        background-color: rgba(221, 216, 223, 0.5); 
+        background-color: rgba(221, 216, 223, 0.5);
         padding: 5px;
-        width: 40%; 
-        max-width: 200px; 
-        box-sizing: border-box; 
+        width: 40%;
+        max-width: 200px;
+        box-sizing: border-box;
     }
 
-    /* Align the text to the left */
     .hero-info h2,
     .hero-info p {
         margin: 0;
-        text-align: left; 
-        padding: 0; 
+        text-align: left;
+        padding: 0;
         color: black;
     }
+    
     .hero-info p {
         font-size: 12px;
     }
-
+    
     .hero-info h2 {
         font-size: 15px;
     }
 
-    /* Center the "Own Today" button */
+    /* "Own Today" Button in Hero */
     .hero-info .own-btn {
         display: block;
         width: 80%;
         text-align: center;
         padding: 10px;
-        background-color: #564147; 
+        background-color: #564147;
         text-decoration: none;
         color: white;
         border: none;
@@ -514,54 +493,59 @@ ul#inv-display li a img {
     }
 
     .hero-info .own-btn:hover {
-        background-color: #72556f; 
+        background-color: #72556f;
     }
 
+    /* Footer */
     footer {
         background-color: #bda5ab;
         color: #fff;
         text-align: right;
         padding: 10px 0;
         font-size: 12px;
-        position: relative; 
-        bottom: 0; 
+        position: relative;
+        bottom: 0;
         width: 100%;
     }
-    footer .copyright{
+
+    footer .copyright {
         padding-right: 5px;
     }
+
+    /* Body Text Adjustments */
     .body-text .body-h2,
-    .body-text2 .body-h2-2{
+    .body-text2 .body-h2-2 {
         font-size: 18px;
-        margin: 0px;
+        margin: 0;
     }
-    .body-text .body-p{
+
+    .body-text .body-p {
         font-size: 12px;
         padding-bottom: 8px;
     }
 
-    .body-text2 .body-p-2{
+    .body-text2 .body-p-2 {
         font-size: 12px;
         list-style-type: none;
         padding: 0;
         margin: 0;
     }
 
-    .body-text2 ul{
+    .body-text2 ul {
         margin: 0;
     }
 
-    /* Body text container for upgrades */
     .body-text2 {
         padding: 10px;
     }
 
+    /* Grid List for Upgrades */
     .grid-list {
         display: grid;
-        grid-template-columns: repeat(2, 1fr); 
-        grid-template-rows: repeat(2, auto); 
-        gap: 20px; 
-        list-style-type: none; 
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, auto);
+        gap: 20px;
+        list-style-type: none;
         padding: 0;
         margin: 0;
     }
@@ -580,40 +564,40 @@ ul#inv-display li a img {
     }
     
     .grid-list .body-p-2 img {
-        width: 50%; 
-        object-fit: cover; 
-        border-radius: 5px 5px 0 0; 
-        margin-bottom: 10px; 
-        display: block; 
-        margin-left: auto; 
-        margin-right: auto; 
+        width: 50%;
+        object-fit: cover;
+        border-radius: 5px 5px 0 0;
+        margin-bottom: 10px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
     }
     
-
     .grid-list .body-p-2 a {
         text-decoration: underline;
-        color: white; 
+        color: white;
         font-weight: bold;
     }
-
+    
     .grid-list .body-p-2 a:hover {
         color: #72556f;
-        text-decoration: none; 
-    }
-    #tools {
-        position: absolute;
-        top: 10px; 
-        right: 1px; 
+        text-decoration: none;
     }
 
-    /* vehicle*/
+    #tools {
+        position: absolute;
+        top: 10px;
+        right: 1px;
+    }
+
+    /* Vehicle Section */
     .vehicle-container {
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;  
-        width: 100%;              
-        max-width: 100%;       
+        justify-content: center;
+        width: 100%;
+        max-width: 100%;
         padding: 15px;
     }
     
@@ -626,107 +610,107 @@ ul#inv-display li a img {
         display: block;
         margin-bottom: 15px;
     }
-
+    
     .vehicle-info {
         text-align: center;
         font-size: 16px;
-        overflow: visible; 
-        word-wrap: break-word; 
-        white-space: normal; 
+        overflow: visible;
+        word-wrap: break-word;
+        white-space: normal;
         padding: 10px;
     }
-
+    
     .vehicle-info h2 {
         font-size: 24px;
         color: #222;
     }
-
+    
     .vehicle-info p strong {
         font-size: 18px;
         color: #ed5e93;
     }
     
-
-    /*display*/
+    /* Inventory Display */
     ul#inv-display {
         display: flex;
         flex-wrap: wrap;
-        gap: 20px; 
-      }
+        gap: 20px;
+    }
     
-      ul#inv-display li {
-        width: 100%; 
+    ul#inv-display li {
+        width: 100%;
         background-color: #f9f9f9;
         border-radius: 8px;
         overflow: hidden;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         transition: box-shadow 0.3s ease;
-        padding: 20px; 
-      }
+        padding: 20px;
+    }
     
-      ul#inv-display li:hover {
+    ul#inv-display li:hover {
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-      }
+    }
     
-      ul#inv-display li a img {
+    ul#inv-display li a img {
         width: 100%;
         height: auto;
         object-fit: cover;
-        border-radius: 10px; /* Optional: Make the image corners rounded */
-      }
+        border-radius: 10px;
+    }
     
-      .namePrice {
+    .namePrice {
         text-align: center;
-        padding: 15px; /* Add padding around text */
-      }
+        padding: 15px;
+    }
     
-      .namePrice h2 {
-        font-size: 1.5rem; /* Increase font size */
+    .namePrice h2 {
+        font-size: 1.5rem;
         margin: 10px 0;
-      }
+    }
     
-      .namePrice span {
-        font-size: 1.2rem; /* Larger price text */
+    .namePrice span {
+        font-size: 1.2rem;
         font-weight: bold;
-      }
+    }
     
-      hr {
+    hr {
         margin: 10px 0;
         border: 1px solid #ddd;
-      }
+    }
     
-      .notice {
-        font-size: 20px; /* Larger text for notices */
+    .notice {
+        font-size: 20px;
         text-align: center;
         margin-top: 20px;
     }
 
-    /*Login*/
+    /* Login Adjustments */
     .parent-container {
-        flex-direction: column; /* Ensures content stacks properly */
-        min-height: auto; /* Allows content to expand if needed */
-        padding: 40px 20px; /* Extra spacing */
+        flex-direction: column;
+        min-height: auto;
+        padding: 40px 20px;
     }
-
+    
     .login-form {
-        width: 90%; /* Make it take most of the screen width */
+        width: 90%;
         padding: 15px;
     }
-
-    .login-form input, 
+    
+    .login-form input,
     .login-form button {
         font-size: 16px;
     }
+    
     .password-requirements {
         width: 280px;
-    }  
-
+    }
+    
     .register-container {
         width: 300px;
     }
 }
 
-/*Form for add inventory page*/
+/* Form for Add Inventory Page (Outside media query) */
 .add-inventory-form {
     max-width: 500px;
     margin: 20px auto;
@@ -742,14 +726,15 @@ ul#inv-display li a img {
     font-weight: bold;
 }
 
-.add-inventory-form input{
+.add-inventory-form input {
     width: 95%;
     padding: 10px;
     margin-top: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
-.add-inventory-form textarea, 
+
+.add-inventory-form textarea,
 .add-inventory-form select {
     width: 100%;
     padding: 10px;
@@ -773,15 +758,15 @@ ul#inv-display li a img {
 }
 
 #inv_description {
-    width: 95%; 
-    height: 150px; 
+    width: 95%;
+    height: 150px;
     padding: 10px;
-    border: 1px solid #ccc; 
-    border-radius: 5px; 
+    border: 1px solid #ccc;
+    border-radius: 5px;
     font-size: 16px;
     background-color: #f9f9f9;
     color: #333;
-    resize: vertical; 
+    resize: vertical;
 }
 
 label[for="inv_description"] {
@@ -790,8 +775,7 @@ label[for="inv_description"] {
     margin-bottom: 5px;
 }
 
-
-/* large Screens (Min Width: 768px) */
+/* Large Screens (Min Width: 768px) */
 @media screen and (min-width: 768px) {
     body {
         background-color: white;
@@ -834,8 +818,8 @@ label[for="inv_description"] {
         background-image: url('/images/vehicles/delorean.jpg');
         background-size: contain;
         background-position: center;
-        border-radius: 20px;
         background-repeat: no-repeat;
+        border-radius: 20px;
         position: relative;
     }
 
@@ -862,8 +846,8 @@ label[for="inv_description"] {
     .hero-info h2 {
         font-size: 30px;
         color: #564147;
-        padding: 0px;
         margin: 5px;
+        padding: 0;
     }
 
     .hero-info p {
@@ -890,27 +874,26 @@ label[for="inv_description"] {
         background-color: #72556f;
     }
 
-    /* Larger-grid container using grid */
+    /* Main Content Layout */
     .main-content {
         display: grid;
-        grid-template-columns: 1fr 1fr ; 
+        grid-template-columns: 1fr 1fr; 
         grid-template-rows: 1fr;
         gap: 20px; 
     }
 
-    /* Keep body-text2 on the left side (1st column) */
-    .main-content .body-text2{
+    /* Body Text Columns */
+    .main-content .body-text2 {
         grid-column: 1; 
         grid-row: 1;
     }
 
-    /* Move main-content to the right side (2nd column) */
     .main-content .body-text {
         grid-column: 2; 
     }
 
-    /* Body Text */
-    .body-text {
+    /* Body Text Styling */
+    .body-text, .body-text2 {
         display: flex;
         flex-direction: column;
         width: 100%; 
@@ -924,13 +907,6 @@ label[for="inv_description"] {
     .body-text .body-p {
         font-size: 18px;
         margin-bottom: 20px;
-    }
-
-    /* Body Text 2 */
-    .body-text2 {
-        display: flex;
-        flex-direction: column;
-        width: 100%; 
     }
 
     .body-text2 .body-h2-2 {
@@ -960,29 +936,26 @@ label[for="inv_description"] {
         align-items: center; 
     }
 
-    /* Remove default link styles */
+    .grid-list .body-p-2 img {  
+        margin-bottom: 10px;
+        object-fit: scale-down;
+        border-radius: 10px;
+    }
+
+    /* General Link Styles (Override if needed) */
     a {
         text-decoration: underline;
         color: white;
-
-    }
-    .grid-list .body-p-2 img {  
-        margin-bottom: 10px;
-        object-fit:scale-down;
-        border-radius: 10px;
-    }
-    footer .copyright {
-        padding-right: 5px;
     }
 
+    /* Tools Link */
     #tools a {
         text-decoration: none;
         color: black;
         font-size: 15px;
     }
 
- 
-    /* Vehicle Information Styling */
+    /* Vehicle Information Section */
     .vehicle-detail {
         display: grid;
         grid-template-columns: 1fr 1fr; /* Two equal columns */
@@ -1007,20 +980,18 @@ label[for="inv_description"] {
         color: #333;
     }
 
-    /* Headings */
     .vehicle-info h2 {
         font-size: 28px;
         font-weight: bold;
         color: #222;
     }
 
-    /* Make price stand out */
     .vehicle-info p strong {
         font-size: 20px;
-        color: #ed5e93; /* Red for emphasis */
+        color: #ed5e93;
     }
 
-    /*classification*/
+    /* Inventory Display (Classification) */
     ul#inv-display li {
         width: 30%;
         border: 1px solid #ddd;
@@ -1036,11 +1007,17 @@ label[for="inv_description"] {
         text-decoration: none;
     }
 
+    /* Password and Registration Containers */
     .password-requirements {
         width: 380px;
     }  
 
     .register-container {
         width: 400px;
+    }
+
+    /* Footer */
+    footer .copyright {
+        padding-right: 5px;
     }
 }

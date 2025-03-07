@@ -1,75 +1,76 @@
-<h1><%= title %></h1>
-
-<% if (flash.error && flash.error.length > 0) { %>
-    <div class="alert alert-danger">
-        <%= flash.error[0] %>
-    </div>
-<% } %>
-
-<% if (flash.success && flash.success.length > 0) { %>
-    <div class="alert alert-success">
-        <%= flash.success[0] %>
-    </div>
-<% } %>
-
-<div class="container">
+<div class="parent-container">
     <form id="loginForm" action="/account/login" method="POST" class="login-form" novalidate>
-        <!-- Client-side error messages -->
-        <div id="error-message" class="alert alert-danger" style="display: none;"></div>
+        <!-- Server-side messages -->
+        <% if (flash.error && flash.error.length > 0) { %>
+            <div class="alert alert-danger">
+                <%= flash.error[0] %>
+            </div>
+        <% } %>
+    
+        <% if (flash.success && flash.success.length > 0) { %>
+            <div class="alert alert-success">
+                <%= flash.success[0] %>
+            </div>
+        <% } %>
 
+        <!-- Client-side error message container -->
+        <div id="error-message" class="alert alert-danger" style="display:none;"></div>
+
+        <!-- Email input -->
         <div class="form-group">
             <label for="email">Email:</label>
-            <input type="email" id="email" name="email" class="form-control" required>
+            <input type="email" id="email" name="account_email" class="form-control" required>
         </div>
 
+        <!-- Password input -->
         <div class="form-group">
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password" class="form-control" required>
-            <input type="checkbox" id="showPassword" onclick="togglePassword()"> Show Password
+            <input type="password" id="password" name="account_password" class="form-control" required>
         </div>
-    
+
+        <!-- Toggle password visibility -->
+        <div class="form-group">
+            <input type="checkbox" id="togglePassword" onclick="togglePassword()">
+            <label for="togglePassword">Show Password</label>
+        </div>
+
+        <!-- Login button -->
         <button type="submit" class="btn btn-primary">Login</button>
         <p class="acct">No account? <a href="/account/register">Sign-up</a></p>
     </form>
-</div>  
+</div>
 
 <script>
     function togglePassword() {
         const passwordField = document.getElementById("password");
-        const showPasswordCheckbox = document.getElementById("showPassword");
-        passwordField.type = showPasswordCheckbox.checked ? "text" : "password";
+        const passwordFieldType = passwordField.getAttribute("type");
+        passwordField.setAttribute("type", passwordField.type === "password" ? "text" : "password");
     }
 
     document.addEventListener("DOMContentLoaded", function () {
         const loginForm = document.getElementById("loginForm");
         const errorMessageDiv = document.getElementById("error-message");
 
-        if (loginForm) {
-            loginForm.addEventListener("submit", function (event) {
-                event.preventDefault();
+        loginForm.addEventListener("submit", function (event) {
+            event.preventDefault();
 
-                const email = document.getElementById("email").value.trim();
-                const password = document.getElementById("password").value.trim();
-                let errorMessage = "";
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
+            let errorMessage = "";
 
-                if (!email) {
-                    errorMessage = "Email is required.";
-                } else if (!/\S+@\S+\.\S+/.test(email)) {
-                    errorMessage = "Invalid email format.";
-                }
+            if (!email) {
+                errorMessageDiv.textContent = "Email is required.";
+            }
 
-                if (!password) {
-                    errorMessage += (errorMessage ? " " : "") + "Password is required.";
-                }
+            if (!password) {
+                errorMessageDiv.textContent += (errorMessage ? " " : "") + "Password is required.";
+            }
 
-                if (errorMessage) {
-                    errorMessageDiv.textContent = errorMessage;
-                    errorMessageDiv.style.display = "block";
-                } else {
-                    loginForm.submit();
-                }
-            });
-        }
+            if (errorMessageDiv.textContent) {
+                errorMessageDiv.style.display = "block";
+            } else {
+                loginForm.submit();
+            }
+        });
     });
 </script>
-

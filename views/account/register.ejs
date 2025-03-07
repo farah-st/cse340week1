@@ -2,32 +2,38 @@
     <div class="register-container">
         <% if (typeof errors !== "undefined" && Array.isArray(errors) && errors.length > 0) { %>
             <div class="alert alert-danger">
-                <% errors.forEach(function(error) { %>
-                    <p><%= error %></p>
-                <% }); %>
+                <ul>
+                    <% errors.forEach(function(error) { %>
+                        <li><%= error %></li>
+                    <% }); %>
+                </ul>
             </div>
         <% } %>
         
         <form action="/account/register" method="POST" class="register-form">
             <div class="form-group">
                 <label for="first_name">First Name:</label>
-                <input type="text" id="first_name" name="account_firstname" class="form-control" required value="<%= locals.account_firstname || '' %>" aria-required="true">
+                <input type="text" id="first_name" name="account_firstname" class="form-control" required 
+                       value="<%= locals.account_firstname || '' %>" aria-required="true">
             </div>
             <div class="form-group">
                 <label for="last_name">Last Name:</label>
-                <input type="text" id="last_name" name="account_lastname" class="form-control" required value="<%= locals.account_lastname || '' %>" aria-required="true">
+                <input type="text" id="last_name" name="account_lastname" class="form-control" required 
+                       value="<%= locals.account_lastname || '' %>" aria-required="true">
             </div>
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" id="email" name="account_email" class="form-control" required value="<%= locals.account_email || '' %>" aria-required="true">
+                <input type="email" id="email" name="account_email" class="form-control" required 
+                       value="<%= locals.account_email || '' %>" aria-required="true">
             </div>
             <div class="form-group">
                 <label for="password">Password:</label>
-                <input type="password" id="password" name="account_password" class="form-control" required pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$" aria-required="true">
+                <input type="password" id="password" name="account_password" class="form-control" required 
+                       pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$" aria-required="true">
                 <input type="checkbox" id="showPassword" onclick="togglePassword()"> Show Password
             </div>
             <div class="password-requirements">
-                Password must be at least 12 characters long and include:
+                <p>Password must be at least 12 characters long and include:</p>
                 <ul class="password-ul">
                     <li>At least one uppercase letter (A-Z)</li>
                     <li>At least one lowercase letter (a-z)</li>

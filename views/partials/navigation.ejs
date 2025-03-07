@@ -8,6 +8,8 @@
     </ul>
   </nav> -->
 
-<nav>
-  <%-nav %>
-</nav>
+  <% if (typeof nav === 'undefined') { var nav = ""; } %>
+  <nav>
+    <%- nav %>
+  </nav>
+  

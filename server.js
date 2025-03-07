@@ -9,7 +9,12 @@
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
 require("dotenv").config(); 
-const app = express();
+const cookieParser = require("cookie-parser")
+const app = express(); // <-- app initialized here
+
+// Middleware after app initialization
+app.use(cookieParser()); // <-- moved here
+
 const baseController = require("./controllers/baseController");
 const inventoryRoute = require("./routes/inventoryRoute");
 const accountRoute = require("./routes/accountRoute");
@@ -17,7 +22,6 @@ const utilities = require("./utilities");
 const pool = require('./database/');
 const session = require("express-session");
 const flash = require("connect-flash");
-const bodyParser = require("body-parser");
 const path = require('path');
 
 /* ********************************
@@ -31,7 +35,9 @@ if (!process.env.SESSION_SECRET || !process.env.DATABASE_URL) {
 /* ***********************
  * Middleware
  *************************/
-app.use(express.static("public"));
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(expressLayouts);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -47,25 +53,16 @@ app.use(session({
   saveUninitialized: true,
   name: 'sessionId',
   cookie: { 
-    /*When deploy in prod change to this*/
-    secure: process.env.NODE_ENV === 'production',
-    /*To run locally */
-    secure: false,
+    secure: process.env.NODE_ENV === 'production', // secure in prod
     httpOnly: true, 
-    maxAge: 1000 * 60 * 60 * 24 
+    maxAge: 1000 * 60 * 60 * 24 // 1 day
   }
 }));
 
 // Flash Middleware
 app.use(flash());
 
-// Middleware to set flash messages to res.locals
-app.use((req, res, next) => {
-  res.locals.messages = req.flash(); // This will allow you to access all flash messages
-  next();
-});
-
-// Middleware to set flash messages to res.locals
+// Consolidated Flash Messages Middleware
 app.use((req, res, next) => {
   res.locals.flash = {
     error: req.flash('error'),
@@ -75,46 +72,7 @@ app.use((req, res, next) => {
   next();
 });
 
-/* ***********************
- * Routes
- *************************/
-app.get("/", utilities.handleErrors(baseController.buildHome));
-app.get("/favicon.ico", (req, res) => res.status(204));
-
-// Inventory routes
-app.use("/inv", inventoryRoute);
-
-// Account routes
-app.use("/account", accountRoute);
-
-// Example route for inventory management
-app.get('/inv', (req, res) => {
-  req.flash('info', 'Welcome to the inventory management page!'); // Set a flash message
-  const message = req.flash('info'); // Retrieve flash messages
-  res.render('inventory/management', { message }); // Render the management page
-});
-
-// Home page route (after login)
-app.get("/", (req, res) => {
-  if (!req.session.account) {
-    return res.redirect("/account/login");  // Redirect to login if not logged in
-  }
-
-  // Render the home page if logged in
-  res.render("home", {
-    title: "Home",
-    user: req.session.account,
-    messages: req.flash() // Pass flash messages
-  });
-});
-
-// Serve static files like images
-app.use(express.static(path.join(__dirname, 'public')));
-
-// File Not Found Route - must be last route in list
-app.use((req, res, next) => {
-  next({ status: 404, message: 'Sorry, we appear to have lost that page.' });
-});
+app.use(utilities.checkJWTToken)
 
 /* ***********************
  * View Engine and Templates
@@ -123,51 +81,78 @@ app.set("view engine", "ejs");
 app.set("layout", "layouts/layout"); // Path to layout
 
 /* ***********************
- * Local Server Information
- * Values from .env (environment) file
+ * Routes
  *************************/
-const port = process.env.PORT || 5501;
-const host = process.env.HOST || "localhost";
+// Home Page Route
+app.get("/", utilities.handleErrors(async (req, res) => {
+  if (!req.session.account) {
+    return res.redirect("/account/login");
+  }
+  res.render("index", {
+    title: "Home",
+    user: req.session.account,
+    messages: req.flash()
+  });  
+}));
+
+
+app.get("/favicon.ico", (req, res) => res.status(204));
+
+// Inventory Routes
+app.use("/inv", inventoryRoute);
+
+// Account Routes
+app.use("/account", accountRoute);
+
+// Example route for inventory management
+app.get("/inv", (req, res) => {
+  req.flash("info", "Welcome to the inventory management page!");
+  const message = req.flash("info");
+  res.render("inventory/management", { message });
+});
+
+// File Not Found Route - must be last route in list
+app.use((req, res, next) => {
+  next({ status: 404, message: 'Sorry, we appear to have lost that page.' });
+});
 
 /* ***********************
  * Express Error Handler
  * Place after all other middleware
  *************************/
 app.use(async (err, req, res, next) => {
-  let nav = await utilities.getNav();
+  const nav = await utilities.getNav();
   console.error(`Error at "${req.originalUrl}": ${err.message}`);
 
   let title = err.status === 404 ? "Page Not Found" : "Server Error";
-  let message =
-    err.status === 404
+  let message = err.status === 404
       ? err.message
       : "Oh no! There was a crash. Maybe try a different route?";
 
-  // Include flash messages in the error response
-  let flashMessages = {
-    error: req.flash('error'),
-    success: req.flash('success'),
-    info: req.flash('info'),
-  };
-
-  console.log('Flash messages:', flashMessages); // Debugging line
-
+  // Use flash messages from locals
   res.status(err.status || 500).render("errors/error", {
     title,
     message,
     nav,
-    flash: flashMessages, // Pass messages to the error view
+    flash: res.locals.messages,
   });
 });
 
-// Ensure this is **AFTER** all routes
-app.use((req, res) => {
+// 404 Final Fallback (if needed)
+app.use(async (req, res) => {
   res.status(404).render("errors/error", {
     title: "Page Not Found",
     message: "The page you are looking for does not exist.",
-    nav: utilities.getNav(),
+    nav: await utilities.getNav(),
+    flash: res.locals.messages,
   });
 });
+
+/* ***********************
+ * Local Server Information
+ *************************/
+const port = process.env.PORT || 5501;
+const host = process.env.HOST || "localhost";
 
 /* ***********************
  * Log statement to confirm server operation
