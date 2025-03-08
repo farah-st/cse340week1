@@ -1,12 +1,43 @@
+<h1>Inventory Management</h1>
+<p id="management-p">Select a classification from the list to see the items belonging to that classification.</p>
 
+<% if (message && message.length > 0) { %>
+    <p class="flash-message"><%= message %></p>
+<% } %>
 
-        <h1>Inventory Management</h1>
+<ul class="invManag">
+    <li><a href="/inv/add-classification">Add New Classification</a></li>
+    <li><a href="/inv/add-inventory">Add New Inventory</a></li>
+</ul>
 
-        <% if (message && message.length > 0) { %>
-            <p class="flash-message"><%= message %></p>
-        <% } %>
+<!-- Heading for Manage Inventory -->
+<h2 id="management-h2">Manage Inventory</h2>
 
-        <ul class="invManag">
-            <li><a href="/inv/add-classification">Add New Classification</a></li>
-            <li><a href="/inv/add-inventory">Add New Inventory</a></li>
-        </ul>
+<!-- Instructional Paragraph -->
+<p id="management-p">Select a classification from the list to see the items belonging to that classification.</p>
+
+<!-- Dropdown for Classification List -->
+<select id="classificationSelect">
+    <% if (Array.isArray(classificationSelect) && classificationSelect.length > 0) { %>
+      <% classificationSelect.forEach(function(classification) { %>
+        <option value="<%= classification.id %>"><%= classification.name %></option>
+      <% }); %>
+    <% } else { %>
+      <option>No classifications available</option>
+    <% } %>
+</select> 
+
+<!-- Empty Table for Inventory Items -->
+<table id="inventoryDisplay">
+  <!-- Table rows will be populated dynamically using JavaScript -->
+</table>
+
+<!-- Message if JavaScript is disabled -->
+<noscript>
+  JavaScript must be enabled to use this page.
+</noscript>
+
+<script src="/js/manageInventory.js"></script>
+
+<script src="/js/script.js"></script>
+

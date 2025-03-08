@@ -197,5 +197,26 @@ async function accountLogin(req, res) {
     throw new Error('Access Forbidden')
   }
 }
+
+/* ****************************************
+ *  Deliver Account Management View
+ * *************************************** */
+async function buildManagement(req, res, next) {
+  try {
+    const { nav, messages } = await getRenderOptions(req);
+    res.render("account/management", {
+      title: "Account Management",
+      nav,
+      messages
+    });
+  } catch (error) {
+    console.error("Error rendering Account Management page:", error);
+    next(error);
+  }
+}
   
-module.exports = { buildLogin, buildRegister, registerAccount, accountLogin };
+module.exports = { buildLogin, 
+  buildRegister, 
+  registerAccount, 
+  accountLogin,
+  buildManagement };

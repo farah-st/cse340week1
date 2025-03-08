@@ -1,3 +1,5 @@
+<script src="/js/script.js"></script>
+
 <div class="parent-container">
     <form id="loginForm" action="/account/login" method="POST" class="login-form" novalidate>
         <!-- Server-side messages -->
@@ -48,29 +50,31 @@
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-        const loginForm = document.getElementById("loginForm");
-        const errorMessageDiv = document.getElementById("error-message");
+    const loginForm = document.getElementById("loginForm");
+    const errorMessageDiv = document.getElementById("error-message");
 
-        loginForm.addEventListener("submit", function (event) {
-            event.preventDefault();
+    loginForm.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-            const email = document.getElementById("email").value.trim();
-            const password = document.getElementById("password").value.trim();
-            let errorMessage = "";
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+        let errorMessage = "";
 
-            if (!email) {
-                errorMessageDiv.textContent = "Email is required.";
-            }
+        if (!email) {
+            errorMessage += "Email is required.<br>";
+        }
 
-            if (!password) {
-                errorMessageDiv.textContent += (errorMessage ? " " : "") + "Password is required.";
-            }
+        if (!password) {
+            errorMessage += "Password is required.";
+        }
 
-            if (errorMessageDiv.textContent) {
-                errorMessageDiv.style.display = "block";
-            } else {
-                loginForm.submit();
-            }
-        });
+        if (errorMessage) {
+            errorMessageDiv.innerHTML = errorMessage;
+            errorMessageDiv.style.display = "block";
+        } else {
+            loginForm.submit();
+        }
     });
+});
+
 </script>

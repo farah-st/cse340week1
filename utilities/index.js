@@ -41,8 +41,13 @@ Util.getNav = async function () {
  * Middleware for handling errors
  * Wraps asynchronous functions to catch errors
  **************************************** */
-Util.handleErrors = (fn) => (req, res, next) =>
-  Promise.resolve(fn(req, res, next)).catch(next);
+// Util.handleErrors = (fn) => (req, res, next) =>
+//   Promise.resolve(fn(req, res, next)).catch(next);
+Util.handleErrors = (fn) => {
+  return (req, res, next) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+};
 
 /* **************************************
  * Build the classification grid HTML
@@ -140,27 +145,24 @@ Util.classificationValidation = [
  * *************************** */
 Util.buildClassificationList = async function (classification_id = null) {
   try {
-    const data = await invModel.getClassifications();
+    const data = await invModel.getClassifications(); // Assuming this method fetches classification data
     if (!data || data.length === 0) {
-      return "<select><option value=''>Error loading classifications</option></select>";
+      return []; // Return an empty array if no classifications are found
     }
 
-    let classificationList = '<select name="classification_id" id="classificationList" required>';
-    classificationList += "<option value='' disabled selected>Choose a Classification</option>";
+    // Map the data to return an array of objects with id and name
+    const classificationList = data.map(row => ({
+      id: row.classification_id,
+      name: row.classification_name
+    }));
 
-    data.forEach((row) => {
-      classificationList += `<option value="${row.classification_id}"${classification_id === row.classification_id ? " selected" : ""}>
-        ${row.classification_name}
-      </option>`;
-    });
-
-    classificationList += "</select>";
-    return classificationList;
+    return classificationList; // Return the array of objects
   } catch (error) {
     console.error("Error fetching classifications:", error);
-    return "<select><option value=''>Error loading classifications</option></select>";
+    return []; // Return an empty array in case of error
   }
 };
+
 
 /* ***************************
  * Middleware to Check if User is Logged In

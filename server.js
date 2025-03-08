@@ -13,7 +13,7 @@ const cookieParser = require("cookie-parser")
 const app = express(); // <-- app initialized here
 
 // Middleware after app initialization
-app.use(cookieParser()); // <-- moved here
+app.use(cookieParser());
 
 const baseController = require("./controllers/baseController");
 const inventoryRoute = require("./routes/inventoryRoute");

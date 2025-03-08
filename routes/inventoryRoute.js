@@ -24,13 +24,20 @@ router.post(
   utilities.handleErrors(invController.addNewInventoryItem) // Controller function
 );
 
-
 // Other inventory routes
-router.get("/type/:classificationId", utilities.handleErrors(invController.buildByClassificationId));
+//router.get("/type/:classificationId", utilities.handleErrors(invController.buildByClassificationId));
 router.get("/detail/:inv_id", utilities.handleErrors(invController.buildDetailView));
 
 // Optional: trigger error route for testing
 router.get("/trigger-error", utilities.handleErrors(invController.triggerError));
 
+router.get(
+  "/",
+  utilities.handleErrors(invController.renderManagement) 
+);
+
+router.get('/classification/:classificationId', utilities.handleErrors(invController.getInventoryByClassification));
+
+router.get("/getInventory/:classification_id", utilities.handleErrors(invController.getInventoryJSON))
 module.exports = router;
 

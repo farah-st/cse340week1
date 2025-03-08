@@ -31,6 +31,11 @@ async function getInventoryByClassificationId(classification_id) {
       WHERE i.classification_id = $1
     `;
     const result = await pool.query(sql, [classification_id]);
+
+    if (result.rows.length === 0) {
+      return []; // Return an empty array if no items are found
+    }
+
     return result.rows;
   } catch (error) {
     console.error("Error fetching inventory by classification ID:", error);

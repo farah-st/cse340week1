@@ -4,7 +4,7 @@ const router = express.Router();
 const accountController = require("../controllers/accountController");
 const utilities = require("../utilities");
 const regValidate = require("../utilities/account-validation"); // Ensure this path is correct
-const { body, validationResult } = require("express-validator"); // Add this line
+const { body, validationResult } = require("express-validator");
 
 // Login view 
 router.get(
@@ -39,7 +39,7 @@ router.post(
   }
 );
 
-// Updated Login processing route
+// Login processing route
 router.post(
   "/login",
   regValidate.loginRules(),                   // Validation rules
@@ -47,7 +47,7 @@ router.post(
   utilities.handleErrors(accountController.accountLogin) // Controller-based login handler
 );
 
-// Dashboard route (unchanged)
+// Dashboard route 
 router.get(
   "/dashboard",
   utilities.isLoggedIn,
@@ -57,7 +57,7 @@ router.get(
   })
 );
 
-// Logout route (unchanged)
+// Logout route 
 router.get(
   "/logout",
   utilities.handleErrors(async (req, res) => {
@@ -72,11 +72,11 @@ router.get(
   })
 );
 
-// Account Management view route (Protected by utilities.checkLogin)
+// Account Management view route 
 router.get(
   "/", 
   utilities.checkLogin,
-  utilities.handleErrors(accountController.buildManagement)
+  utilities.handleErrors(accountController.buildManagement) // FIXED function reference
 );
 
 module.exports = router;

@@ -1,5 +1,4 @@
 /* General Reset */
-
 html {
     background-image: url('/images/site/small_check.jpg');
     background-size: cover;  /* Make background responsive */
@@ -9,13 +8,10 @@ html {
 body {
     background-color: white;
     margin: 20px auto; 
-    max-width: 50vh;
+    max-width: 100%;
+    
     border: 10px solid #bda5ab;
-    /*display: flex;
-    flex-direction: column;*/
-    /* Remove justify-content to avoid centering all children vertically */
 }
-
 
 /* Header Styling */
 header .siteName {
@@ -69,7 +65,6 @@ footer {
     background-color: #bda5ab;
     color: #fff;
     text-align: right;
-    padding: 10px 0;
     font-size: 15px;
     bottom: 0;
     width: 100%;
@@ -180,7 +175,6 @@ ul#inv-display li a img {
     display: flex;
     justify-content: center;
     align-items: center;
-   
     padding: 20px; /* Prevents touching screen edges */
 }
 
@@ -193,9 +187,6 @@ ul#inv-display li a img {
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
-
-/* Login Form Labels */
-
 
 /* Login Form Inputs */
 .login-form input {
@@ -347,6 +338,177 @@ ul#inv-display li a img {
 
 .invManag a:hover {
     background: #ed5e93;
+}
+
+/* Form for Add Inventory Page (Outside media query) */
+.add-inventory-form {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.add-inventory-form label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.add-inventory-form input {
+    width: 95%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.add-inventory-form textarea,
+.add-inventory-form select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.add-inventory-form button {
+    background-color: #ed5e93;
+    color: white;
+    padding: 10px;
+    margin: 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-inventory-form button:hover {
+    background-color: #F49EBE;
+}
+
+#inv_description {
+    width: 95%;
+    height: 150px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    color: #333;
+    resize: vertical;
+}
+
+label[for="inv_description"] {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/*Management Table*/
+#inventoryDisplay {
+    width: 100%;
+    margin: 20px 0;
+    border-collapse: collapse;
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+}
+
+#inventoryDisplay table {
+    width: 100%;
+    border: 1px solid #ddd;
+    table-layout: auto; /* Allow for better cell resizing */
+}
+
+#inventoryDisplay th,
+#inventoryDisplay td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#inventoryDisplay th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+#inventoryDisplay tr:hover {
+    background-color: #f1f1f1;
+}
+
+#inventoryDisplay td a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+    padding: 5px 10px;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+#inventoryDisplay td a:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+#inventoryDisplay td a[title='Click to update'] {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+#inventoryDisplay td a[title='Click to delete'] {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+#inventoryDisplay td a[title='Click to update']:hover {
+    background-color: #e0a800;
+}
+
+#inventoryDisplay td a[title='Click to delete']:hover {
+    background-color: #c82333;
+}
+
+#management-h2{
+    padding-left: 5px;
+}
+
+#management-p{
+    padding-left: 5px;
+}
+
+/* Style for the select dropdown */
+#classificationSelect {
+    width: 100%;
+    max-width: 200px; /* Max width for better appearance on larger screens */
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #333;
+    appearance: none; /* Remove default browser styles for a custom look */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+/* Style for the dropdown arrow */
+#classificationSelect::-ms-expand {
+    display: none; /* Hide the default dropdown arrow in IE/Edge */
+}
+
+/* Style when the dropdown is focused */
+#classificationSelect:focus {
+    outline: none;
+    border-color: #007bff; /* Change border color when focused */
+    background-color: #f8f9fa; /* Light background change when focused */
+}
+
+/* Style for options */
+#classificationSelect option {
+    padding: 8px;
+    font-size: 16px;
 }
 
 /* Smaller Screens (Max Width: 767px) */
@@ -708,71 +870,52 @@ ul#inv-display li a img {
     .register-container {
         width: 300px;
     }
-}
 
-/* Form for Add Inventory Page (Outside media query) */
-.add-inventory-form {
-    max-width: 500px;
-    margin: 20px auto;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+    /*Management Table*/
+    #inventoryDisplay table {
+        width: 100%;
+        display: block;
+        overflow-x: auto; /* Allow horizontal scrolling on smaller screens */
+    }
 
-.add-inventory-form label {
-    display: block;
-    margin-top: 10px;
-    font-weight: bold;
-}
+    #inventoryDisplay th,
+    #inventoryDisplay td {
+        padding: 8px;
+        font-size: 14px; /* Slightly smaller text for mobile */
+    }
 
-.add-inventory-form input {
-    width: 95%;
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
+    #inventoryDisplay td a {
+        font-size: 12px; /* Make links smaller on mobile */
+        padding: 4px 8px; /* Adjust link padding */
+    }
 
-.add-inventory-form textarea,
-.add-inventory-form select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
+    #inventoryDisplay th {
+        font-size: 16px; /* Larger font for table header */
+    }
 
-.add-inventory-form button {
-    background-color: #ed5e93;
-    color: white;
-    padding: 10px;
-    margin: 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+    #inventoryDisplay td a[title='Click to update'] {
+        background-color: #ffc107;
+        border-color: #ffc107;
+    }
 
-.add-inventory-form button:hover {
-    background-color: #F49EBE;
-}
+    #inventoryDisplay td a[title='Click to delete'] {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
 
-#inv_description {
-    width: 95%;
-    height: 150px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    background-color: #f9f9f9;
-    color: #333;
-    resize: vertical;
-}
+    #inventoryDisplay td a[title='Click to update']:hover {
+        background-color: #e0a800;
+    }
 
-label[for="inv_description"] {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
+    #inventoryDisplay td a[title='Click to delete']:hover {
+        background-color: #c82333;
+    }
+
+    #classificationSelect {
+        width: 100%;
+        font-size: 14px;
+        padding: 10px; /* Slightly bigger padding on mobile */
+    }
 }
 
 /* Large Screens (Min Width: 768px) */

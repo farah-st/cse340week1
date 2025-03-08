@@ -54,13 +54,23 @@ invCont.buildDetailView = utilities.handleErrors(async (req, res) => {
  *  Render Inventory Management View
  * *************************** */
 invCont.renderManagement = utilities.handleErrors(async (req, res) => {
-  const nav = await utilities.getNav();
-  const message = req.flash("info");
-  res.render("inventory/management", { 
-    title: "Inventory Management", 
-    nav, 
-    message 
-  });
+  try {
+    const nav = await utilities.getNav(); 
+    const message = req.flash("info");
+
+    // Create classification select list
+    const classificationSelect = await utilities.buildClassificationList();
+
+    res.render("inventory/management", { 
+      title: "Inventory Management", 
+      nav,  
+      message,
+      classificationSelect,
+    });
+  } catch (error) {
+    console.error("Error rendering Inventory Management page:", error);
+    res.status(500).render("errors/error", { message: "Error loading Inventory Management." });
+  }
 });
 
 /* ***************************
@@ -115,12 +125,13 @@ invCont.addClassification = utilities.handleErrors(async (req, res) => {
 invCont.renderAddInventory = utilities.handleErrors(async (req, res) => {
   const classificationList = await utilities.buildClassificationList();
   const nav = await utilities.getNav();
+
   res.render("inventory/add-inventory", {
     title: "Add New Vehicle",
     nav,
     classificationList,
-    message: null,
-    // Sticky defaults (empty strings) for vehicle fields:
+    message: req.flash("info") || "",  // Ensure message is defined
+    error: req.flash("error") || "",   // Ensure error is defined
     inv_make: "",
     inv_model: "",
     inv_year: "",
@@ -149,7 +160,7 @@ const upload = multer({ storage }).single("inv_image");
 invCont.addNewInventoryItem = utilities.handleErrors(async (req, res) => {
   console.log("Inside the route handler for adding new inventory");
 
-  // Use multer upload to handle file upload first
+  // Using multer upload (make sure this is correctly configured elsewhere)
   upload(req, res, async (err) => {
     if (err) {
       console.error("Multer error:", err);
@@ -170,7 +181,7 @@ invCont.addNewInventoryItem = utilities.handleErrors(async (req, res) => {
 
     console.log("Vehicle data received:", req.body);
 
-    const imagePath = req.file ? `/images/vehicles/${req.file.filename}` : "default-image.jpg";
+    const imagePath = req.file ? `/images/vehicles/${req.file.filename}` : "/images/default-image.jpg";
 
     const parsedClassificationId = parseInt(classification_id, 10);
     if (isNaN(parsedClassificationId)) {
@@ -195,37 +206,54 @@ invCont.addNewInventoryItem = utilities.handleErrors(async (req, res) => {
 
       if (insertResult) {
         req.flash("info", "Vehicle added successfully!");
-        return res.redirect("/inv/");
+        return res.redirect("/inv/add-inventory"); // Redirect back to form to show flash message
       } else {
         throw new Error("Failed to add the vehicle.");
       }
     } catch (error) {
       console.error("Error inserting inventory item:", error);
       req.flash("error", error.message);
-      const nav = await utilities.getNav();
-      const classificationList = await utilities.buildClassificationList();
-      return res.render("inventory/add-inventory", {
-        title: "Add New Vehicle",
-        nav,
-        classificationList,
-        errors: [error.message],
-        inv_make,
-        inv_model,
-        inv_year,
-        inv_description,
-        inv_price,
-        inv_miles,
-        inv_color
-      });
+      return res.redirect("/inv/add-inventory"); // Redirect to persist flash message
     }
   });
 });
 
 /* ***************************
- *  Optional: Trigger Error for Testing
+ *  Get Inventory by Classification
+ * *************************** */
+invCont.getInventoryByClassification = utilities.handleErrors(async (req, res) => {
+  const classificationId = req.params.classificationId;
+
+  try {
+    // Fetch the inventory based on classification ID
+    const inventory = await invModel.getInventoryByClassificationId(classificationId);
+
+    // Send inventory data as JSON response
+    res.json(inventory);
+  } catch (error) {
+    console.error("Error fetching inventory data:", error);
+    res.status(500).json({ message: "Error loading inventory data." });
+  }
+});
+
+/* ***************************
+ *  Trigger Error for Testing
  * *************************** */
 invCont.triggerError = (req, res) => {
   throw new Error("Intentional error triggered!");
 };
+
+/* ***************************
+ *  Return Inventory by Classification As JSON
+ * ************************** */
+invCont.getInventoryJSON = async (req, res, next) => {
+  const classification_id = parseInt(req.params.classification_id)
+  const invData = await invModel.getInventoryByClassificationId(classification_id)
+  if (invData[0].inv_id) {
+    return res.json(invData)
+  } else {
+    next(new Error("No data returned"))
+  }
+}
 
 module.exports = invCont;

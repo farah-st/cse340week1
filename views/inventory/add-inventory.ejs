@@ -2,8 +2,13 @@
     <h1>Add New Vehicle</h1>
 
     <!-- Flash message for success or status -->
-    <% if (message) { %>
-        <p class="flash-message"><%= message %></p>
+    <% if (typeof message !== "undefined" && message.length > 0) { %>
+        <p class="flash-message success"><%= message %></p>
+    <% } %>
+
+    <!-- Flash message for errors -->
+    <% if (typeof error !== "undefined" && error.length > 0) { %>
+        <p class="flash-message error"><%= error %></p>
     <% } %>
 
     <!-- Add Vehicle Form -->
