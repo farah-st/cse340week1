@@ -20,24 +20,35 @@ router.get("/add-inventory", utilities.handleErrors(invController.renderAddInven
 router.post(
   "/add-inventory",
   invValidate.addVehicleRules(),      // Validation rules middleware
-  invValidate.checkVehicleData,         // Check validation and handle errors
+  invValidate.checkVehicleData,       // Check validation and handle errors
   utilities.handleErrors(invController.addNewInventoryItem) // Controller function
 );
 
-// Other inventory routes
-//router.get("/type/:classificationId", utilities.handleErrors(invController.buildByClassificationId));
+// Get details of a specific inventory item
 router.get("/detail/:inv_id", utilities.handleErrors(invController.buildDetailView));
 
 // Optional: trigger error route for testing
 router.get("/trigger-error", utilities.handleErrors(invController.triggerError));
 
+// Default route to render Inventory Management view
 router.get(
   "/",
   utilities.handleErrors(invController.renderManagement) 
 );
 
+// Get inventory by classification
 router.get('/classification/:classificationId', utilities.handleErrors(invController.getInventoryByClassification));
 
-router.get("/getInventory/:classification_id", utilities.handleErrors(invController.getInventoryJSON))
-module.exports = router;
+// Get inventory data in JSON format by classification ID
+router.get("/getInventory/:classification_id", utilities.handleErrors(invController.getInventoryJSON));
 
+// Get inventory items by type
+router.get('/type/:id', invController.getInventoryByType);
+
+// Render the Edit Inventory view
+router.get(
+  "/edit/:id",
+  utilities.handleErrors(invController.editInventoryView)
+);
+
+module.exports = router;

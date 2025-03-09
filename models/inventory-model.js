@@ -58,6 +58,23 @@ async function getVehicleById(invId) {
 }
 
 /* ***************************
+ *  Get inventory by type
+ * ************************** */
+async function getInventoryByType(typeId) {
+  try {
+      const result = await pool.query(
+          "SELECT * FROM inventory WHERE classification_id = $1",
+          [typeId]
+      );
+      console.log(`Fetched inventory for type ${typeId}:`, result.rows);
+      return result.rows;
+  } catch (error) {
+      console.error("Database query error:", error);
+      return null;
+  }
+}
+
+/* ***************************
  *  Insert New Classification into Database
  * ************************** */
 async function addClassification(classification_name) {
@@ -148,6 +165,7 @@ module.exports = {
   getClassifications,
   getInventoryByClassificationId,
   getVehicleById,
+  getInventoryByType,
   addClassification,
   addInventoryItem,
   getAccountByEmail

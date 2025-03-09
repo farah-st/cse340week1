@@ -32,14 +32,12 @@ invCont.buildByClassificationId = utilities.handleErrors(async (req, res) => {
  * *************************** */
 invCont.buildDetailView = utilities.handleErrors(async (req, res) => {
   const invId = req.params.inv_id;
-  console.log(`Looking for vehicle with ID: ${invId}`);
 
   const vehicle = await invModel.getVehicleById(invId);
   if (!vehicle) {
     return res.status(404).render("errors/error", { title: "Vehicle Not Found", message: "Vehicle not found" });
   }
 
-  console.log("Vehicle found:", vehicle);
   const nav = await utilities.getNav();
   const vehicleHTML = utilities.buildVehicleDetailHTML(vehicle);
 
@@ -57,8 +55,6 @@ invCont.renderManagement = utilities.handleErrors(async (req, res) => {
   try {
     const nav = await utilities.getNav(); 
     const message = req.flash("info");
-
-    // Create classification select list
     const classificationSelect = await utilities.buildClassificationList();
 
     res.render("inventory/management", { 
@@ -74,12 +70,54 @@ invCont.renderManagement = utilities.handleErrors(async (req, res) => {
 });
 
 /* ***************************
+ *  Get Inventory by Type (Newly Added)
+ * *************************** */
+invCont.getInventoryByType = utilities.handleErrors(async (req, res) => {
+  const typeId = req.params.id;
+
+  try {
+    const inventoryList = await invModel.getInventoryByType(typeId);
+
+    if (!inventoryList || inventoryList.length === 0) {
+      return res.status(404).render("errors/error", {
+        title: "Page Not Found",
+        message: "Sorry, no inventory found for this type.",
+      });
+    }
+
+    const nav = await utilities.getNav();
+
+  let grid = "";
+  inventoryList.forEach((vehicle) => {
+    grid += `
+      <div class="vehicle-card">
+        <img src="${vehicle.inv_thumbnail}" alt="${vehicle.inv_make} ${vehicle.inv_model}">
+        <h3><a href="/vehicle-details.html?id=${vehicle.inv_id}" class="vehicle-link">${vehicle.inv_make} ${vehicle.inv_model}</a></h3>
+        <p>${vehicle.inv_description}</p>
+        <p>Price: $${vehicle.inv_price}</p>
+      </div>
+    `;
+  });
+
+    res.render("inventory/classification", { 
+      title: "Inventory by Type",
+      nav,
+      grid, 
+    });
+
+  } catch (error) {
+    console.error("Error fetching inventory by type:", error);
+    res.status(500).render("errors/error", { message: "Error retrieving inventory data." });
+  }
+});
+
+/* ***************************
  *  Render Add Classification View
  * *************************** */
 invCont.renderAddClassification = utilities.handleErrors(async (req, res) => {
   const nav = await utilities.getNav();
   const message = req.flash("info");
-  // You can pass sticky data if needed; here we default to an empty classification name.
+
   res.render("inventory/add-classification", {
     title: "Add Classification",
     nav,
@@ -100,7 +138,6 @@ invCont.addClassification = utilities.handleErrors(async (req, res) => {
     const insertResult = await invModel.addClassification(classification_name);
 
     if (insertResult) {
-      // Regenerate navigation if classifications have changed.
       nav = await utilities.getNav();
       req.flash("info", "Classification added successfully!");
       return res.redirect("/inv/");
@@ -130,8 +167,8 @@ invCont.renderAddInventory = utilities.handleErrors(async (req, res) => {
     title: "Add New Vehicle",
     nav,
     classificationList,
-    message: req.flash("info") || "",  // Ensure message is defined
-    error: req.flash("error") || "",   // Ensure error is defined
+    message: req.flash("info") || "",
+    error: req.flash("error") || "",
     inv_make: "",
     inv_model: "",
     inv_year: "",
@@ -145,7 +182,6 @@ invCont.renderAddInventory = utilities.handleErrors(async (req, res) => {
 /* ***************************
  *  Handle Adding New Inventory
  * *************************** */
-// Set storage engine for multer to save files to 'public/images/vehicles' directory
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "public/images/vehicles");
@@ -158,12 +194,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage }).single("inv_image");
 
 invCont.addNewInventoryItem = utilities.handleErrors(async (req, res) => {
-  console.log("Inside the route handler for adding new inventory");
-
-  // Using multer upload (make sure this is correctly configured elsewhere)
   upload(req, res, async (err) => {
     if (err) {
-      console.error("Multer error:", err);
       req.flash("error", "File upload failed.");
       return res.redirect("/inv/add-inventory");
     }
@@ -178,8 +210,6 @@ invCont.addNewInventoryItem = utilities.handleErrors(async (req, res) => {
       inv_miles,
       inv_color
     } = req.body;
-
-    console.log("Vehicle data received:", req.body);
 
     const imagePath = req.file ? `/images/vehicles/${req.file.filename}` : "/images/default-image.jpg";
 
@@ -206,14 +236,13 @@ invCont.addNewInventoryItem = utilities.handleErrors(async (req, res) => {
 
       if (insertResult) {
         req.flash("info", "Vehicle added successfully!");
-        return res.redirect("/inv/add-inventory"); // Redirect back to form to show flash message
+        return res.redirect("/inv/add-inventory");
       } else {
         throw new Error("Failed to add the vehicle.");
       }
     } catch (error) {
-      console.error("Error inserting inventory item:", error);
       req.flash("error", error.message);
-      return res.redirect("/inv/add-inventory"); // Redirect to persist flash message
+      return res.redirect("/inv/add-inventory");
     }
   });
 });
@@ -225,13 +254,9 @@ invCont.getInventoryByClassification = utilities.handleErrors(async (req, res) =
   const classificationId = req.params.classificationId;
 
   try {
-    // Fetch the inventory based on classification ID
     const inventory = await invModel.getInventoryByClassificationId(classificationId);
-
-    // Send inventory data as JSON response
     res.json(inventory);
   } catch (error) {
-    console.error("Error fetching inventory data:", error);
     res.status(500).json({ message: "Error loading inventory data." });
   }
 });
@@ -247,13 +272,41 @@ invCont.triggerError = (req, res) => {
  *  Return Inventory by Classification As JSON
  * ************************** */
 invCont.getInventoryJSON = async (req, res, next) => {
-  const classification_id = parseInt(req.params.classification_id)
-  const invData = await invModel.getInventoryByClassificationId(classification_id)
+  const classification_id = parseInt(req.params.classification_id);
+  const invData = await invModel.getInventoryByClassificationId(classification_id);
   if (invData[0].inv_id) {
-    return res.json(invData)
+    return res.json(invData);
   } else {
-    next(new Error("No data returned"))
+    next(new Error("No data returned"));
   }
+};
+
+/* ***************************
+ *  Build edit inventory view
+ * ************************** */
+invCont.editInventoryView = async function (req, res, next) {
+  const inv_id = parseInt(req.params.inv_id)
+  let nav = await utilities.getNav()
+  const itemData = await invModel.getInventoryById(inv_id)
+  const classificationSelect = await utilities.buildClassificationList(itemData.classification_id)
+  const itemName = `${itemData.inv_make} ${itemData.inv_model}`
+  res.render("./inventory/edit-inventory", {
+    title: "Edit " + itemName,
+    nav,
+    classificationSelect: classificationSelect,
+    errors: null,
+    inv_id: itemData.inv_id,
+    inv_make: itemData.inv_make,
+    inv_model: itemData.inv_model,
+    inv_year: itemData.inv_year,
+    inv_description: itemData.inv_description,
+    inv_image: itemData.inv_image,
+    inv_thumbnail: itemData.inv_thumbnail,
+    inv_price: itemData.inv_price,
+    inv_miles: itemData.inv_miles,
+    inv_color: itemData.inv_color,
+    classification_id: itemData.classification_id
+  })
 }
 
 module.exports = invCont;

@@ -51,7 +51,13 @@
         
         <div class="form-group">
             <label for="classificationList">Classification:</label>
-            <%- classificationList %>
+            <select name="classification_id" id="classificationList" required>
+                <option value="">Select Classification</option>
+                <% classificationList.forEach(classification => { %>
+                    <option value="<%= classification.id %>"><%= classification.name %></option>
+                <% }); %>
+            </select>
+            
         </div>
         
         <div class="form-group">
