@@ -648,7 +648,7 @@ label[for="inv_description"] {
         align-items: center;
         justify-content: center;
         margin-top: 5px;
-        border-radius: 10px;
+        border-radius: 10px; 
         overflow: hidden;
     }
 
