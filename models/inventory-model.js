@@ -58,14 +58,34 @@ async function getVehicleById(invId) {
 }
 
 /* ***************************
+ *  Get vehicle details by inv_id
+ * ************************** */
+async function getInventoryById(invId) {
+  try {
+    const sql = "SELECT * FROM public.inventory WHERE inv_id = $1";
+    const result = await pool.query(sql, [invId]);
+    return result.rows.length > 0 ? result.rows[0] : null;
+  } catch (error) {
+    console.error("Database error fetching vehicle details:", error);
+    throw new Error("Error fetching vehicle details.");
+  }
+}
+
+/* ***************************
  *  Get inventory by type
  * ************************** */
 async function getInventoryByType(typeId) {
+  // Validate and sanitize typeId
+  if (!typeId || isNaN(typeId)) {
+      console.error(`Invalid typeId provided: ${typeId}`);
+      return null;
+  }
+
   try {
-      const result = await pool.query(
-          "SELECT * FROM inventory WHERE classification_id = $1",
-          [typeId]
-      );
+      const query = "SELECT * FROM inventory WHERE classification_id = $1";
+      const values = [parseInt(typeId, 10)];
+
+      const result = await pool.query(query, values);
       console.log(`Fetched inventory for type ${typeId}:`, result.rows);
       return result.rows;
   } catch (error) {
@@ -165,6 +185,7 @@ module.exports = {
   getClassifications,
   getInventoryByClassificationId,
   getVehicleById,
+  getInventoryById,
   getInventoryByType,
   addClassification,
   addInventoryItem,

@@ -1,5 +1,6 @@
 const invModel = require("../models/inventory-model");
 const utilities = require("../utilities/index");
+const { getClassifications } = require("../utilities/index");
 const multer = require("multer");
 
 // Initialize controller object
@@ -72,42 +73,94 @@ invCont.renderManagement = utilities.handleErrors(async (req, res) => {
 /* ***************************
  *  Get Inventory by Type (Newly Added)
  * *************************** */
+// invCont.getInventoryByType = utilities.handleErrors(async (req, res) => {
+//   const typeId = req.params.id;
+
+//   try {
+//     const inventoryList = await invModel.getInventoryByType(typeId);
+
+//     if (!inventoryList || inventoryList.length === 0) {
+//       return res.status(404).render("errors/error", {
+//         title: "Page Not Found",
+//         message: "Sorry, no inventory found for this type.",
+//       });
+//     }
+
+//     const nav = await utilities.getNav();
+
+//   let grid = "";
+//   inventoryList.forEach((vehicle) => {
+//     grid += `
+//       <div class="vehicle-card">
+//         <img src="${vehicle.inv_thumbnail}" alt="${vehicle.inv_make} ${vehicle.inv_model}">
+//         <h3><a href="/vehicle-details.html?id=${vehicle.inv_id}" class="vehicle-link">${vehicle.inv_make} ${vehicle.inv_model}</a></h3>
+//         <p>${vehicle.inv_description}</p>
+//         <p>Price: $${vehicle.inv_price}</p>
+//       </div>
+//     `;
+//   });
+
+//     res.render("inventory/classification", { 
+//       title: "Inventory by Type",
+//       nav,
+//       grid, 
+//     });
+
+//   } catch (error) {
+//     console.error("Error fetching inventory by type:", error);
+//     res.status(500).render("errors/error", { message: "Error retrieving inventory data." });
+//   }
+// });
 invCont.getInventoryByType = utilities.handleErrors(async (req, res) => {
-  const typeId = req.params.id;
+  const typeId = parseInt(req.params.typeId, 10); // Ensure typeId is an integer
+
+  if (!typeId || isNaN(typeId)) {
+      console.error(`Invalid typeId provided: ${req.params.typeId}`);
+      return res.status(400).render("errors/error", { 
+          title: "Invalid Request",
+          message: "Invalid type ID provided. Please check your request.",
+          nav: await utilities.getNav() // Ensure nav is passed to the error page
+      });
+  }
 
   try {
-    const inventoryList = await invModel.getInventoryByType(typeId);
+      const inventoryList = await invModel.getInventoryByType(typeId);
 
-    if (!inventoryList || inventoryList.length === 0) {
-      return res.status(404).render("errors/error", {
-        title: "Page Not Found",
-        message: "Sorry, no inventory found for this type.",
+      if (!inventoryList || inventoryList.length === 0) {
+          return res.status(404).render("errors/error", {
+              title: "No Inventory Found",
+              message: "Sorry, no inventory found for this type.",
+              nav: await utilities.getNav()
+          });
+      }
+
+      const nav = await utilities.getNav();
+
+      let grid = "";
+      inventoryList.forEach((vehicle) => {
+          grid += `
+              <div class="vehicle-card">
+                  <img src="${vehicle.inv_thumbnail}" alt="${vehicle.inv_make} ${vehicle.inv_model}">
+                  <h3><a href="/inv/detail/${vehicle.inv_id}" class="vehicle-link">${vehicle.inv_make} ${vehicle.inv_model}</a></h3>
+                  <p>${vehicle.inv_description}</p>
+                  <p>Price: $${vehicle.inv_price}</p>
+              </div>
+          `;
       });
-    }
 
-    const nav = await utilities.getNav();
-
-  let grid = "";
-  inventoryList.forEach((vehicle) => {
-    grid += `
-      <div class="vehicle-card">
-        <img src="${vehicle.inv_thumbnail}" alt="${vehicle.inv_make} ${vehicle.inv_model}">
-        <h3><a href="/vehicle-details.html?id=${vehicle.inv_id}" class="vehicle-link">${vehicle.inv_make} ${vehicle.inv_model}</a></h3>
-        <p>${vehicle.inv_description}</p>
-        <p>Price: $${vehicle.inv_price}</p>
-      </div>
-    `;
-  });
-
-    res.render("inventory/classification", { 
-      title: "Inventory by Type",
-      nav,
-      grid, 
-    });
+      res.render("inventory/classification", { 
+          title: "Inventory by Type",
+          nav,
+          grid
+      });
 
   } catch (error) {
-    console.error("Error fetching inventory by type:", error);
-    res.status(500).render("errors/error", { message: "Error retrieving inventory data." });
+      console.error("Error fetching inventory by type:", error);
+      res.status(500).render("errors/error", { 
+          title: "Server Error",
+          message: "Error retrieving inventory data.",
+          nav: await utilities.getNav()
+      });
   }
 });
 
@@ -285,28 +338,55 @@ invCont.getInventoryJSON = async (req, res, next) => {
  *  Build edit inventory view
  * ************************** */
 invCont.editInventoryView = async function (req, res, next) {
-  const inv_id = parseInt(req.params.inv_id)
-  let nav = await utilities.getNav()
-  const itemData = await invModel.getInventoryById(inv_id)
-  const classificationSelect = await utilities.buildClassificationList(itemData.classification_id)
-  const itemName = `${itemData.inv_make} ${itemData.inv_model}`
+  const inv_id = parseInt(req.params.inv_id, 10);
+
+  if (!req.params.inv_id || isNaN(inv_id)) {
+      console.error(`Invalid inventory ID received: ${req.params.inv_id}`);
+      return res.status(400).render("errors/error", { 
+          title: "Invalid Request",
+          message: "Invalid inventory ID provided. Please check your request."
+      });
+  }
+
+  let nav = await utilities.getNav();
+  const itemData = await invModel.getInventoryById(inv_id);
+
+  if (!itemData) {
+      console.error(`Error: No inventory item found for ID ${inv_id}`);
+      return res.status(404).render("errors/error", { 
+          title: "Not Found",
+          message: "Inventory item not found."
+      });
+  }
+
+  const classifications = await getClassifications();
+
+  let classificationSelect = `<select name="classification_id" id="classification_id">`;
+  classifications.forEach(classification => {
+      let selected = classification.classification_id === itemData.classification_id ? "selected" : "";
+      classificationSelect += `<option value="${classification.classification_id}" ${selected}>${classification.classification_name}</option>`;
+  });
+  classificationSelect += `</select>`;
+
+  const itemName = `${itemData.inv_make} ${itemData.inv_model}`;
+
   res.render("./inventory/edit-inventory", {
-    title: "Edit " + itemName,
-    nav,
-    classificationSelect: classificationSelect,
-    errors: null,
-    inv_id: itemData.inv_id,
-    inv_make: itemData.inv_make,
-    inv_model: itemData.inv_model,
-    inv_year: itemData.inv_year,
-    inv_description: itemData.inv_description,
-    inv_image: itemData.inv_image,
-    inv_thumbnail: itemData.inv_thumbnail,
-    inv_price: itemData.inv_price,
-    inv_miles: itemData.inv_miles,
-    inv_color: itemData.inv_color,
-    classification_id: itemData.classification_id
-  })
-}
+      title: "Edit " + itemName,
+      nav,
+      classificationSelect, 
+      errors: [],
+      inv_id: itemData.inv_id,
+      inv_make: itemData.inv_make,
+      inv_model: itemData.inv_model,
+      inv_year: itemData.inv_year,
+      inv_description: itemData.inv_description,
+      inv_image: itemData.inv_image,
+      inv_thumbnail: itemData.inv_thumbnail,
+      inv_price: itemData.inv_price,
+      inv_miles: itemData.inv_miles,
+      inv_color: itemData.inv_color,
+      classification_id: itemData.classification_id
+  });
+};
 
 module.exports = invCont;

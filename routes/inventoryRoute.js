@@ -43,11 +43,11 @@ router.get('/classification/:classificationId', utilities.handleErrors(invContro
 router.get("/getInventory/:classification_id", utilities.handleErrors(invController.getInventoryJSON));
 
 // Get inventory items by type
-router.get('/type/:id', invController.getInventoryByType);
+router.get("/type/:typeId", utilities.handleErrors(invController.getInventoryByType));
 
 // Render the Edit Inventory view
 router.get(
-  "/edit/:id",
+  "/edit/:inv_id",
   utilities.handleErrors(invController.editInventoryView)
 );
 

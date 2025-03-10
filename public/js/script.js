@@ -88,36 +88,36 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   
     // Handle Classification Select and Fetch Inventory
-    const classificationSelect = document.getElementById('classificationSelect');
-    const inventoryTable = document.getElementById('inventoryDisplay');
+    // const classificationSelect = document.getElementById('classificationSelect');
+    // const inventoryTable = document.getElementById('inventoryDisplay');
   
-    classificationSelect.addEventListener('change', function () {
-      const classificationId = classificationSelect.value;
+    // classificationSelect.addEventListener('change', function () {
+    //   const classificationId = classificationSelect.value;
   
-      fetch(`/inv/classification/${classificationId}`)
-        .then(response => response.json())
-        .then(data => {
-          inventoryTable.innerHTML = ''; // Clear previous table content
+    //   fetch(`/inv/classification/${classificationId}`)
+    //     .then(response => response.json())
+    //     .then(data => {
+    //       inventoryTable.innerHTML = ''; // Clear previous table content
   
-          const headerRow = document.createElement('tr');
-          headerRow.innerHTML = `<th>Make</th><th>Model</th><th>Year</th><th>Price</th><th>Color</th>`;
-          inventoryTable.appendChild(headerRow);
+    //       const headerRow = document.createElement('tr');
+    //       headerRow.innerHTML = `<th>Make</th><th>Model</th><th>Year</th><th>Price</th><th>Color</th>`;
+    //       inventoryTable.appendChild(headerRow);
   
-          // Create a table row for each inventory item
-          data.forEach(item => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-              <td>${item.inv_make}</td>
-              <td>${item.inv_model}</td>
-              <td>${item.inv_year}</td>
-              <td>${item.inv_price}</td>
-              <td>${item.inv_color}</td>
-            `;
-            inventoryTable.appendChild(row);
-          });
-        })
-        .catch(error => {
-          console.error('Error fetching inventory data:', error);
-        });
-    });
+    //       // Create a table row for each inventory item
+    //       data.forEach(item => {
+    //         const row = document.createElement('tr');
+    //         row.innerHTML = `
+    //           <td>${item.inv_make}</td>
+    //           <td>${item.inv_model}</td>
+    //           <td>${item.inv_year}</td>
+    //           <td>${item.inv_price}</td>
+    //           <td>${item.inv_color}</td>
+    //         `;
+    //         inventoryTable.appendChild(row);
+    //       });
+    //     })
+    //     .catch(error => {
+    //       console.error('Error fetching inventory data:', error);
+    //     });
+    // });
   });  

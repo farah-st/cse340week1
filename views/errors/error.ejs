@@ -1,19 +1,12 @@
 <div class="error-container">
-    <h1><%= title || "An error occurred" %></h1>
-    <p class="error-message"><%- message || "Something went wrong." %></p>
-    
-    <p class="fun-message">
-        Looks like something went wrong! But hey, even the Death Star had design flaws! 🚀
-    </p>
+  <h1><%= title || "An error occurred" %></h1>
+  <p class="error-message"><%- message || "Something went wrong." %></p>
 
-    <a class="returntosafe" href="/" title="Return to Home Page">Return to safety</a>
+  <% if (typeof nav !== "undefined") { %>
+      <%= nav %>
+  <% } %>
+
+  <script src="/js/script.js"></script>
 </div>
-
-<!-- Optional: Log error details only in development -->
-<% if (process.env.NODE_ENV !== 'production') { %>
-  <% console.log({ title, message, nav }); %>
-<% } %>
-
-<script src="/js/script.js"></script>
 
 

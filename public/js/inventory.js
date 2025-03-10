@@ -1,62 +1,73 @@
 'use strict';
 
 document.addEventListener("DOMContentLoaded", function () {
-    // Get a list of items in inventory based on the classification_id
-    let classificationList = document.querySelector("#classificationSelect");
+    console.log("DOM fully loaded.");
 
-    if (classificationList) {
-        classificationList.addEventListener("change", function () {
-            let classification_id = classificationList.value;
-            console.log(`classification_id is: ${classification_id}`);
+    // Get the classification dropdown (Fix ID Name to Match HTML)
+    let classificationList = document.getElementById("classificationSelect"); // ✅ Updated to match HTML
 
-            let classIdURL = "/inv/getInventory/" + classification_id;
-            fetch(classIdURL)
-                .then(function (response) {
-                    if (response.ok) {
-                        return response.json();
-                    }
-                    throw Error("Network response was not OK");
-                })
-                .then(function (data) {
-                    console.log(data);
-                    buildInventoryList(data);
-                })
-                .catch(function (error) {
-                    console.log('There was a problem: ', error.message);
-                });
-        });
-    } else {
+    if (!classificationList) {
         console.error("Error: classificationSelect not found in the DOM.");
-    }
-});
-
-// Build inventory items into HTML table components and inject into DOM
-function buildInventoryList(data) {
-    let inventoryDisplay = document.getElementById("inventoryDisplay");
-    
-    if (!inventoryDisplay) {
-        console.error("Error: inventoryDisplay table element not found in the DOM.");
-        return;
+        return; // Stop execution if the dropdown is missing
     }
 
-    // Set up the table labels
-    let dataTable = '<thead>';
-    dataTable += '<tr><th>Vehicle Name</th><td>&nbsp;</td><td>&nbsp;</td></tr>';
-    dataTable += '</thead>';
+    console.log("Classification dropdown found:", classificationList);
     
-    // Set up the table body
-    dataTable += '<tbody>';
-    
-    // Iterate over all vehicles in the array and put each in a row
-    data.forEach(function (element) {
-        console.log(element.inv_id + ", " + element.inv_model);
-        dataTable += `<tr><td>${element.inv_make} ${element.inv_model}</td>`;
-        dataTable += `<td><a href='/inv/edit/${element.inv_id}' title='Click to update'>Modify</a></td>`;
-        dataTable += `<td><a href='/inv/delete/${element.inv_id}' title='Click to delete'>Delete</a></td></tr>`;
+    classificationList.addEventListener("change", function () {
+        let classificationId = classificationList.value;
+        console.log(`classification_id selected: ${classificationId}`);
+
+        // Fetch inventory data based on the selected classification
+        fetch(`/inv/getInventory/${classificationId}`)
+            .then(response => response.json())
+            .then(data => {
+                const inventoryArray = Array.isArray(data) ? data : data.inventory || data.data || []; 
+
+                // Get the display element from the DOM
+                const inventoryDisplay = document.getElementById("inventoryDisplay");
+                if (!inventoryDisplay) {
+                    console.error("Error: inventoryDisplay element not found in the DOM.");
+                    return;
+                }
+
+                // Clear any existing content
+                inventoryDisplay.innerHTML = "";
+
+                // Check if there's data to display
+                if (inventoryArray.length === 0) {
+                    inventoryDisplay.innerHTML = "<tr><td colspan='3'>No inventory items found.</td></tr>";
+                    return;
+                }
+
+                // Set up the table headers
+                let dataTable = `<thead>
+                    <tr>
+                        <th>Vehicle Name</th>
+                        <th>Modify</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>`;
+
+                // Set up the table body
+                dataTable += "<tbody>";
+
+                // Populate the table with each inventory item
+                inventoryArray.forEach(element => {
+                    dataTable += `
+                        <tr>
+                            <td>${element.inv_make} ${element.inv_model}</td>
+                            <td><a href='/inv/edit/${element.inv_id}' title='Click to update'>Modify</a></td>
+                            <td><a href='/inv/delete/${element.inv_id}' title='Click to delete'>Delete</a></td>
+                        </tr>`;
+                });
+
+                dataTable += "</tbody>";
+
+                // Inject the built table into the HTML
+                inventoryDisplay.innerHTML = dataTable;
+            })
+            .catch(err => {
+                console.error("Error loading inventory data:", err);
+            });
     });
-    
-    dataTable += '</tbody>';
-    
-    // Display the contents in the Inventory Management view
-    inventoryDisplay.innerHTML = dataTable;
-}
+});

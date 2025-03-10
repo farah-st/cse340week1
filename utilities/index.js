@@ -210,4 +210,23 @@ Util.checkLogin = (req, res, next) => {
   }
 }
 
-module.exports = Util;
+
+/* ****************************************
+ *  classification?
+ * ************************************ */
+async function getClassifications() {
+  try {
+      const result = await pool.query("SELECT classification_id, classification_name FROM classification ORDER BY classification_name");
+      return result.rows;
+  } catch (error) {
+      console.error("Database error fetching classifications:", error);
+      return [];
+  }
+}
+
+//module.exports = Util;
+
+module.exports = {
+  getClassifications, 
+  ...Util 
+};
