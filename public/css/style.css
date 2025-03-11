@@ -405,6 +405,72 @@ label[for="inv_description"] {
     margin-bottom: 5px;
 }
 
+#inv_description {
+    width: 95%;
+    height: 150px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    color: #333;
+    resize: vertical;
+}
+
+label[for="inv_description"] {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Form Styling for Add and Edit Inventory Pages */
+.add-inventory-form, .edit-inventory-form {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.add-inventory-form label, .edit-inventory-form label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.add-inventory-form input, .edit-inventory-form input {
+    width: 95%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.add-inventory-form textarea,
+.add-inventory-form select,
+.edit-inventory-form textarea,
+.edit-inventory-form select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.add-inventory-form button, .edit-inventory-form button {
+    background-color: #ed5e93;
+    color: white;
+    padding: 10px;
+    margin: 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-inventory-form button:hover, .edit-inventory-form button:hover {
+    background-color: #F49EBE;
+}
 /*Management Table*/
 #inventoryDisplay {
     width: 100%;
@@ -512,14 +578,11 @@ label[for="inv_description"] {
 }
 
 /*inventory grid*/
-#inventoryGrid {
+.vehicle-card {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 3fr));
     gap: 20px;
     padding: 20px;
-  }
-  
-  .vehicle-card {
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 15px;
@@ -540,12 +603,12 @@ label[for="inv_description"] {
   }
   
   .vehicle-card h3 {
-    margin: 10px 0;
+    margin: 10px;
   }
   
   .vehicle-card .vehicle-link {
     text-decoration: none;
-    color: #007BFF;
+    color: #ed5e93;
     font-weight: bold;
   }
   
@@ -586,7 +649,36 @@ label[for="inv_description"] {
         color: black;
         padding-right: 5px;
     }
+      /*vehicle card*/
+      .vehicle-card {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #fff;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.2s;
+    }
 
+    .vehicle-card img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin-left: 35px;
+    }
+
+    .vehicle-card p {
+        font-size: 14px; 
+        line-height: 1.4; 
+        text-align: justify; 
+        word-wrap: break-word; 
+        max-width: 100%;
+        text-overflow: ellipsis; 
+        display: -webkit-box;
+    }
     /* Navigation (Grid Layout Below Header) */
     nav {
         display: grid;
