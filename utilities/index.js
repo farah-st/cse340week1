@@ -4,6 +4,7 @@ const { JSDOM } = require("jsdom");
 const createDOMPurify = require("dompurify");
 const jwt = require("jsonwebtoken")
 require("dotenv").config()
+const { pool } = require("../database");
 
 // Create a virtual window for DOMPurify
 const window = new JSDOM("").window;
@@ -213,7 +214,7 @@ Util.checkLogin = (req, res, next) => {
 
 /* ****************************************
  *  classification?
- * ************************************ */
+ * ***************************************/
 async function getClassifications() {
   try {
       const result = await pool.query("SELECT classification_id, classification_name FROM classification ORDER BY classification_name");
@@ -230,3 +231,16 @@ module.exports = {
   getClassifications, 
   ...Util 
 };
+
+/* ****************************************
+ *  Testing DB
+ * ***************************************/
+async function testDatabaseConnection() {
+  try {
+      const result = await pool.query("SELECT NOW()");
+      console.log("✅ Database connection successful:", result.rows);
+  } catch (error) {
+      console.error("❌ Database connection failed:", error);
+  }
+}
+testDatabaseConnection();

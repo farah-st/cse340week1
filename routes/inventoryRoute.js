@@ -5,16 +5,24 @@ const utilities = require("../utilities");
 const invValidate = require("../utilities/inventory-validation");
 
 // Render Inventory Management view
-router.get("/management", utilities.handleErrors(invController.renderManagement));
+router.get("/management", 
+  utilities.handleErrors(invController.renderManagement)
+);
 
 // Render the Add Classification view
-router.get("/add-classification", utilities.handleErrors(invController.renderAddClassification));
+router.get("/add-classification", 
+  utilities.handleErrors(invController.renderAddClassification)
+);
 
 // Process adding a new classification
-router.post("/add-classification", utilities.handleErrors(invController.addClassification));
+router.post("/add-classification", 
+  utilities.handleErrors(invController.addClassification)
+);
 
 // Render the Add Inventory view
-router.get("/add-inventory", utilities.handleErrors(invController.renderAddInventory));
+router.get("/add-inventory", 
+  utilities.handleErrors(invController.renderAddInventory)
+);
 
 // Process adding a new inventory item (with validation)
 router.post(
@@ -25,10 +33,14 @@ router.post(
 );
 
 // Get details of a specific inventory item
-router.get("/detail/:inv_id", utilities.handleErrors(invController.buildDetailView));
+router.get("/detail/:inv_id", 
+  utilities.handleErrors(invController.buildDetailView)
+);
 
 // Optional: trigger error route for testing
-router.get("/trigger-error", utilities.handleErrors(invController.triggerError));
+router.get("/trigger-error", 
+  utilities.handleErrors(invController.triggerError)
+);
 
 // Default route to render Inventory Management view
 router.get(
@@ -37,13 +49,19 @@ router.get(
 );
 
 // Get inventory by classification
-router.get('/classification/:classificationId', utilities.handleErrors(invController.getInventoryByClassification));
+router.get('/classification/:classificationId', 
+  utilities.handleErrors(invController.getInventoryByClassification)
+);
 
 // Get inventory data in JSON format by classification ID
-router.get("/getInventory/:classification_id", utilities.handleErrors(invController.getInventoryJSON));
+router.get("/getInventory/:classification_id", 
+  utilities.handleErrors(invController.getInventoryJSON)
+);
 
 // Get inventory items by type
-router.get("/type/:typeId", utilities.handleErrors(invController.getInventoryByType));
+router.get("/type/:typeId", 
+  utilities.handleErrors(invController.getInventoryByType)
+);
 
 // Render the Edit Inventory view
 router.get(

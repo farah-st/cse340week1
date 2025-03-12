@@ -369,6 +369,7 @@ invCont.editInventoryView = async function (req, res, next) {
   classificationSelect += `</select>`;
 
   const itemName = `${itemData.inv_make} ${itemData.inv_model}`;
+  console.log("Classifications Data:", classifications);
 
   res.render("./inventory/edit-inventory", {
       title: "Edit " + itemName,
