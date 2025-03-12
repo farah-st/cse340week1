@@ -16,7 +16,9 @@ router.get(
 );
 
 // Registration view 
-router.get("/register", utilities.handleErrors(accountController.buildRegister));
+router.get("/register", 
+  utilities.handleErrors(accountController.buildRegister)
+);
 
 // Registration route 
 router.post(

@@ -43,5 +43,5 @@ const queryWithRetry = async (text, params, retries = 3) => {
 
 module.exports = {
   query: queryWithRetry,
-  pool, // Expose pool for direct use (if needed)
+  pool,
 };
