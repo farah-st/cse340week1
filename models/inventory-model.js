@@ -179,6 +179,36 @@ async function getAccountByEmail (account_email) {
 }
 
 /* ***************************
+ *  update Inventory Item
+ * ************************** */
+async function updateInventoryItem(item) {
+  try {
+      // Ensure `inv_thumbnail` is never null
+      let inv_thumbnail = item.inv_thumbnail || item.inv_image; 
+
+      const sql = `
+          UPDATE inventory 
+          SET inv_make = $1, inv_model = $2, inv_year = $3, inv_description = $4, 
+              inv_image = $5, inv_thumbnail = $6, inv_price = $7, inv_miles = $8, 
+              inv_color = $9, classification_id = $10
+          WHERE inv_id = $11
+          RETURNING *;
+      `;
+      const values = [
+          item.inv_make, item.inv_model, item.inv_year, item.inv_description,
+          item.inv_image, inv_thumbnail, item.inv_price, item.inv_miles,
+          item.inv_color, item.classification_id, item.inv_id
+      ];
+
+      const result = await pool.query(sql, values);
+      return result.rowCount > 0;
+  } catch (error) {
+      console.error("Error updating inventory item:", error);
+      throw new Error("Database update failed.");
+  }
+}
+
+/* ***************************
  *  Export all functions
  * ************************** */
 module.exports = {
@@ -189,5 +219,6 @@ module.exports = {
   getInventoryByType,
   addClassification,
   addInventoryItem,
-  getAccountByEmail
+  getAccountByEmail,
+  updateInventoryItem
 };

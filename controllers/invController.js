@@ -371,7 +371,7 @@ invCont.editInventoryView = async function (req, res, next) {
   const itemName = `${itemData.inv_make} ${itemData.inv_model}`;
   console.log("Classifications Data:", classifications);
 
-  res.render("./inventory/edit-inventory", {
+  res.render("./inventory/edit", {
       title: "Edit " + itemName,
       nav,
       classificationSelect, 
@@ -389,5 +389,127 @@ invCont.editInventoryView = async function (req, res, next) {
       classification_id: itemData.classification_id
   });
 };
+/* ***************************
+ *  Render Update Inventory View
+ * ************************** */
+invCont.showUpdateForm = async function (req, res, next) {
+  const inv_id = parseInt(req.params.id, 10);
+
+  if (!inv_id || isNaN(inv_id)) {
+      console.error(`Invalid inventory ID received: ${req.params.id}`);
+      return res.status(400).render("errors/error", { 
+          title: "Invalid Request",
+          message: "Invalid inventory ID provided. Please check your request."
+      });
+  }
+
+  let nav = await utilities.getNav();
+  const itemData = await invModel.getInventoryById(inv_id);
+
+  if (!itemData) {
+      console.error(`Error: No inventory item found for ID ${inv_id}`);
+      return res.status(404).render("errors/error", { 
+          title: "Not Found",
+          message: "Inventory item not found."
+      });
+  }
+
+  const classifications = await getClassifications();
+
+  let classificationSelect = `<select name="classification_id" id="classification_id">`;
+  classifications.forEach(classification => {
+      let selected = classification.classification_id === itemData.classification_id ? "selected" : "";
+      classificationSelect += `<option value="${classification.classification_id}" ${selected}>${classification.classification_name}</option>`;
+  });
+  classificationSelect += `</select>`;
+
+  const itemName = `${itemData.inv_make} ${itemData.inv_model}`;
+  
+  res.render("inventory/edit", {
+      title: "Edit " + itemName,
+      nav,
+      classificationSelect,
+      errors: [],
+      inv_id: itemData.inv_id,
+      inv_make: itemData.inv_make,
+      inv_model: itemData.inv_model,
+      inv_year: itemData.inv_year,
+      inv_description: itemData.inv_description,
+      inv_image: itemData.inv_image,
+      inv_thumbnail: itemData.inv_thumbnail,
+      inv_price: itemData.inv_price,
+      inv_miles: itemData.inv_miles,
+      inv_color: itemData.inv_color,
+      classification_id: itemData.classification_id
+  });
+};
+
+/* ***************************
+*  Handle Inventory Update Submission
+* ************************** */
+invCont.processUpdate = async function (req, res, next) {
+  upload(req, res, async (err) => {
+      if (err) {
+          req.flash("error", "File upload failed.");
+          return res.redirect(`/inv/update/${req.body.inv_id}`);
+      }
+
+      try {
+          const {
+              inv_id,
+              inv_make,
+              inv_model,
+              inv_year,
+              inv_description,
+              inv_price,
+              inv_miles,
+              inv_color,
+              classification_id,
+              existing_image,
+              existing_thumbnail
+          } = req.body;
+
+          // Validate classification_id
+          const parsedClassificationId = parseInt(classification_id, 10);
+          if (isNaN(parsedClassificationId)) {
+              req.flash("error", `Invalid classification ID provided: ${classification_id}`);
+              return res.redirect(`/inv/update/${inv_id}`);
+          }
+
+          let imagePath = existing_image; // Default to existing image
+          let thumbnailPath = existing_thumbnail; // Default to existing thumbnail
+
+          if (req.file) {
+              imagePath = `/images/vehicles/${req.file.filename}`;
+              thumbnailPath = `/images/vehicles/${req.file.filename}`; // Ensure thumbnail is updated
+          }
+
+          const updateResult = await invModel.updateInventoryItem({
+              inv_id,
+              inv_make,
+              inv_model,
+              inv_year,
+              inv_description,
+              inv_price: Math.round(inv_price),
+              inv_miles: parseInt(inv_miles, 10),
+              inv_color,
+              classification_id: parsedClassificationId, // Now correctly parsed as an integer
+              inv_image: imagePath,
+              inv_thumbnail: thumbnailPath // Ensure thumbnail is passed
+          });
+
+          if (updateResult) {
+              req.flash("info", "Vehicle updated successfully!");
+              return res.redirect("/inv/management");
+          } else {
+              throw new Error("Failed to update the vehicle.");
+          }
+      } catch (error) {
+          req.flash("error", error.message);
+          return res.redirect(`/inv/update/${req.body.inv_id}`);
+      }
+  });
+};
+
 
 module.exports = invCont;

@@ -69,4 +69,14 @@ router.get(
   utilities.handleErrors(invController.editInventoryView)
 );
 
+// Route to show the update form
+router.get('/update/:id', 
+  invController.showUpdateForm
+);
+
+// Route to process the update form submission
+router.post('/update/:id', 
+  invController.processUpdate
+);
+
 module.exports = router;

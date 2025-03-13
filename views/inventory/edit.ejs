@@ -7,10 +7,13 @@
     <% } %>
 
     <!-- Edit Vehicle Form -->
-    <form action="/inv/update" method="post" id="editInventoryForm" class="edit-inventory-form" enctype="multipart/form-data">
+    <form action="/inv/update/<%= inv_id %>" method="post" id="editInventoryForm" class="edit-inventory-form" enctype="multipart/form-data">
         
         <!-- Hidden Input for Vehicle ID -->
         <input type="hidden" name="inv_id" value="<%= inv_id %>">
+
+        <!-- Hidden Input for Existing Thumbnail -->
+        <input type="hidden" name="existing_thumbnail" value="<%= inv_thumbnail %>">
 
         <div class="form-group">
             <label for="inv_make">Make:</label>
@@ -50,7 +53,8 @@
         <div class="form-group">
             <label for="classification_id">Classification:</label>
             <%- classificationSelect %> 
-        </div>        
+            <input type="hidden" name="classification_id" value="<%= classification_id %>">
+        </div>          
 
         <div class="form-group">
             <label for="inv_image">Current Image:</label>
@@ -67,4 +71,4 @@
     </form>
 </div>
 
-<script src="/js/inventory.js"></script> <!-- Link to custom scripts -->
+<script src="/js/inventory.js"></script> 
