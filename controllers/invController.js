@@ -72,45 +72,7 @@ invCont.renderManagement = utilities.handleErrors(async (req, res) => {
 
 /* ***************************
  *  Get Inventory by Type (Newly Added)
- * *************************** */
-// invCont.getInventoryByType = utilities.handleErrors(async (req, res) => {
-//   const typeId = req.params.id;
-
-//   try {
-//     const inventoryList = await invModel.getInventoryByType(typeId);
-
-//     if (!inventoryList || inventoryList.length === 0) {
-//       return res.status(404).render("errors/error", {
-//         title: "Page Not Found",
-//         message: "Sorry, no inventory found for this type.",
-//       });
-//     }
-
-//     const nav = await utilities.getNav();
-
-//   let grid = "";
-//   inventoryList.forEach((vehicle) => {
-//     grid += `
-//       <div class="vehicle-card">
-//         <img src="${vehicle.inv_thumbnail}" alt="${vehicle.inv_make} ${vehicle.inv_model}">
-//         <h3><a href="/vehicle-details.html?id=${vehicle.inv_id}" class="vehicle-link">${vehicle.inv_make} ${vehicle.inv_model}</a></h3>
-//         <p>${vehicle.inv_description}</p>
-//         <p>Price: $${vehicle.inv_price}</p>
-//       </div>
-//     `;
-//   });
-
-//     res.render("inventory/classification", { 
-//       title: "Inventory by Type",
-//       nav,
-//       grid, 
-//     });
-
-//   } catch (error) {
-//     console.error("Error fetching inventory by type:", error);
-//     res.status(500).render("errors/error", { message: "Error retrieving inventory data." });
-//   }
-// });
+ * ****************************/
 invCont.getInventoryByType = utilities.handleErrors(async (req, res) => {
   const typeId = parseInt(req.params.typeId, 10); // Ensure typeId is an integer
 
@@ -500,7 +462,7 @@ invCont.processUpdate = async function (req, res, next) {
 
           if (updateResult) {
               req.flash("info", "Vehicle updated successfully!");
-              return res.redirect("/inv/management");
+              return res.redirect("/inv/");
           } else {
               throw new Error("Failed to update the vehicle.");
           }
@@ -511,5 +473,74 @@ invCont.processUpdate = async function (req, res, next) {
   });
 };
 
+/* ***************************
+ *  Deliver Delete Confirmation View
+ * ************************** */
+invCont.buildDeleteConfirmView = async function (req, res, next) {
+  try {
+      const inv_id = parseInt(req.params.inv_id, 10); // Ensure integer parsing
+      if (Number.isNaN(inv_id)) {
+          req.flash("error", "Invalid inventory ID.");
+          return res.redirect("/inv/");
+      }
+
+      const nav = await utilities.getNav(); // Build navigation for the view
+      const itemData = await invModel.getInventoryById(inv_id); // Get inventory data
+
+      if (!itemData) {
+          console.warn(`Inventory item with ID ${inv_id} not found.`);
+          req.flash("error", "Inventory item not found.");
+          return res.redirect("/inv/");
+      }
+
+      const name = `${itemData.inv_make} ${itemData.inv_model}`; // Build item name
+
+      res.render("inventory/delete-confirm", {
+          title: `Delete ${name}`,
+          nav,
+          errors: null,
+          inv_id: itemData.inv_id,
+          inv_make: itemData.inv_make,
+          inv_model: itemData.inv_model,
+          inv_year: itemData.inv_year,
+          inv_price: itemData.inv_price,
+      });
+  } catch (error) {
+      console.error("Error loading delete confirmation view:", error);
+      next(error);
+  }
+};
+
+/* ***************************
+ *  Process Inventory Deletion
+ * ************************** */
+invCont.deleteInventoryItem = async function (req, res, next) {
+  try {
+      console.log("typeof invModel.deleteInventoryItem:", typeof invModel.deleteInventoryItem);
+
+      const inv_id = parseInt(req.body.inv_id, 10);
+      if (Number.isNaN(inv_id)) {
+          req.flash("error", "Invalid inventory ID.");
+          return res.redirect("/inv/");
+      }
+
+      console.log("Checking invModel:", invModel);
+      console.log("Attempting to delete inv_id:", inv_id);
+
+      const deleteResult = await invModel.deleteInventoryItem(inv_id);
+
+      if (deleteResult) {
+          req.flash("success", "Vehicle successfully deleted.");
+          return res.redirect("/inv/");
+      } else {
+          console.warn(`Failed to delete vehicle with ID ${inv_id}`);
+          req.flash("error", "Failed to delete the vehicle. Please try again.");
+          return res.redirect(`/inv/delete/${inv_id}`);
+      }
+  } catch (error) {
+      console.error("Error processing delete:", error);
+      next(error);
+  }
+};
 
 module.exports = invCont;
