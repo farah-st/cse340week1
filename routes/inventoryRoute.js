@@ -27,9 +27,9 @@ router.get("/add-inventory",
 // Process adding a new inventory item (with validation)
 router.post(
   "/add-inventory",
-  invValidate.addVehicleRules(),      // Validation rules middleware
-  invValidate.checkVehicleData,       // Check validation and handle errors
-  utilities.handleErrors(invController.addNewInventoryItem) // Controller function
+  invValidate.addVehicleRules(),
+  invValidate.checkVehicleData,
+  utilities.handleErrors(invController.addNewInventoryItem)
 );
 
 // Get details of a specific inventory item
@@ -77,6 +77,16 @@ router.get('/update/:id',
 // Route to process the update form submission
 router.post('/update/:id', 
   invController.processUpdate
+);
+
+// Route to render the Delete Confirmation view
+router.get("/delete/:inv_id", 
+  utilities.handleErrors(invController.buildDeleteConfirmView)
+);
+
+// Route to process the Delete action
+router.post("/delete/:inv_id", 
+  utilities.handleErrors(invController.deleteInventoryItem)
 );
 
 module.exports = router;

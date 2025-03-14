@@ -471,18 +471,19 @@ label[for="inv_description"] {
 .add-inventory-form button:hover, .edit-inventory-form button:hover {
     background-color: #F49EBE;
 }
+
 /*Management Table*/
 #inventoryDisplay {
     width: 100%;
     margin: 20px 0;
     border-collapse: collapse;
-    overflow-x: auto; /* Allow horizontal scrolling if needed */
+    overflow-x: auto;
 }
 
 #inventoryDisplay table {
     width: 100%;
     border: 1px solid #ddd;
-    table-layout: auto; /* Allow for better cell resizing */
+    table-layout: auto; 
 }
 
 #inventoryDisplay th,
@@ -561,14 +562,14 @@ label[for="inv_description"] {
 
 /* Style for the dropdown arrow */
 #classificationSelect::-ms-expand {
-    display: none; /* Hide the default dropdown arrow in IE/Edge */
+    display: none;
 }
 
 /* Style when the dropdown is focused */
 #classificationSelect:focus {
     outline: none;
-    border-color: #007bff; /* Change border color when focused */
-    background-color: #f8f9fa; /* Light background change when focused */
+    border-color: #007bff; 
+    background-color: #f8f9fa; 
 }
 
 /* Style for options */
@@ -615,6 +616,71 @@ label[for="inv_description"] {
   .vehicle-card .vehicle-link:hover {
     text-decoration: underline;
   }
+
+  /* Delete Inventory Form */
+.delete-inventory-form {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.delete-inventory-form p {
+    font-weight: bold;
+    color: #d9534f; /* Red warning color */
+    margin-bottom: 15px;
+}
+
+.delete-inventory-form .form-group {
+    margin-bottom: 15px;
+}
+
+.delete-inventory-form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.delete-inventory-form input {
+    width: 95%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #e9ecef; /* Light gray for read-only fields */
+    cursor: not-allowed;
+}
+
+/* Delete Button */
+.delete-inventory-form button {
+    background-color: #dc3545; /* Bootstrap Danger Red */
+    color: white;
+    padding: 12px;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.delete-inventory-form button:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
+/* Flash Message for Errors */
+.flash-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
 /* Smaller Screens (Max Width: 767px) */
 @media screen and (max-width: 767px) {
     body {
