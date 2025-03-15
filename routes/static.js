@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const baseController = require("../controllers/baseController"); 
 
+
+// Serve the homepage (index.ejs)
+router.get("/", baseController.buildHome);
 // Optional: Set cache control for static files (e.g., 1 day)
 const oneDay = 86400000;
 

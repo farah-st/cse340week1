@@ -1,9 +1,11 @@
 <header id="top-header">
-  <span class="siteName">
-    CSE Motors
-  </span>
+  <span class="siteName">CSE Motors</span>
   <div id="tools">
-    <a title="Click to log in" href="/account/login">My Account</a>
-    <!-- Optionally, you could conditionally render user-specific tools here -->
+    <% if (user) { %>
+      <a title="Go to Account Management" href="/account/">Welcome, <%= user.account_firstname %></a>
+      <a title="Click to log out" href="/account/logout">Logout</a>
+    <% } else { %>
+      <a title="Click to log in" href="/account/login">My Account</a>
+    <% } %>
   </div>
 </header>

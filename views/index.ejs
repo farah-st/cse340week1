@@ -1,3 +1,12 @@
+<% if (flash.success) { %>
+  <div class="alert alert-success"><%= flash.success %></div>
+<% } %>
+<% if (flash.notice) { %>
+  <div class="alert alert-warning"><%= flash.notice %></div>
+<% } %>
+
+<pre><%= JSON.stringify(user, null, 2) %></pre>
+
 <div class="hero-container">
   <h1 class="hero-heading">Welcome to CSE Motors!</h1>
 
@@ -72,13 +81,3 @@
     </ul>  
   </div>
 </div>
-
-
-
-
-
-
-
-
-
-

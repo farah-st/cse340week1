@@ -1,16 +1,16 @@
 /* General Reset */
 html {
     background-image: url('/images/site/small_check.jpg');
-    background-size: cover;  /* Make background responsive */
+    background-size: cover; 
 }
 
 /* Body Styling */
 body {
     background-color: white;
     margin: 20px auto; 
-    max-width: 100%;
-    
     border: 10px solid #bda5ab;
+    width: auto;
+    margin: 0 auto;
 }
 
 /* Header Styling */
@@ -56,7 +56,7 @@ nav a:hover {
 /* Content Wrapper */
 #content-wrapper {
     padding: 20px;
-    margin-top: 140px; /* Adjust for mobile header */
+    margin-top: 140px; 
     background-color: white;
 }
 
@@ -69,8 +69,8 @@ footer {
     bottom: 0;
     width: 100%;
     display: flex;
-    justify-content: space-between;  /* Space out the content */
-    align-items: center;  /* Vertically align items */
+    justify-content: space-between;  
+    align-items: center; 
     padding: 10px 0;
 }
 
@@ -163,10 +163,10 @@ ul#inv-display li a img {
 }
 
 .notice-list li {
-    background-color: #ffe6e6; /* Light red background */
+    background-color: #ffe6e6;
     padding: 8px;
     margin-bottom: 5px;
-    border-radius: 5px; /* Rounded corners */
+    border-radius: 5px; 
     font-weight: bold;
 }
 
@@ -175,7 +175,7 @@ ul#inv-display li a img {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px; /* Prevents touching screen edges */
+    padding: 20px; 
 }
 
 /* Login Form */
@@ -546,14 +546,14 @@ label[for="inv_description"] {
 /* Style for the select dropdown */
 #classificationSelect {
     width: 100%;
-    max-width: 200px; /* Max width for better appearance on larger screens */
+    max-width: 200px; 
     padding: 8px 12px;
     font-size: 16px;
     border: 1px solid #ddd;
     border-radius: 5px;
     background-color: #fff;
     color: #333;
-    appearance: none; /* Remove default browser styles for a custom look */
+    appearance: none; 
     -webkit-appearance: none;
     -moz-appearance: none;
     box-sizing: border-box;
@@ -649,13 +649,13 @@ label[for="inv_description"] {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    background-color: #e9ecef; /* Light gray for read-only fields */
+    background-color: #e9ecef; 
     cursor: not-allowed;
 }
 
 /* Delete Button */
 .delete-inventory-form button {
-    background-color: #dc3545; /* Bootstrap Danger Red */
+    background-color: #dc3545; 
     color: white;
     padding: 12px;
     width: 100%;
@@ -667,7 +667,7 @@ label[for="inv_description"] {
 }
 
 .delete-inventory-form button:hover {
-    background-color: #c82333; /* Darker red on hover */
+    background-color: #c82333;
 }
 
 /* Flash Message for Errors */
@@ -685,7 +685,7 @@ label[for="inv_description"] {
 @media screen and (max-width: 767px) {
     body {
         background-color: white;
-        margin: 2px; /* Single margin definition */
+        margin: 2px;
         padding: 0;
         height: 100%;
     }
@@ -711,7 +711,7 @@ label[for="inv_description"] {
 
     header #tools a {
         text-decoration: none;
-        font-size: 10px; /* Kept the smaller size for mobile */
+        font-size: 10px;
         color: black;
         padding-right: 5px;
     }
@@ -1077,22 +1077,22 @@ label[for="inv_description"] {
     #inventoryDisplay table {
         width: 100%;
         display: block;
-        overflow-x: auto; /* Allow horizontal scrolling on smaller screens */
+        overflow-x: auto; 
     }
 
     #inventoryDisplay th,
     #inventoryDisplay td {
         padding: 8px;
-        font-size: 14px; /* Slightly smaller text for mobile */
+        font-size: 14px; 
     }
 
     #inventoryDisplay td a {
-        font-size: 12px; /* Make links smaller on mobile */
-        padding: 4px 8px; /* Adjust link padding */
+        font-size: 12px; 
+        padding: 4px 8px; 
     }
 
     #inventoryDisplay th {
-        font-size: 16px; /* Larger font for table header */
+        font-size: 16px; 
     }
 
     #inventoryDisplay td a[title='Click to update'] {
@@ -1116,7 +1116,15 @@ label[for="inv_description"] {
     #classificationSelect {
         width: 100%;
         font-size: 14px;
-        padding: 10px; /* Slightly bigger padding on mobile */
+        padding: 10px; 
+    }
+
+    .body-h2-2{
+        padding-bottom: 10px;
+        text-align: center;
+    }
+    .body-h2{
+        text-align: center;
     }
 }
 
@@ -1259,6 +1267,14 @@ label[for="inv_description"] {
         margin-bottom: 20px;
     }
 
+    .body-h2-2{
+        text-align: center;
+    }
+
+    .body-h2{
+        text-align: center;
+    }
+
     /* Grid List for Upgrades */
     .grid-list {
         display: grid;
@@ -1303,14 +1319,14 @@ label[for="inv_description"] {
     /* Vehicle Information Section */
     .vehicle-detail {
         display: grid;
-        grid-template-columns: 1fr 1fr; /* Two equal columns */
+        grid-template-columns: 1fr 1fr;
         align-items: center;
         gap: 20px;
     }
     
     .vehicle-detail img {
         width: 100%;
-        max-width: 500px; /* Prevents excessive stretching */
+        max-width: 500px;
         object-fit: cover;
         border-radius: 10px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);

@@ -10,20 +10,22 @@ baseController.buildHome = async function (req, res, next) {
   try {
     const nav = await utilities.getNav();
 
-    // Set a flash message for demonstration; remove or conditionally set in production
-    if (process.env.NODE_ENV !== "production") {
-      req.flash("notice", "This is a flash message.");
-    }
-    
+    // Retrieve flash messages (if any)
+    const messages = req.flash(); 
+
+    // Check if user is logged in (assuming session contains user data)
+    const loggedInUser = req.session ? req.session.loggedInUser : null;
+    console.log("Session Data:", req.session);
+
     res.render("index", {
       title: "Home",
-      nav
+      nav,
+      messages, 
+      loggedInUser, 
     });
   } catch (error) {
-    next(error); // Forward errors to the global error handler
+    next(error); 
   }
 };
 
 module.exports = baseController;
-
-

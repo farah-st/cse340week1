@@ -44,9 +44,9 @@ router.post(
 // Login processing route
 router.post(
   "/login",
-  regValidate.loginRules(),                   // Validation rules
-  regValidate.checkLoginData,                 // Data validation check
-  utilities.handleErrors(accountController.accountLogin) // Controller-based login handler
+  regValidate.loginRules(),
+  regValidate.checkLoginData,
+  utilities.handleErrors(accountController.accountLogin)
 );
 
 // Dashboard route 
@@ -60,25 +60,23 @@ router.get(
 );
 
 // Logout route 
-router.get(
-  "/logout",
-  utilities.handleErrors(async (req, res) => {
-    req.logout((err) => {
-      if (err) {
-        req.flash("error", "Error during logout.");
-        return res.redirect("/account/dashboard");
-      }
-      req.flash("success", "Successfully logged out.");
-      res.redirect("/");
-    });
-  })
-);
+router.get("/logout", async (req, res) => {
+  req.flash("success", "Successfully logged out."); 
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Logout error:", err);
+      return res.redirect("/account/");
+    }
+    res.clearCookie("sessionId");
+    res.redirect("/");
+  });
+});
 
 // Account Management view route 
 router.get(
   "/", 
   utilities.checkLogin,
-  utilities.handleErrors(accountController.buildManagement) // FIXED function reference
+  utilities.handleErrors(accountController.buildManagement) 
 );
 
 module.exports = router;

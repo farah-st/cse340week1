@@ -1,28 +1,21 @@
-/* ******************************************
- * This server.js file is the primary file of the 
- * application. It is used to control the project.
- *******************************************/
-
 /* ***********************
  * Require Statements
  *************************/
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
 require("dotenv").config(); 
-const cookieParser = require("cookie-parser")
-const app = express(); // <-- app initialized here
-
-// Middleware after app initialization
-app.use(cookieParser());
-
-const baseController = require("./controllers/baseController");
-const inventoryRoute = require("./routes/inventoryRoute");
-const accountRoute = require("./routes/accountRoute");
-const utilities = require("./utilities");
-const pool = require('./database/');
+const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const flash = require("connect-flash");
-const path = require('path');
+const pgSession = require("connect-pg-simple")(session); 
+const path = require("path");
+const utilities = require("./utilities");
+const pool = require("./database/");
+const app = express(); 
+
+// ✅ Import Routes BEFORE using them
+const inventoryRoute = require("./routes/inventoryRoute");
+const accountRoute = require("./routes/accountRoute");
 
 /* ********************************
  * Validate Environment Variables
@@ -35,74 +28,72 @@ if (!process.env.SESSION_SECRET || !process.env.DATABASE_URL) {
 /* ***********************
  * Middleware
  *************************/
-// Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(cookieParser());
 
+// Serve static files
+app.use(express.static(path.join(__dirname, "public")));
 app.use(expressLayouts);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Session Middleware (Handles Cookies)
-app.use(session({
-  store: new (require('connect-pg-simple')(session))({
-    createTableIfMissing: true,
-    pool,
-  }),
-  secret: process.env.SESSION_SECRET,
-  resave: true,
-  saveUninitialized: true,
-  name: 'sessionId',
-  cookie: { 
-    secure: process.env.NODE_ENV === 'production', // secure in prod
-    httpOnly: true, 
-    maxAge: 1000 * 60 * 60 * 24 // 1 day
-  }
-}));
+// ✅ Session Middleware
+app.use(
+  session({
+    store: new pgSession({
+      pool: pool,
+      tableName: "session",
+      createTableIfMissing: true,
+    }),
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    name: "sessionId",
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24,
+    },
+  })
+);
 
-// Flash Middleware
+// ✅ Flash Middleware (After session)
 app.use(flash());
 
-// Consolidated Flash Messages Middleware
+// ✅ Ensure user and flash messages are available in all views (AFTER session & flash)
 app.use((req, res, next) => {
-  res.locals.flash = {
-    error: req.flash('error'),
-    success: req.flash('success'),
-    info: req.flash('info'),
-  };
+  res.locals.flash = req.flash();
+  res.locals.user = req.session.account || null;
   next();
 });
 
-app.use(utilities.checkJWTToken)
+app.use(utilities.checkJWTToken);
 
 /* ***********************
  * View Engine and Templates
  *************************/
 app.set("view engine", "ejs");
-app.set("layout", "layouts/layout"); // Path to layout
+app.set("layout", "layouts/layout"); 
 
 /* ***********************
- * Routes
+ * Routes (Now inventoryRoute is defined)
  *************************/
+
+// ✅ Use Routes AFTER defining them
+app.use("/inv", inventoryRoute);
+app.use("/account", accountRoute);
+
 // Home Page Route
 app.get("/", utilities.handleErrors(async (req, res) => {
-  if (!req.session.account) {
-    return res.redirect("/account/login");
-  }
+  const nav = await utilities.getNav();
   res.render("index", {
     title: "Home",
-    user: req.session.account,
+    nav,
+    user: req.session.account || null,
     messages: req.flash()
-  });  
+  });
 }));
 
-
 app.get("/favicon.ico", (req, res) => res.status(204));
-
-// Inventory Routes
-app.use("/inv", inventoryRoute);
-
-// Account Routes
-app.use("/account", accountRoute);
 
 // Example route for inventory management
 app.get("/inv", (req, res) => {
@@ -111,14 +102,13 @@ app.get("/inv", (req, res) => {
   res.render("inventory/management", { message });
 });
 
-// File Not Found Route - must be last route in list
+// 404 Error Handler
 app.use((req, res, next) => {
   next({ status: 404, message: 'Sorry, we appear to have lost that page.' });
 });
 
 /* ***********************
  * Express Error Handler
- * Place after all other middleware
  *************************/
 app.use(async (err, req, res, next) => {
   const nav = await utilities.getNav();
@@ -129,7 +119,6 @@ app.use(async (err, req, res, next) => {
       ? err.message
       : "Oh no! There was a crash. Maybe try a different route?";
 
-  // Use flash messages from locals
   res.status(err.status || 500).render("errors/error", {
     title,
     message,
@@ -138,7 +127,7 @@ app.use(async (err, req, res, next) => {
   });
 });
 
-// 404 Final Fallback (if needed)
+// Final 404 Fallback
 app.use(async (req, res) => {
   res.status(404).render("errors/error", {
     title: "Page Not Found",
@@ -149,14 +138,11 @@ app.use(async (req, res) => {
 });
 
 /* ***********************
- * Local Server Information
+ * Server Setup
  *************************/
 const port = process.env.PORT || 5501;
 const host = process.env.HOST || "localhost";
 
-/* ***********************
- * Log statement to confirm server operation
- *************************/
 app.listen(port, () => {
   console.log(`App listening on http://${host}:${port}`);
 });
