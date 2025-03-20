@@ -24,7 +24,7 @@ Util.getNav = async function () {
     data.forEach((row) => {
       const safeName = DOMPurify.sanitize(row.classification_name);
       list += `<li>
-                <a href="/inv/type/${row.classification_id}" title="See our inventory of ${safeName} vehicles">
+                <a href="/inventory/type/${row.classification_id}" title="See our inventory of ${safeName} vehicles">
                   ${safeName}
                 </a>
               </li>`;
@@ -66,7 +66,7 @@ Util.buildClassificationGrid = async function (data) {
         const safeModel = DOMPurify.sanitize(vehicle.inv_model);
 
         grid += `<li>
-          <a href="../../inv/detail/${vehicle.inv_id}" title="View ${safeMake} ${safeModel} details">
+          <a href="../../inventory/detail/${vehicle.inv_id}" title="View ${safeMake} ${safeModel} details">
             <img src="${tnImage}" 
                  srcset="${tnImage} 768w, ${fullImage} 1200w"
                  sizes="(max-width: 768px) 100vw, (min-width: 769px) 50vw"
@@ -75,7 +75,7 @@ Util.buildClassificationGrid = async function (data) {
           <div class="namePrice">
             <hr />
             <h2>
-              <a href="../../inv/detail/${vehicle.inv_id}" title="View ${safeMake} ${safeModel} details">
+              <a href="../../inventory/detail/${vehicle.inv_id}" title="View ${safeMake} ${safeModel} details">
                 ${safeMake} ${safeModel}
               </a>
             </h2>

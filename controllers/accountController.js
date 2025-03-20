@@ -152,14 +152,14 @@ async function registerAccount(req, res) {
 
 /* ****************************************
  *  Process login request
- * ************************************ */
+ * **************************************/
 // async function accountLogin(req, res) {
 //   let nav = await utilities.getNav();
 //   const { account_email, account_password } = req.body;
 //   const accountData = await accountModel.getAccountByEmail(account_email);
 
 //   if (!accountData) {
-//     req.flash("notice", "Please check your credentials and try again.");
+//     req.flash("notice", "Invalid email or password.");
 //     return res.status(400).render("account/login", {
 //       title: "Login",
 //       nav,
@@ -172,29 +172,47 @@ async function registerAccount(req, res) {
 //     if (await bcrypt.compare(account_password, accountData.account_password)) {
 //       delete accountData.account_password;
 
+//       // Store user data in session
 //       req.session.account = {
 //         account_id: accountData.account_id,
 //         account_firstname: accountData.account_firstname,
 //         account_email: accountData.account_email,
+//         account_type: accountData.account_type,
 //       };
 
-//       const accessToken = jwt.sign(
-//         accountData,
-//         process.env.ACCESS_TOKEN_SECRET || "fallbackSecretKey",
+//       console.log("Session after login:", req.session); // Debugging output
+
+//       // Generate JWT Token
+//       const token = jwt.sign(
+//         {
+//           account_id: accountData.account_id,
+//           account_email: accountData.account_email,
+//           account_type: accountData.account_type,
+//         },
+//         process.env.JWT_SECRET,
 //         { expiresIn: "1h" }
 //       );
 
-//       const cookieOptions = {
+//       console.log("Generated JWT Token:", token); // Debugging output
+
+//       // Store JWT in cookie
+//       res.cookie("jwt", token, {
 //         httpOnly: true,
-//         maxAge: 3600 * 1000,
-//         secure: process.env.NODE_ENV !== "development",
-//       };
+//         secure: false, // Change to `true` in production with HTTPS
+//         sameSite: "Strict",
+//         maxAge: 60 * 60 * 1000,
+//       });
 
-//       res.cookie("jwt", accessToken, cookieOptions);
-
-//       return res.redirect("/account/");
+//       // Redirect based on account type
+//       if (accountData.account_type === "Admin") {
+//         req.flash("success", `Welcome back, ${accountData.account_firstname}!`);
+//         return res.redirect("/inventory/management");
+//       } else {
+//         // Do NOT set flash message for successful client login
+//         return res.redirect("http://localhost:5501/");
+//       }
 //     } else {
-//       req.flash("notice", "Please check your credentials and try again.");
+//       req.flash("notice", "Invalid email or password.");
 //       return res.status(400).render("account/login", {
 //         title: "Login",
 //         nav,
@@ -204,7 +222,8 @@ async function registerAccount(req, res) {
 //     }
 //   } catch (error) {
 //     console.error("Login Error:", error);
-//     throw new Error("Access Forbidden");
+//     req.flash("error", "An unexpected error occurred. Please try again.");
+//     return res.redirect("/account/login");
 //   }
 // }
 async function accountLogin(req, res) {
@@ -226,16 +245,46 @@ async function accountLogin(req, res) {
     if (await bcrypt.compare(account_password, accountData.account_password)) {
       delete accountData.account_password;
 
+      // Store user data in session
       req.session.account = {
         account_id: accountData.account_id,
         account_firstname: accountData.account_firstname,
         account_email: accountData.account_email,
+        account_type: accountData.account_type,
       };
 
       console.log("Session after login:", req.session); // Debugging output
 
+      // Generate JWT Token
+      const token = jwt.sign(
+        {
+          account_id: accountData.account_id,
+          account_email: accountData.account_email,
+          account_type: accountData.account_type,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+
+      console.log("Generated JWT Token:", token); // Debugging output
+
+      // Store JWT in cookie
+      res.cookie("jwt", token, {
+        httpOnly: true,
+        secure: false, // Change to `true` in production with HTTPS
+        sameSite: "Strict",
+        maxAge: 60 * 60 * 1000,
+      });
+
+      // Show welcome message for all users
       req.flash("success", `Welcome back, ${accountData.account_firstname}!`);
-      return res.redirect("/");
+
+      // Redirect based on account type
+      if (accountData.account_type === "Admin") {
+        return res.redirect("/inventory/management");
+      } else {
+        return res.redirect("http://localhost:5501/");
+      }
     } else {
       req.flash("notice", "Invalid email or password.");
       return res.status(400).render("account/login", {
@@ -251,7 +300,6 @@ async function accountLogin(req, res) {
     return res.redirect("/account/login");
   }
 }
-
 
 /* ****************************************
  *  Deliver Account Management View

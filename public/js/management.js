@@ -4,23 +4,37 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("DOM fully loaded.");
 
     // Try to get classification dropdown from either page
-    let classificationList = document.getElementById("classificationSelect") 
+    let classificationList = document.getElementById("classificationSelect");
 
     if (!classificationList) {
-        console.error("Error: classificationSelect or classification_id not found in the DOM.");
+        console.error("Error: classificationSelect not found in the DOM.");
         return; // Stop execution if the dropdown is missing
     }
 
     console.log("Classification dropdown found:", classificationList);
-    
+
+    // Debugging: Log available options
+    console.log("Dropdown options:", [...classificationList.options].map(opt => opt.value));
+
     classificationList.addEventListener("change", function () {
-        let classificationId = classificationList.value;
+        let classificationId = classificationList.value.trim(); // Ensure it's a valid value
         console.log(`classification_id selected: ${classificationId}`);
 
-        // Fetch inventory data based on the selected classification
-        fetch(`/inv/getInventory/${classificationId}`)
-            .then(response => response.json())
+        if (!classificationId || classificationId === "") {
+            console.warn("No classification selected, skipping request.");
+            return; // Prevent empty requests
+        }
+
+        // ✅ Use the correct backend route and ensure a valid classificationId
+        fetch(`/inventory/getInventory/${classificationId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
+                console.log("Fetched inventory data:", data);
                 const inventoryArray = Array.isArray(data) ? data : data.inventory || data.data || []; 
 
                 // Get the display element from the DOM
@@ -56,8 +70,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     dataTable += `
                         <tr>
                             <td>${element.inv_make} ${element.inv_model}</td>
-                            <td><a href='/inv/edit/${element.inv_id}' title='Click to update'>Modify</a></td>
-                            <td><a href='/inv/delete/${element.inv_id}' title='Click to delete'>Delete</a></td>
+                            <td><a href='/inventory/edit/${element.inv_id}' title='Click to update'>Modify</a></td>
+                            <td><a href='/inventory/delete/${element.inv_id}' title='Click to delete'>Delete</a></td>
                         </tr>`;
                 });
 
@@ -70,4 +84,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error("Error loading inventory data:", err);
             });
     });
+
+    // Ensure dropdown selection event fires only when a valid classification is chosen
+    if (classificationList.value) {
+        classificationList.dispatchEvent(new Event("change"));
+    }
 });

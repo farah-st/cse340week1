@@ -1,37 +1,39 @@
 <h1>Inventory Management</h1>
 
+<!-- Show user info if available -->
+<% if (user) { %>
+    <p>Welcome, <strong><%= user.account_type %></strong>!</p>
+<% } else { %>
+    <p class="flash-message">Unauthorized access. Please log in.</p>
+<% } %>
+
+<!-- Display Flash Messages -->
 <% if (message && message.length > 0) { %>
     <p class="flash-message"><%= message %></p>
 <% } %>
 
 <ul class="invManag">
-    <li><a href="/inv/add-classification">Add New Classification</a></li>
-    <li><a href="/inv/add-inventory">Add New Inventory</a></li>
+    <li><a href="/inventory/add-classification">Add New Classification</a></li>
+    <li><a href="/inventory/add-inventory">Add New Inventory</a></li>
 </ul>
 
-<!-- Heading for Manage Inventory -->
 <h2 id="management-h2">Manage Inventory</h2>
-
-<!-- Instructional Paragraph -->
 <p>Select a classification from the list to see the items belonging to that classification.</p>
 
 <!-- Dropdown for Classification List -->
 <select id="classificationSelect">
-    <% if (Array.isArray(classificationSelect) && classificationSelect.length > 0) { %>
-      <% classificationSelect.forEach(function(classification) { %>
-        <option value="<%= classification.id %>"><%= classification.name %></option>
-      <% }); %>
-    <% } else { %>
-      <option>No classifications available</option>
-    <% } %>
-</select> 
+  <option value="">Select a classification</option>
+  <% classificationSelect.forEach(classification => { %>
+      <option value="<%= classification.id %>">
+          <%= classification.name %>
+      </option>
+  <% }) %>
+</select>
 
-<!-- Empty Table for Inventory Items -->
 <table id="inventoryDisplay">
   <!-- Table rows will be populated dynamically using JavaScript -->
 </table>
 
-<!-- Message if JavaScript is disabled -->
 <noscript>
   JavaScript must be enabled to use this page.
 </noscript>

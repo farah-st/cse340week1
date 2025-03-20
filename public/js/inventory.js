@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 let classificationId = classificationList.value;
                 console.log(`classification_id selected: ${classificationId}`);
 
-                fetch(`/inv/getInventory/${classificationId}`)
+                fetch(`/inventory/getInventory/${classificationId}`)
                     .then(response => response.json())
                     .then(data => {
                         const inventoryArray = Array.isArray(data) ? data : data.inventory || data.data || [];
@@ -45,8 +45,8 @@ document.addEventListener("DOMContentLoaded", function () {
                             dataTable += `
                                 <tr>
                                     <td>${element.inv_make} ${element.inv_model}</td>
-                                    <td><a href='/inv/edit/${element.inv_id}' title='Click to update'>Modify</a></td>
-                                    <td><a href='/inv/delete/${element.inv_id}' title='Click to delete'>Delete</a></td>
+                                    <td><a href='/inventory/edit/${element.inv_id}' title='Click to update'>Modify</a></td>
+                                    <td><a href='/inventory/delete/${element.inv_id}' title='Click to delete'>Delete</a></td>
                                 </tr>`;
                         });
 

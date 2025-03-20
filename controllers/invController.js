@@ -54,21 +54,32 @@ invCont.buildDetailView = utilities.handleErrors(async (req, res) => {
  * *************************** */
 invCont.renderManagement = utilities.handleErrors(async (req, res) => {
   try {
-    const nav = await utilities.getNav(); 
+    const nav = await utilities.getNav();
     const message = req.flash("info");
-    const classificationSelect = await utilities.buildClassificationList();
 
+    // ✅ Fetch classification list from DB
+    const classificationList = await utilities.buildClassificationList();
+    console.log("Classification list fetched from DB:", classificationList); // Debugging
+
+    if (!req.user) {
+      req.flash("error", "Unauthorized access. Please log in.");
+      return res.redirect("/account/login");
+    }
+
+    // ✅ Ensure classification data is passed to the template
     res.render("inventory/management", { 
       title: "Inventory Management", 
       nav,  
       message,
-      classificationSelect,
+      classificationSelect: classificationList, // Pass classification list here
+      user: req.user,
     });
   } catch (error) {
     console.error("Error rendering Inventory Management page:", error);
     res.status(500).render("errors/error", { message: "Error loading Inventory Management." });
   }
 });
+
 
 /* ***************************
  *  Get Inventory by Type (Newly Added)
@@ -103,7 +114,7 @@ invCont.getInventoryByType = utilities.handleErrors(async (req, res) => {
           grid += `
               <div class="vehicle-card">
                   <img src="${vehicle.inv_thumbnail}" alt="${vehicle.inv_make} ${vehicle.inv_model}">
-                  <h3><a href="/inv/detail/${vehicle.inv_id}" class="vehicle-link">${vehicle.inv_make} ${vehicle.inv_model}</a></h3>
+                  <h3><a href="/inventory/detail/${vehicle.inv_id}" class="vehicle-link">${vehicle.inv_make} ${vehicle.inv_model}</a></h3>
                   <p>${vehicle.inv_description}</p>
                   <p>Price: $${vehicle.inv_price}</p>
               </div>
@@ -155,7 +166,7 @@ invCont.addClassification = utilities.handleErrors(async (req, res) => {
     if (insertResult) {
       nav = await utilities.getNav();
       req.flash("info", "Classification added successfully!");
-      return res.redirect("/inv/");
+      return res.redirect("/inventory/");
     } else {
       throw new Error("Classification insertion failed.");
     }
@@ -212,7 +223,7 @@ invCont.addNewInventoryItem = utilities.handleErrors(async (req, res) => {
   upload(req, res, async (err) => {
     if (err) {
       req.flash("error", "File upload failed.");
-      return res.redirect("/inv/add-inventory");
+      return res.redirect("/inventory/add-inventory");
     }
 
     const {
@@ -231,7 +242,7 @@ invCont.addNewInventoryItem = utilities.handleErrors(async (req, res) => {
     const parsedClassificationId = parseInt(classification_id, 10);
     if (isNaN(parsedClassificationId)) {
       req.flash("error", "Invalid classification ID.");
-      return res.redirect("/inv/add-inventory");
+      return res.redirect("/inventory/add-inventory");
     }
 
     const formattedYear = String(inv_year);
@@ -251,13 +262,13 @@ invCont.addNewInventoryItem = utilities.handleErrors(async (req, res) => {
 
       if (insertResult) {
         req.flash("info", "Vehicle added successfully!");
-        return res.redirect("/inv/add-inventory");
+        return res.redirect("/inventory/add-inventory");
       } else {
         throw new Error("Failed to add the vehicle.");
       }
     } catch (error) {
       req.flash("error", error.message);
-      return res.redirect("/inv/add-inventory");
+      return res.redirect("/inventory/add-inventory");
     }
   });
 });
@@ -287,12 +298,23 @@ invCont.triggerError = (req, res) => {
  *  Return Inventory by Classification As JSON
  * ************************** */
 invCont.getInventoryJSON = async (req, res, next) => {
-  const classification_id = parseInt(req.params.classification_id);
-  const invData = await invModel.getInventoryByClassificationId(classification_id);
-  if (invData[0].inv_id) {
-    return res.json(invData);
-  } else {
-    next(new Error("No data returned"));
+  try {
+    const classification_id = parseInt(req.params.classification_id, 10);
+
+    if (isNaN(classification_id)) {
+      return res.status(400).json({ error: "Invalid classification ID" });
+    }
+
+    const invData = await invModel.getInventoryByClassificationId(classification_id);
+
+    if (!invData || invData.length === 0) {
+      return res.status(404).json({ error: "No inventory found for this classification" });
+    }
+
+    res.json(invData);
+  } catch (error) {
+    console.error("Error fetching inventory data:", error);
+    res.status(500).json({ error: "Server error retrieving inventory" });
   }
 };
 
@@ -413,7 +435,7 @@ invCont.processUpdate = async function (req, res, next) {
   upload(req, res, async (err) => {
       if (err) {
           req.flash("error", "File upload failed.");
-          return res.redirect(`/inv/update/${req.body.inv_id}`);
+          return res.redirect(`/inventory/update/${req.body.inv_id}`);
       }
 
       try {
@@ -435,7 +457,7 @@ invCont.processUpdate = async function (req, res, next) {
           const parsedClassificationId = parseInt(classification_id, 10);
           if (isNaN(parsedClassificationId)) {
               req.flash("error", `Invalid classification ID provided: ${classification_id}`);
-              return res.redirect(`/inv/update/${inv_id}`);
+              return res.redirect(`/inventory/update/${inv_id}`);
           }
 
           let imagePath = existing_image; // Default to existing image
@@ -462,13 +484,13 @@ invCont.processUpdate = async function (req, res, next) {
 
           if (updateResult) {
               req.flash("info", "Vehicle updated successfully!");
-              return res.redirect("/inv/");
+              return res.redirect("/inventory/");
           } else {
               throw new Error("Failed to update the vehicle.");
           }
       } catch (error) {
           req.flash("error", error.message);
-          return res.redirect(`/inv/update/${req.body.inv_id}`);
+          return res.redirect(`/inventory/update/${req.body.inv_id}`);
       }
   });
 };
@@ -481,7 +503,7 @@ invCont.buildDeleteConfirmView = async function (req, res, next) {
       const inv_id = parseInt(req.params.inv_id, 10); // Ensure integer parsing
       if (Number.isNaN(inv_id)) {
           req.flash("error", "Invalid inventory ID.");
-          return res.redirect("/inv/");
+          return res.redirect("/inventory/");
       }
 
       const nav = await utilities.getNav(); // Build navigation for the view
@@ -490,7 +512,7 @@ invCont.buildDeleteConfirmView = async function (req, res, next) {
       if (!itemData) {
           console.warn(`Inventory item with ID ${inv_id} not found.`);
           req.flash("error", "Inventory item not found.");
-          return res.redirect("/inv/");
+          return res.redirect("/inventory/");
       }
 
       const name = `${itemData.inv_make} ${itemData.inv_model}`; // Build item name
@@ -521,7 +543,7 @@ invCont.deleteInventoryItem = async function (req, res, next) {
       const inv_id = parseInt(req.body.inv_id, 10);
       if (Number.isNaN(inv_id)) {
           req.flash("error", "Invalid inventory ID.");
-          return res.redirect("/inv/");
+          return res.redirect("/inventory/");
       }
 
       console.log("Checking invModel:", invModel);
@@ -531,11 +553,11 @@ invCont.deleteInventoryItem = async function (req, res, next) {
 
       if (deleteResult) {
           req.flash("success", "Vehicle successfully deleted.");
-          return res.redirect("/inv/");
+          return res.redirect("/inventory/");
       } else {
           console.warn(`Failed to delete vehicle with ID ${inv_id}`);
           req.flash("error", "Failed to delete the vehicle. Please try again.");
-          return res.redirect(`/inv/delete/${inv_id}`);
+          return res.redirect(`/inventory/delete/${inv_id}`);
       }
   } catch (error) {
       console.error("Error processing delete:", error);

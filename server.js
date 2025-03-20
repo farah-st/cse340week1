@@ -51,7 +51,7 @@ app.use(
     cookie: {
       secure: process.env.NODE_ENV === "production",
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24,
+      maxAge: 1000 * 60 * 60 * 24 * 7, 
     },
   })
 );
@@ -79,7 +79,7 @@ app.set("layout", "layouts/layout");
  *************************/
 
 // ✅ Use Routes AFTER defining them
-app.use("/inv", inventoryRoute);
+app.use("/inventory", inventoryRoute);
 app.use("/account", accountRoute);
 
 // Home Page Route

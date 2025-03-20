@@ -3,90 +3,111 @@ const router = express.Router();
 const invController = require("../controllers/invController");
 const utilities = require("../utilities");
 const invValidate = require("../utilities/inventory-validation");
+const authMiddleware = require("../middleware/authMiddleware");  // Import authMiddleware
 
-// Render Inventory Management view
+// ✅ Protect Inventory Management view (Requires Employee or Admin)
 router.get("/management", 
+  authMiddleware,
   utilities.handleErrors(invController.renderManagement)
 );
 
-// Render the Add Classification view
+// ✅ Protect Add Classification view
 router.get("/add-classification", 
+  authMiddleware,
   utilities.handleErrors(invController.renderAddClassification)
 );
 
-// Process adding a new classification
+// ✅ Protect Adding a new classification
 router.post("/add-classification", 
+  authMiddleware,
   utilities.handleErrors(invController.addClassification)
 );
 
-// Render the Add Inventory view
+// ✅ Protect Add Inventory view
 router.get("/add-inventory", 
+  authMiddleware,
   utilities.handleErrors(invController.renderAddInventory)
 );
 
-// Process adding a new inventory item (with validation)
+// ✅ Protect Adding a new inventory item
 router.post(
   "/add-inventory",
+  authMiddleware,
   invValidate.addVehicleRules(),
   invValidate.checkVehicleData,
   utilities.handleErrors(invController.addNewInventoryItem)
 );
 
-// Get details of a specific inventory item
-router.get("/detail/:inv_id", 
+// ✅ Protect Edit Inventory view
+router.get(
+  "/edit/:inv_id",
+  authMiddleware,
+  utilities.handleErrors(invController.editInventoryView)
+);
+
+// ✅ Protect Updating an inventory item
+router.get(
+  '/update/:id', 
+  authMiddleware,
+  invController.showUpdateForm
+);
+
+router.post(
+  '/update/:id', 
+  authMiddleware,
+  invController.processUpdate
+);
+
+// ✅ Protect Delete Confirmation view
+router.get(
+  "/delete/:inv_id", 
+  authMiddleware,
+  utilities.handleErrors(invController.buildDeleteConfirmView)
+);
+
+// ✅ Protect Delete Inventory action
+router.post(
+  "/delete/:inv_id", 
+  authMiddleware,
+  utilities.handleErrors(invController.deleteInventoryItem)
+);
+
+// Public routes (No authentication needed)
+router.get(
+  "/detail/:inv_id", 
   utilities.handleErrors(invController.buildDetailView)
 );
 
-// Optional: trigger error route for testing
-router.get("/trigger-error", 
-  utilities.handleErrors(invController.triggerError)
-);
-
-// Default route to render Inventory Management view
 router.get(
-  "/",
-  utilities.handleErrors(invController.renderManagement) 
-);
-
-// Get inventory by classification
-router.get('/classification/:classificationId', 
+  '/classification/:classificationId', 
   utilities.handleErrors(invController.getInventoryByClassification)
 );
 
-// Get inventory data in JSON format by classification ID
-router.get("/getInventory/:classification_id", 
+router.get(
+  "/getInventory/:classification_id", 
   utilities.handleErrors(invController.getInventoryJSON)
 );
 
-// Get inventory items by type
 router.get("/type/:typeId", 
   utilities.handleErrors(invController.getInventoryByType)
 );
 
-// Render the Edit Inventory view
+// Default route for Inventory Management (Protected)
 router.get(
-  "/edit/:inv_id",
-  utilities.handleErrors(invController.editInventoryView)
+  "/",
+  authMiddleware,
+  utilities.handleErrors(invController.renderManagement) 
 );
 
-// Route to show the update form
-router.get('/update/:id', 
-  invController.showUpdateForm
+// Optional: Error testing route
+router.get(
+  "/trigger-error", 
+  utilities.handleErrors(invController.triggerError)
 );
 
-// Route to process the update form submission
-router.post('/update/:id', 
-  invController.processUpdate
-);
-
-// Route to render the Delete Confirmation view
-router.get("/delete/:inv_id", 
-  utilities.handleErrors(invController.buildDeleteConfirmView)
-);
-
-// Route to process the Delete action
-router.post("/delete/:inv_id", 
-  utilities.handleErrors(invController.deleteInventoryItem)
+router.get(
+  "/management", 
+  authMiddleware, utilities.handleErrors(invController.renderManagement)
 );
 
 module.exports = router;

@@ -32,6 +32,8 @@ async function getInventoryByClassificationId(classification_id) {
     `;
     const result = await pool.query(sql, [classification_id]);
 
+    console.log(`Fetched inventory for classification_id=${classification_id}:`, result.rows); // Debugging
+
     if (result.rows.length === 0) {
       return []; // Return an empty array if no items are found
     }
@@ -42,6 +44,7 @@ async function getInventoryByClassificationId(classification_id) {
     throw new Error("Error fetching inventory by classification ID.");
   }
 }
+
 
 /* ***************************
  *  Get vehicle details by inv_id
