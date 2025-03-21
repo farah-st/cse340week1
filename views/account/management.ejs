@@ -1,3 +1,15 @@
-<!-- views/account/management.ejs -->
-<h1>Account Management</h1>
-<p>Welcome to your account management page.</p>
+<div class="account-management">
+    <h1>Account Management</h1>
+    <p>Welcome to your account management page.</p>
+
+    <h2>Welcome <%= account.first_name %></h2>
+
+    <p><a href="/account/update/<%= account.id %>">Update Account Information</a></p>
+
+    <% if (account.account_type === 'Employee' || account.account_type === 'Admin') { %>
+        <div class="inventory-section">
+            <h3>Inventory Management</h3>
+            <p><a href="/inventory/management">Access Inventory Management</a></p>
+        </div>
+    <% } %>
+</div>

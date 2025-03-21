@@ -203,12 +203,13 @@ async function registerAccount(req, res) {
 //         maxAge: 60 * 60 * 1000,
 //       });
 
+//       // Show welcome message for all users
+//       req.flash("success", `Welcome back, ${accountData.account_firstname}!`);
+
 //       // Redirect based on account type
 //       if (accountData.account_type === "Admin") {
-//         req.flash("success", `Welcome back, ${accountData.account_firstname}!`);
 //         return res.redirect("/inventory/management");
 //       } else {
-//         // Do NOT set flash message for successful client login
 //         return res.redirect("http://localhost:5501/");
 //       }
 //     } else {
@@ -226,6 +227,7 @@ async function registerAccount(req, res) {
 //     return res.redirect("/account/login");
 //   }
 // }
+
 async function accountLogin(req, res) {
   let nav = await utilities.getNav();
   const { account_email, account_password } = req.body;
@@ -245,21 +247,21 @@ async function accountLogin(req, res) {
     if (await bcrypt.compare(account_password, accountData.account_password)) {
       delete accountData.account_password;
 
-      // Store user data in session
+      // ✅ Store user data in session with correct property names
       req.session.account = {
-        account_id: accountData.account_id,
-        account_firstname: accountData.account_firstname,
-        account_email: accountData.account_email,
+        id: accountData.account_id, // Ensuring correct naming
+        first_name: accountData.account_firstname, // Match EJS
+        email: accountData.account_email,
         account_type: accountData.account_type,
-      };
+      };    
 
       console.log("Session after login:", req.session); // Debugging output
 
       // Generate JWT Token
       const token = jwt.sign(
         {
-          account_id: accountData.account_id,
-          account_email: accountData.account_email,
+          id: accountData.account_id, // ✅ Uses id to match session object
+          email: accountData.account_email,
           account_type: accountData.account_type,
         },
         process.env.JWT_SECRET,
@@ -279,11 +281,11 @@ async function accountLogin(req, res) {
       // Show welcome message for all users
       req.flash("success", `Welcome back, ${accountData.account_firstname}!`);
 
-      // Redirect based on account type
+      // ✅ Corrected redirect for non-admin users
       if (accountData.account_type === "Admin") {
         return res.redirect("/inventory/management");
       } else {
-        return res.redirect("http://localhost:5501/");
+        return res.redirect("/account/"); // ✅ Redirect to account management
       }
     } else {
       req.flash("notice", "Invalid email or password.");
@@ -307,13 +309,47 @@ async function accountLogin(req, res) {
 async function buildManagement(req, res, next) {
   try {
     const { nav, messages } = await getRenderOptions(req);
+    const account = req.session.account;
+
+    console.log("Session Data in Management Page:", account); // Debugging
+
+    if (!account) {
+      return res.redirect("/account/login"); // Redirect if not logged in
+    }
+
     res.render("account/management", {
       title: "Account Management",
       nav,
       messages,
+      account, // Ensure account data is passed to the view
     });
   } catch (error) {
     console.error("Error rendering Account Management page:", error);
+    next(error);
+  }
+}
+
+/* ****************************************
+ *  Build Update
+ * ****************************************/
+async function buildUpdate(req, res, next) {
+  try {
+    const account_id = req.params.id;
+    const account = await accountModel.getAccountById(account_id); // Fetch account details
+
+    if (!account) {
+      return res.status(404).send("Account not found.");
+    }
+
+    const { nav, messages } = await getRenderOptions(req);
+    res.render("account/update", {
+      title: "Update Account Information",
+      nav,
+      messages,
+      account
+    });
+  } catch (error) {
+    console.error("Error at /account/update/:id:", error);
     next(error);
   }
 }
@@ -339,4 +375,5 @@ module.exports = {
   accountLogin,
   buildManagement,
   logout,
+  buildUpdate,
 };

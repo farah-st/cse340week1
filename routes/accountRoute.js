@@ -79,4 +79,6 @@ router.get(
   utilities.handleErrors(accountController.buildManagement) 
 );
 
+router.get("/update/:id", utilities.checkLogin, utilities.handleErrors(accountController.buildUpdate));
+
 module.exports = router;
