@@ -3,7 +3,6 @@
  *************************/
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
-require("dotenv").config(); 
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const flash = require("connect-flash");
@@ -11,19 +10,21 @@ const pgSession = require("connect-pg-simple")(session);
 const path = require("path");
 const utilities = require("./utilities");
 const pool = require("./database/");
+require("dotenv").config(); // ✅ Load environment variables here
 const app = express(); 
+
+/* ********************************
+ * Validate Environment Variables
+ **********************************/
+if (!process.env.SESSION_SECRET || !process.env.DATABASE_URL || !process.env.JWT_SECRET) {
+  console.error("❌ Missing required environment variable(s): SESSION_SECRET, DATABASE_URL, or JWT_SECRET.");
+  process.exit(1);
+}
 
 // Import Routes BEFORE using them
 const inventoryRoute = require("./routes/inventoryRoute");
 const accountRoute = require("./routes/accountRoute");
 
-/* ********************************
- * Validate Environment Variables
- **********************************/
-if (!process.env.SESSION_SECRET || !process.env.DATABASE_URL) {
-  console.error("Missing required environment variables: SESSION_SECRET or DATABASE_URL.");
-  process.exit(1); 
-}
 
 /* ***********************
  * Middleware
@@ -36,7 +37,7 @@ app.use(expressLayouts);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Session Middleware
+// Session Middleware local
 // app.use(
 //   session({
 //     store: new pgSession({
@@ -56,6 +57,7 @@ app.use(express.urlencoded({ extended: true }));
 //   })
 // );
 
+// Session Middleware local in prod
 const isProduction = process.env.NODE_ENV === "production";
 
 app.use(
