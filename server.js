@@ -37,6 +37,27 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Session Middleware
+// app.use(
+//   session({
+//     store: new pgSession({
+//       pool: pool,
+//       tableName: "session",
+//       createTableIfMissing: true,
+//     }),
+//     secret: process.env.SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//     name: "sessionId",
+//     cookie: {
+//       secure: process.env.NODE_ENV === "production",
+//       httpOnly: true,
+//       maxAge: 1000 * 60 * 60 * 24 * 7, 
+//     },
+//   })
+// );
+
+const isProduction = process.env.NODE_ENV === "production";
+
 app.use(
   session({
     store: new pgSession({
@@ -49,9 +70,10 @@ app.use(
     saveUninitialized: false,
     name: "sessionId",
     cookie: {
-      secure: process.env.NODE_ENV === "production",
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 7, 
+      secure: isProduction, // Only use secure cookies on HTTPS (Render)
+      httpOnly: true,       // Keeps cookie inaccessible to JavaScript
+      sameSite: isProduction ? 'lax' : 'strict', // 'lax' works better with login redirects in HTTPS
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
     },
   })
 );
