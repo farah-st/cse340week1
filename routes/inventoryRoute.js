@@ -5,31 +5,31 @@ const utilities = require("../utilities");
 const invValidate = require("../utilities/inventory-validation");
 const authMiddleware = require("../middleware/authMiddleware");  // Import authMiddleware
 
-// ✅ Protect Inventory Management view (Requires Employee or Admin)
+//Protect Inventory Management view (Requires Employee or Admin)
 router.get("/management", 
   authMiddleware,
   utilities.handleErrors(invController.renderManagement)
 );
 
-// ✅ Protect Add Classification view
+//Protect Add Classification view
 router.get("/add-classification", 
   authMiddleware,
   utilities.handleErrors(invController.renderAddClassification)
 );
 
-// ✅ Protect Adding a new classification
+// Protect Adding a new classification
 router.post("/add-classification", 
   authMiddleware,
   utilities.handleErrors(invController.addClassification)
 );
 
-// ✅ Protect Add Inventory view
+//Protect Add Inventory view
 router.get("/add-inventory", 
   authMiddleware,
   utilities.handleErrors(invController.renderAddInventory)
 );
 
-// ✅ Protect Adding a new inventory item
+//Protect Adding a new inventory item
 router.post(
   "/add-inventory",
   authMiddleware,
@@ -38,14 +38,14 @@ router.post(
   utilities.handleErrors(invController.addNewInventoryItem)
 );
 
-// ✅ Protect Edit Inventory view
+//Protect Edit Inventory view
 router.get(
   "/edit/:inv_id",
   authMiddleware,
   utilities.handleErrors(invController.editInventoryView)
 );
 
-// ✅ Protect Updating an inventory item
+//Protect Updating an inventory item
 router.get(
   '/update/:id', 
   authMiddleware,
@@ -58,14 +58,14 @@ router.post(
   invController.processUpdate
 );
 
-// ✅ Protect Delete Confirmation view
+//Protect Delete Confirmation view
 router.get(
   "/delete/:inv_id", 
   authMiddleware,
   utilities.handleErrors(invController.buildDeleteConfirmView)
 );
 
-// ✅ Protect Delete Inventory action
+//Protect Delete Inventory action
 router.post(
   "/delete/:inv_id", 
   authMiddleware,

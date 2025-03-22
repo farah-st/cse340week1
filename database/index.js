@@ -36,12 +36,12 @@ const queryWithRetry = async (text, params, retries = 3) => {
         throw new Error("Database query failed. Please check the logs for details.");
       }
       console.log(`Retrying query (${attempt}/${retries})...`);
-      await new Promise(resolve => setTimeout(resolve, 1000)); // wait 1 second before retry
+      await new Promise(resolve => setTimeout(resolve, 1000)); 
     }
   }
 };
 
 module.exports = {
   query: queryWithRetry,
-  pool, // Expose pool for direct use (if needed)
+  pool, 
 };

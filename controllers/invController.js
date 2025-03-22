@@ -57,7 +57,7 @@ invCont.renderManagement = utilities.handleErrors(async (req, res) => {
     const nav = await utilities.getNav();
     const message = req.flash("info");
 
-    // ✅ Fetch classification list from DB
+    // Fetch classification list from DB
     const classificationList = await utilities.buildClassificationList();
     console.log("Classification list fetched from DB:", classificationList); // Debugging
 
@@ -66,7 +66,7 @@ invCont.renderManagement = utilities.handleErrors(async (req, res) => {
       return res.redirect("/account/login");
     }
 
-    // ✅ Ensure classification data is passed to the template
+    // Ensure classification data is passed to the template
     res.render("inventory/management", { 
       title: "Inventory Management", 
       nav,  
@@ -237,17 +237,30 @@ invCont.addNewInventoryItem = utilities.handleErrors(async (req, res) => {
       inv_color
     } = req.body;
 
+    console.log("📛 classification_id from form:", classification_id);
+    
     const imagePath = req.file ? `/images/vehicles/${req.file.filename}` : "/images/default-image.jpg";
-
     const parsedClassificationId = parseInt(classification_id, 10);
+    const formattedYear = String(inv_year);
+
     if (isNaN(parsedClassificationId)) {
       req.flash("error", "Invalid classification ID.");
       return res.redirect("/inventory/add-inventory");
     }
 
-    const formattedYear = String(inv_year);
-
     try {
+      console.log("📦 Attempting to insert vehicle with:", {
+        inv_make,
+        inv_model,
+        inv_year: formattedYear,
+        inv_description,
+        inv_price: Math.round(inv_price),
+        classification_id: parsedClassificationId,
+        inv_image: imagePath,
+        inv_miles: parseInt(inv_miles, 10),
+        inv_color
+      });
+
       const insertResult = await invModel.addInventoryItem({
         inv_make,
         inv_model,

@@ -60,7 +60,7 @@ Util.buildClassificationGrid = async function (data) {
     if (data.length > 0) {
       grid = '<ul id="inv-display">';
       data.forEach((vehicle) => {
-        const tnImage = vehicle.inv_thumbnail;
+        const tnImage = `/images/vehicles/${vehicle.inv_thumbnail}`;
         const fullImage = tnImage.replace("-tn", "");
         const safeMake = DOMPurify.sanitize(vehicle.inv_make);
         const safeModel = DOMPurify.sanitize(vehicle.inv_model);
@@ -146,9 +146,9 @@ Util.classificationValidation = [
  * *************************** */
 Util.buildClassificationList = async function (classification_id = null) {
   try {
-    const data = await invModel.getClassifications(); // Assuming this method fetches classification data
+    const data = await invModel.getClassifications(); 
     if (!data || data.length === 0) {
-      return []; // Return an empty array if no classifications are found
+      return []; 
     }
 
     // Map the data to return an array of objects with id and name
@@ -160,7 +160,7 @@ Util.buildClassificationList = async function (classification_id = null) {
     return classificationList; // Return the array of objects
   } catch (error) {
     console.error("Error fetching classifications:", error);
-    return []; // Return an empty array in case of error
+    return []; 
   }
 };
 

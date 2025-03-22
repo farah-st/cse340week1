@@ -198,7 +198,7 @@ async function accountLogin(req, res) {
       // Store JWT in cookie
       res.cookie("jwt", token, {
         httpOnly: true,
-        secure: false, // Change to `true` in production with HTTPS
+        secure: true, // Change to `true` in production with HTTPS
         sameSite: "Strict",
         maxAge: 60 * 60 * 1000,
       });
