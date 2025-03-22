@@ -16,7 +16,8 @@ router.get(
 );
 
 // Registration view 
-router.get("/register", 
+router.get(
+  "/register", 
   utilities.handleErrors(accountController.buildRegister)
 );
 
@@ -79,6 +80,26 @@ router.get(
   utilities.handleErrors(accountController.buildManagement) 
 );
 
-router.get("/update/:id", utilities.checkLogin, utilities.handleErrors(accountController.buildUpdate));
+router.get(
+  "/update/:id",
+   utilities.checkLogin, 
+   utilities.handleErrors(accountController.buildUpdate)
+);
+
+router.post(
+  "/update",
+  regValidate.accountUpdateRules(), // you'll define this in account-validation.js
+  regValidate.checkAccountUpdateData, // this too
+  utilities.checkLogin,
+  utilities.handleErrors(accountController.updateAccount)
+);
+
+router.post(
+  "/update-password",
+  regValidate.passwordUpdateRules(), // new validation rule for password only
+  regValidate.checkPasswordUpdateData, // to handle password validation errors
+  utilities.checkLogin,
+  utilities.handleErrors(accountController.updatePassword)
+);
 
 module.exports = router;

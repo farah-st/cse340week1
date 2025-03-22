@@ -153,81 +153,6 @@ async function registerAccount(req, res) {
 /* ****************************************
  *  Process login request
  * **************************************/
-// async function accountLogin(req, res) {
-//   let nav = await utilities.getNav();
-//   const { account_email, account_password } = req.body;
-//   const accountData = await accountModel.getAccountByEmail(account_email);
-
-//   if (!accountData) {
-//     req.flash("notice", "Invalid email or password.");
-//     return res.status(400).render("account/login", {
-//       title: "Login",
-//       nav,
-//       errors: null,
-//       account_email,
-//     });
-//   }
-
-//   try {
-//     if (await bcrypt.compare(account_password, accountData.account_password)) {
-//       delete accountData.account_password;
-
-//       // Store user data in session
-//       req.session.account = {
-//         account_id: accountData.account_id,
-//         account_firstname: accountData.account_firstname,
-//         account_email: accountData.account_email,
-//         account_type: accountData.account_type,
-//       };
-
-//       console.log("Session after login:", req.session); // Debugging output
-
-//       // Generate JWT Token
-//       const token = jwt.sign(
-//         {
-//           account_id: accountData.account_id,
-//           account_email: accountData.account_email,
-//           account_type: accountData.account_type,
-//         },
-//         process.env.JWT_SECRET,
-//         { expiresIn: "1h" }
-//       );
-
-//       console.log("Generated JWT Token:", token); // Debugging output
-
-//       // Store JWT in cookie
-//       res.cookie("jwt", token, {
-//         httpOnly: true,
-//         secure: false, // Change to `true` in production with HTTPS
-//         sameSite: "Strict",
-//         maxAge: 60 * 60 * 1000,
-//       });
-
-//       // Show welcome message for all users
-//       req.flash("success", `Welcome back, ${accountData.account_firstname}!`);
-
-//       // Redirect based on account type
-//       if (accountData.account_type === "Admin") {
-//         return res.redirect("/inventory/management");
-//       } else {
-//         return res.redirect("http://localhost:5501/");
-//       }
-//     } else {
-//       req.flash("notice", "Invalid email or password.");
-//       return res.status(400).render("account/login", {
-//         title: "Login",
-//         nav,
-//         errors: null,
-//         account_email,
-//       });
-//     }
-//   } catch (error) {
-//     console.error("Login Error:", error);
-//     req.flash("error", "An unexpected error occurred. Please try again.");
-//     return res.redirect("/account/login");
-//   }
-// }
-
 async function accountLogin(req, res) {
   let nav = await utilities.getNav();
   const { account_email, account_password } = req.body;
@@ -247,10 +172,10 @@ async function accountLogin(req, res) {
     if (await bcrypt.compare(account_password, accountData.account_password)) {
       delete accountData.account_password;
 
-      // ✅ Store user data in session with correct property names
+      // Store user data in session with correct property names
       req.session.account = {
-        id: accountData.account_id, // Ensuring correct naming
-        first_name: accountData.account_firstname, // Match EJS
+        id: accountData.account_id,
+        first_name: accountData.account_firstname, 
         email: accountData.account_email,
         account_type: accountData.account_type,
       };    
@@ -368,6 +293,90 @@ async function logout(req, res) {
   });
 }
 
+/* ****************************************
+ *  Update Account Information
+ * ***************************************/
+async function updateAccount(req, res) {
+  const { account_id, account_firstname, account_lastname, account_email } = req.body;
+  const { nav } = await getRenderOptions(req);
+
+  try {
+    const updateResult = await accountModel.updateAccount(
+      account_id,
+      account_firstname,
+      account_lastname,
+      account_email
+    );
+
+    if (updateResult) {
+      // Refresh session info if email or name was updated
+      req.session.account.first_name = account_firstname;
+      req.session.account.email = account_email;
+
+      req.flash("success", "Account information updated successfully.");
+    } else {
+      req.flash("error", "Update failed. Please try again.");
+    }
+
+    const updatedAccount = await accountModel.getAccountById(account_id);
+
+    return res.render("account/management", {
+      title: "Account Management",
+      nav,
+      account: updatedAccount,
+      messages: {
+        success: req.flash("success"),
+        error: req.flash("error"),
+      },
+    });
+  } catch (error) {
+    console.error("Account update error:", error);
+    req.flash("error", "Something went wrong while updating your account.");
+    return res.redirect("/account");
+  }
+}
+
+/* ****************************************
+ *  Update Password
+ * ***************************************/
+async function updatePassword(req, res) {
+  const { account_id, account_password } = req.body;
+  const { nav } = await getRenderOptions(req);
+
+  try {
+    const hashedPassword = await bcrypt.hash(account_password, 10);
+    const updateSuccess = await accountModel.updatePassword(account_id, hashedPassword);
+
+    if (updateSuccess) {
+      req.flash("success", "Password updated successfully.");
+    } else {
+      req.flash("error", "Failed to update password.");
+    }
+
+    const updatedAccount = await accountModel.getAccountById(account_id);
+
+    return res.render("account/management", {
+      title: "Account Management",
+      nav,
+      account: updatedAccount,
+      messages: {
+        success: req.flash("success"),
+        error: req.flash("error"),
+      },
+    });
+  } catch (error) {
+    console.error("Password update error:", error);
+    req.flash("error", "Error updating password.");
+    const account = await accountModel.getAccountById(account_id);
+    return res.render("account/update", {
+      title: "Update Account",
+      nav,
+      account,
+      messages: { error: req.flash("error") },
+    });
+  }
+}
+
 module.exports = {
   buildLogin,
   buildRegister,
@@ -376,4 +385,6 @@ module.exports = {
   buildManagement,
   logout,
   buildUpdate,
+  updateAccount,
+  updatePassword,
 };

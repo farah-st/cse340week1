@@ -1,11 +1,41 @@
-<h1>Update Account Information</h1>
-<p>Edit your account details below:</p>
-<form action="/account/update/<%= account.id %>" method="POST">
-    <label for="first_name">First Name:</label>
-    <input type="text" name="first_name" value="<%= account.first_name %>" required>
-    
-    <label for="email">Email:</label>
-    <input type="email" name="email" value="<%= account.email %>" required>
-    
-    <button type="submit">Update</button>
-</form>
+<h1>Update Account</h1>
+
+<% if (messages.error) { %>
+    <p class="error"><%= messages.error %></p>
+<% } %>
+<% if (messages.success) { %>
+    <p class="success"><%= messages.success %></p>
+<% } %>
+
+<!-- Account Update Form -->
+<form class="account-form" action="/account/update" method="POST" novalidate>
+    <fieldset>
+      <legend>Account Update</legend>
+      <input type="hidden" name="account_id" value="<%= account.account_id %>">
+  
+      <label for="account_firstname">First Name:</label>
+      <input type="text" id="account_firstname" name="account_firstname" required value="<%= account.account_firstname || '' %>">
+  
+      <label for="account_lastname">Last Name:</label>
+      <input type="text" id="account_lastname" name="account_lastname" required value="<%= account.account_lastname || '' %>">
+  
+      <label for="account_email">Email:</label>
+      <input type="email" id="account_email" name="account_email" required value="<%= account.account_email || '' %>">
+  
+      <button type="submit">Update Account</button>
+    </fieldset>
+  </form>
+  
+  <!-- Change Password Form -->
+  <form class="account-form" action="/account/update-password" method="POST" novalidate>
+    <fieldset>
+      <legend>Change Password</legend>
+      <input type="hidden" name="account_id" value="<%= account.account_id %>">
+  
+      <label for="account_password">New Password:</label>
+      <input type="password" id="account_password" name="account_password" required minlength="12">
+      <p class="info">Password must be at least 12 characters and include an uppercase, lowercase, number, and symbol.</p>
+  
+      <button type="submit">Change Password</button>
+    </fieldset>
+  </form>  

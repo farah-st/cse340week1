@@ -56,10 +56,10 @@ app.use(
   })
 );
 
-// ✅ Flash Middleware (After session)
+// Flash Middleware (After session)
 app.use(flash());
 
-// ✅ Ensure user and flash messages are available in all views (AFTER session & flash)
+// Ensure user and flash messages are available in all views (AFTER session & flash)
 app.use((req, res, next) => {
   res.locals.flash = req.flash();
   res.locals.user = req.session.account || null;
