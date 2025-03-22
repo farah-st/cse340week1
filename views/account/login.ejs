@@ -32,7 +32,7 @@
 
         <!-- Toggle password visibility -->
         <div class="form-group">
-            <input type="checkbox" id="togglePassword" onclick="togglePassword()">
+            <input type="checkbox" id="togglePassword">
             <label for="togglePassword">Show Password</label>
         </div>
 
@@ -43,15 +43,15 @@
 </div>
 
 <script>
-    function togglePassword() {
-        const passwordField = document.getElementById("password");
-        const passwordFieldType = passwordField.getAttribute("type");
-        passwordField.setAttribute("type", passwordField.type === "password" ? "text" : "password");
-    }
-
     document.addEventListener("DOMContentLoaded", function () {
     const loginForm = document.getElementById("loginForm");
     const errorMessageDiv = document.getElementById("error-message");
+    const togglePasswordCheckbox = document.getElementById("togglePassword");
+
+    togglePasswordCheckbox.addEventListener("change", function () {
+        const passwordField = document.getElementById("password");
+        passwordField.type = this.checked ? "text" : "password";
+    });
 
     loginForm.addEventListener("submit", function (event) {
         event.preventDefault();
@@ -76,5 +76,4 @@
         }
     });
 });
-
 </script>

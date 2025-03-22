@@ -20,7 +20,7 @@ const authMiddleware = (req, res, next) => {
                 return res.redirect('/account/login');
             }
         
-            console.log('Decoded Token:', decoded);  // 🔍 Debugging output
+            console.log('Decoded Token:', decoded); 
         
             if (decoded.account_type !== 'Employee' && decoded.account_type !== 'Admin') {
                 req.flash('error', 'Access denied. Insufficient privileges.');

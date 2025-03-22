@@ -13,7 +13,7 @@ const utilities = require("./utilities");
 const pool = require("./database/");
 const app = express(); 
 
-// ✅ Import Routes BEFORE using them
+// Import Routes BEFORE using them
 const inventoryRoute = require("./routes/inventoryRoute");
 const accountRoute = require("./routes/accountRoute");
 
@@ -36,7 +36,7 @@ app.use(expressLayouts);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ Session Middleware
+// Session Middleware
 app.use(
   session({
     store: new pgSession({
@@ -77,8 +77,7 @@ app.set("layout", "layouts/layout");
 /* ***********************
  * Routes (Now inventoryRoute is defined)
  *************************/
-
-// ✅ Use Routes AFTER defining them
+// Use Routes AFTER defining them
 app.use("/inventory", inventoryRoute);
 app.use("/account", accountRoute);
 

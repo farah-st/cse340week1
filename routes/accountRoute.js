@@ -61,17 +61,22 @@ router.get(
 );
 
 // Logout route 
-router.get("/logout", async (req, res) => {
-  req.flash("success", "Successfully logged out."); 
-  req.session.destroy((err) => {
-    if (err) {
-      console.error("Logout error:", err);
-      return res.redirect("/account/");
-    }
-    res.clearCookie("sessionId");
-    res.redirect("/");
-  });
-});
+// router.get("/logout", async (req, res) => {
+//   req.flash("success", "Successfully logged out."); 
+//   req.session.destroy((err) => {
+//     if (err) {
+//       console.error("Logout error:", err);
+//       return res.redirect("/account/");
+//     }
+//     res.clearCookie("sessionId");
+//     res.redirect("/");
+//   });
+// });
+
+router.get(
+  "/logout",
+  utilities.handleErrors(accountController.logout)
+);
 
 // Account Management view route 
 router.get(

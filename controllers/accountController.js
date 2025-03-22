@@ -180,12 +180,12 @@ async function accountLogin(req, res) {
         account_type: accountData.account_type,
       };    
 
-      console.log("Session after login:", req.session); // Debugging output
+      console.log("Session after login:", req.session); 
 
       // Generate JWT Token
       const token = jwt.sign(
         {
-          id: accountData.account_id, // ✅ Uses id to match session object
+          id: accountData.account_id, 
           email: accountData.account_email,
           account_type: accountData.account_type,
         },
@@ -193,7 +193,7 @@ async function accountLogin(req, res) {
         { expiresIn: "1h" }
       );
 
-      console.log("Generated JWT Token:", token); // Debugging output
+      console.log("Generated JWT Token:", token); 
 
       // Store JWT in cookie
       res.cookie("jwt", token, {
@@ -206,11 +206,11 @@ async function accountLogin(req, res) {
       // Show welcome message for all users
       req.flash("success", `Welcome back, ${accountData.account_firstname}!`);
 
-      // ✅ Corrected redirect for non-admin users
+      // Corrected redirect for non-admin users
       if (accountData.account_type === "Admin") {
         return res.redirect("/inventory/management");
       } else {
-        return res.redirect("/account/"); // ✅ Redirect to account management
+        return res.redirect("/account/"); 
       }
     } else {
       req.flash("notice", "Invalid email or password.");
@@ -236,17 +236,17 @@ async function buildManagement(req, res, next) {
     const { nav, messages } = await getRenderOptions(req);
     const account = req.session.account;
 
-    console.log("Session Data in Management Page:", account); // Debugging
+    console.log("Session Data in Management Page:", account); 
 
     if (!account) {
-      return res.redirect("/account/login"); // Redirect if not logged in
+      return res.redirect("/account/login"); 
     }
 
     res.render("account/management", {
       title: "Account Management",
       nav,
       messages,
-      account, // Ensure account data is passed to the view
+      account, 
     });
   } catch (error) {
     console.error("Error rendering Account Management page:", error);
@@ -260,7 +260,7 @@ async function buildManagement(req, res, next) {
 async function buildUpdate(req, res, next) {
   try {
     const account_id = req.params.id;
-    const account = await accountModel.getAccountById(account_id); // Fetch account details
+    const account = await accountModel.getAccountById(account_id); 
 
     if (!account) {
       return res.status(404).send("Account not found.");
@@ -283,12 +283,19 @@ async function buildUpdate(req, res, next) {
  *  Logout
  * ****************************************/
 async function logout(req, res) {
+  // Call flash before destroying the session
+  req.flash("success", "You have successfully logged out.");
+
   req.session.destroy((err) => {
     if (err) {
       console.error("Logout Error:", err);
       return res.status(500).send("Error logging out.");
     }
+
+    // Clear the JWT cookie after session destroy
     res.clearCookie("jwt");
+
+    // Redirect to homepage with flash
     res.redirect("/");
   });
 }
