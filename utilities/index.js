@@ -179,38 +179,69 @@ Util.isLoggedIn = (req, res, next) => {
 /* ****************************************
 * Middleware to check token validity
 **************************************** */
+// local
+// Util.checkJWTToken = (req, res, next) => {
+//   if (req.cookies.jwt) {
+//    jwt.verify(
+//     req.cookies.jwt,
+//     process.env.ACCESS_TOKEN_SECRET,
+//     function (err, accountData) {
+//      if (err) {
+//       req.flash("Please log in")
+//       res.clearCookie("jwt")
+//       return res.redirect("/account/login")
+//      }
+//      res.locals.accountData = accountData
+//      res.locals.loggedin = 1
+//      next()
+//     })
+//   } else {
+//    next()
+//   }
+//  }
+
+//prod
 Util.checkJWTToken = (req, res, next) => {
-  if (req.cookies.jwt) {
-   jwt.verify(
-    req.cookies.jwt,
-    process.env.ACCESS_TOKEN_SECRET,
-    function (err, accountData) {
-     if (err) {
-      req.flash("Please log in")
-      res.clearCookie("jwt")
-      return res.redirect("/account/login")
-     }
-     res.locals.accountData = accountData
-     res.locals.loggedin = 1
-     next()
-    })
+  const token = req.cookies.jwt;
+
+  if (token) {
+    jwt.verify(
+      token,
+      process.env.ACCESS_TOKEN_SECRET,
+      function (err, accountData) {
+        if (err) {
+          req.flash("Please log in");
+          res.clearCookie("jwt");
+          return res.redirect("/account/login");
+        }
+
+        //Attach account info to res.locals (for views)
+        res.locals.accountData = accountData;
+        res.locals.loggedin = 1;
+
+        //Restore session so route handlers can use it
+        req.session.account = accountData;
+
+        next();
+      }
+    );
   } else {
-   next()
+    next();
   }
- }
+};
 
 /* ****************************************
  *  Check Login
  * ************************************ */
 Util.checkLogin = (req, res, next) => {
-  if (res.locals.loggedin) {
-    next()
+  // Accept if either session or JWT restored login state
+  if (res.locals.loggedin || req.session.account) {
+    return next();
   } else {
-    req.flash("notice", "Please log in.")
-    return res.redirect("/account/login")
+    req.flash("notice", "Please log in.");
+    return res.redirect("/account/login");
   }
-}
-
+};
 
 /* ****************************************
  *  classification?

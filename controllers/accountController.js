@@ -183,6 +183,26 @@ async function accountLogin(req, res) {
       console.log("Session after login:", req.session); 
 
       // Generate JWT Token
+      // const token = jwt.sign(
+      //   {
+      //     id: accountData.account_id, 
+      //     email: accountData.account_email,
+      //     account_type: accountData.account_type,
+      //   },
+      //   process.env.JWT_SECRET,
+      //   { expiresIn: "1h" }
+      // );
+
+      // console.log("Generated JWT Token:", token); 
+
+      // // Store JWT in cookie
+      // res.cookie("jwt", token, {
+      //   httpOnly: true,
+      //   secure: true, // Change to `true` in production with HTTPS
+      //   sameSite: "Strict",
+      //   maxAge: 60 * 60 * 1000,
+      // });
+      // Generate JWT Token
       const token = jwt.sign(
         {
           id: accountData.account_id, 
@@ -193,15 +213,18 @@ async function accountLogin(req, res) {
         { expiresIn: "1h" }
       );
 
-      console.log("Generated JWT Token:", token); 
+      console.log("Generated JWT Token:", token);
 
-      // Store JWT in cookie
+      // Set cookie options based on environment
+      const isProduction = process.env.NODE_ENV === "production";
+
       res.cookie("jwt", token, {
         httpOnly: true,
-        secure: true, // Change to `true` in production with HTTPS
-        sameSite: "Strict",
-        maxAge: 60 * 60 * 1000,
+        secure: isProduction, // ✅ only true in production (Render uses HTTPS)
+        sameSite: isProduction ? "lax" : "strict", // ✅ lax avoids issues with HTTPS redirects
+        maxAge: 60 * 60 * 1000, // 1 hour
       });
+
 
       // Show welcome message for all users
       req.flash("success", `Welcome back, ${accountData.account_firstname}!`);
