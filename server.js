@@ -87,6 +87,11 @@ app.use(flash());
 app.use((req, res, next) => {
   res.locals.flash = req.flash();
   res.locals.user = req.session.account || null;
+  res.locals.loggedin = req.session.account ? true : false;
+
+  console.log("Session Account:", req.session.account);
+  console.log("res.locals.user:", res.locals.user);
+
   next();
 });
 

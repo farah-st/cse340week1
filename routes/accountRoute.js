@@ -1,12 +1,16 @@
-// Needed Resources
+/* ***************************
+ *  Required Resources
+ * ***************************/
 const express = require("express");
 const router = express.Router();
 const accountController = require("../controllers/accountController");
 const utilities = require("../utilities");
-const regValidate = require("../utilities/account-validation"); // Ensure this path is correct
+const regValidate = require("../utilities/account-validation");
 const { body, validationResult } = require("express-validator");
 
-// Login view 
+/* ***************************
+ *  Login View
+ * ***************************/
 router.get(
   "/login",
   utilities.handleErrors(async (req, res) => {
@@ -15,13 +19,17 @@ router.get(
   })
 );
 
-// Registration view 
+/* ***************************
+ *  Registration View
+ * ***************************/
 router.get(
-  "/register", 
+  "/register",
   utilities.handleErrors(accountController.buildRegister)
 );
 
-// Registration route 
+/* ***************************
+ *  Handle New Account Registration
+ * ***************************/
 router.post(
   "/register",
   [
@@ -42,7 +50,9 @@ router.post(
   }
 );
 
-// Login processing route
+/* ***************************
+ *  Handle Login Processing
+ * ***************************/
 router.post(
   "/login",
   regValidate.loginRules(),
@@ -50,7 +60,9 @@ router.post(
   utilities.handleErrors(accountController.accountLogin)
 );
 
-// Dashboard route 
+/* ***************************
+ *  Dashboard View
+ * ***************************/
 router.get(
   "/dashboard",
   utilities.isLoggedIn,
@@ -60,51 +72,81 @@ router.get(
   })
 );
 
-// Logout route 
-// router.get("/logout", async (req, res) => {
-//   req.flash("success", "Successfully logged out."); 
-//   req.session.destroy((err) => {
-//     if (err) {
-//       console.error("Logout error:", err);
-//       return res.redirect("/account/");
-//     }
-//     res.clearCookie("sessionId");
-//     res.redirect("/");
-//   });
-// });
-
+/* ***************************
+ *  Handle Logout
+ * ***************************/
 router.get(
   "/logout",
   utilities.handleErrors(accountController.logout)
 );
 
-// Account Management view route 
+/* ***************************
+ *  Account Management View
+ * ***************************/
 router.get(
-  "/", 
+  "/",
   utilities.checkLogin,
-  utilities.handleErrors(accountController.buildManagement) 
+  utilities.handleErrors(accountController.buildManagement)
 );
 
+/* ***************************
+ *  Account Update View (by ID)
+ * ***************************/
 router.get(
   "/update/:id",
-   utilities.checkLogin, 
-   utilities.handleErrors(accountController.buildUpdate)
+  utilities.checkLogin,
+  utilities.handleErrors(accountController.buildUpdate)
 );
 
+/* ***************************
+ *  Handle Account Information Update
+ * ***************************/
 router.post(
   "/update",
-  regValidate.accountUpdateRules(), // you'll define this in account-validation.js
-  regValidate.checkAccountUpdateData, // this too
+  regValidate.accountUpdateRules(),
+  regValidate.checkAccountUpdateData,
   utilities.checkLogin,
   utilities.handleErrors(accountController.updateAccount)
 );
 
+/* ***************************
+ *  Handle Password Update
+ * ***************************/
 router.post(
   "/update-password",
-  regValidate.passwordUpdateRules(), // new validation rule for password only
-  regValidate.checkPasswordUpdateData, // to handle password validation errors
+  regValidate.passwordUpdateRules(),
+  regValidate.checkPasswordUpdateData,
   utilities.checkLogin,
   utilities.handleErrors(accountController.updatePassword)
+);
+
+/* ***************************
+ *  Admin Dashboard View
+ * ***************************/
+router.get(
+  "/admin",
+  utilities.checkLogin,
+  utilities.checkAdmin,
+  accountController.adminDashboard
+);
+
+/* ***************************
+ *  User Role Update View (Admin Only)
+ * ***************************/
+router.get(
+  "/roles",
+  utilities.verifyAdmin,
+  utilities.handleErrors(accountController.updateUserRoleView)
+);
+
+
+/* ***************************
+ *  Handle Role Update Submission (Admin Only)
+ * ***************************/
+router.post(
+  "/roles/update",
+  utilities.verifyAdmin,
+  utilities.handleErrors(accountController.updateUserRoleHandler)
 );
 
 module.exports = router;

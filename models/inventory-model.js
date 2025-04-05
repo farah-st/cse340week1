@@ -213,7 +213,7 @@ async function updateInventoryItem(item) {
 
 /* ***************************
  *  Delete Inventory Item
- * ************************** */
+ * ***************************/
 async function deleteInventoryItem(inv_id) {
   try {
     const sql = 'DELETE FROM inventory WHERE inv_id = $1';
@@ -222,6 +222,19 @@ async function deleteInventoryItem(inv_id) {
   } catch (error) {
     console.error("Delete Inventory Error:", error);
     throw new Error("Error deleting inventory item.");
+  }
+}
+
+/* ***************************
+ *  Delete Classification By Id
+ * ***************************/
+async function deleteClassification(classification_id) {
+  try {
+    const sql = "DELETE FROM classification WHERE classification_id = $1";
+    const data = await pool.query(sql, [classification_id]);
+    return data.rowCount;
+  } catch (error) {
+    throw new Error("Database error deleting classification: " + error.message);
   }
 }
 
@@ -238,5 +251,6 @@ module.exports = {
   addInventoryItem,
   getAccountByEmail,
   updateInventoryItem,
-  deleteInventoryItem
+  deleteInventoryItem,
+  deleteClassification
 };

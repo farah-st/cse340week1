@@ -548,7 +548,7 @@ invCont.buildDeleteConfirmView = async function (req, res, next) {
 
 /* ***************************
  *  Process Inventory Deletion
- * ************************** */
+ * ***************************/
 invCont.deleteInventoryItem = async function (req, res, next) {
   try {
       console.log("typeof invModel.deleteInventoryItem:", typeof invModel.deleteInventoryItem);
@@ -577,5 +577,28 @@ invCont.deleteInventoryItem = async function (req, res, next) {
       next(error);
   }
 };
+
+/* ***************************
+ *  Handle Classification Deletion
+ * *************************** */
+invCont.deleteClassification = utilities.handleErrors(async (req, res) => {
+  const classification_id = parseInt(req.params.classification_id, 10);
+
+  if (isNaN(classification_id)) {
+    req.flash("error", "Invalid classification ID.");
+    return res.redirect("/account/admin");
+  }
+
+  try {
+    await invModel.deleteClassification(classification_id);
+    req.flash("info", "Classification deleted successfully.");
+    res.redirect("/account/admin");
+  } catch (error) {
+    console.error("Error deleting classification:", error);
+    req.flash("error", "Error deleting classification.");
+    res.redirect("/account/admin");
+  }
+});
+
 
 module.exports = invCont;

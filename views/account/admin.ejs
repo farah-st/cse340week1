@@ -1,0 +1,46 @@
+<main class="dashboard-container">
+    <h1 class="dashboard-title">Admin Dashboard</h1>
+    <p class="welcome-message">Welcome, <%= user.first_name %>! You have admin access.</p>
+  
+    <% if (account.account_type === 'Employee' || account.account_type === 'Admin') { %>
+      <div class="inventory-section">
+        <h3 class="inventory-title">Inventory Management</h3>
+        <p><a class="inventory-link" href="/inventory/management">Access Inventory Management</a></p>
+      </div>
+  
+      <div class="inventory-section">
+        <h3 class="inventory-title">User Role Management</h3>
+        <p><a class="inventory-link" href="/account/roles">Manage User Roles</a></p>
+      </div>
+    <% } %>
+  
+    <% if (classifications && classifications.length > 0) { %>
+      <div class="classification-section">
+        <h3>Vehicle Classifications</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% classifications.forEach(classification => { %>
+              <tr>
+                <td><%= classification.classification_name %></td>
+                <td>
+                  <a href="/inventory/classification/delete/<%= classification.classification_id %>"
+                     onclick="return confirm('Are you sure you want to delete this classification?')">
+                     🗑️ Delete
+                  </a>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <p>No classifications found.</p>
+    <% } %>
+</main>
+  

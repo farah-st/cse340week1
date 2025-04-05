@@ -807,6 +807,50 @@ label[for="inv_description"] {
     max-width: 600px;
   }
   
+  /*admin.ejs*/
+  .dashboard-container {
+    max-width: 700px;
+    margin: 3rem auto;
+    padding: 2.5rem;
+    background: #f0f3f7;
+    border-radius: 20px;
+    box-shadow: 8px 8px 16px #babecc, -8px -8px 16px #ffffff;
+    text-align: center;
+  }
+
+  .dashboard-title {
+    font-size: 2.5rem;
+    color: #3a3a3a;
+    margin-bottom: 1rem;
+    letter-spacing: 1px;
+  }
+
+  .welcome-message {
+    font-size: 1.1rem;
+    color: #5c5c5c;
+    margin-bottom: 1.5rem;
+  }
+
+  .inventory-title {
+    color: #2e2e2e;
+    margin-bottom: 0.75rem;
+  }
+
+  .inventory-link {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    background-color: #ed5e93;
+    color: #fff;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .inventory-link:hover {
+    background-color: #b71451;
+    transform: translateY(-2px);
+  }
   .error {
     color: #a33;
     background-color: #fdd;
@@ -816,7 +860,72 @@ label[for="inv_description"] {
     max-width: 600px;
   }
   
+  .classification-section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+  
+  .classification-section th,
+  .classification-section td {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    text-align: left;
+  }
 
+  
+  
+  .classification-section th {
+    background-color: #f2f2f2;
+  }
+
+/*role-management*/
+.user-roles-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-family: Arial, sans-serif;
+    font-size: 0.95rem;
+  }
+  
+  .user-roles-table th,
+  .user-roles-table td {
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+    text-align: left;
+  }
+  
+  .user-roles-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+  
+  .user-roles-table tr:nth-child(even) {
+    background-color: #fafafa;
+  }
+  
+  .user-roles-table tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .user-roles-table select,
+  .user-roles-table button {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
+  .user-roles-table button {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .user-roles-table button:hover {
+    background-color: #45a049;
+  }
+   
 /* Smaller Screens (Max Width: 767px) */
 @media screen and (max-width: 767px) {
     body {

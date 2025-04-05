@@ -3,6 +3,8 @@ require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const utilities = require("../utilities");
 const accountModel = require("../models/account-model");
+const invModel = require("../models/inventory-model");
+
 
 // Helper function to prepare navigation and flash messages for rendering
 async function getRenderOptions(req) {
@@ -206,6 +208,7 @@ async function accountLogin(req, res) {
       const token = jwt.sign(
         {
           id: accountData.account_id, 
+          first_name: accountData.account_firstname,
           email: accountData.account_email,
           account_type: accountData.account_type,
         },
@@ -231,7 +234,7 @@ async function accountLogin(req, res) {
 
       // Corrected redirect for non-admin users
       if (accountData.account_type === "Admin") {
-        return res.redirect("/inventory/management");
+        return res.redirect("/account/");
       } else {
         return res.redirect("/account/"); 
       }
@@ -257,7 +260,7 @@ async function accountLogin(req, res) {
 async function buildManagement(req, res, next) {
   try {
     const { nav, messages } = await getRenderOptions(req);
-    const account = req.session.account;
+    const account = req.session.account || res.locals.user;
 
     console.log("Session Data in Management Page:", account); 
 
@@ -282,8 +285,12 @@ async function buildManagement(req, res, next) {
  * ****************************************/
 async function buildUpdate(req, res, next) {
   try {
-    const account_id = req.params.id;
-    const account = await accountModel.getAccountById(account_id); 
+    const sessionAccount = req.session.account;
+    if (!sessionAccount || sessionAccount.id !== parseInt(req.params.id)) {
+      return res.status(403).send("Unauthorized access.");
+    }
+
+    const account = await accountModel.getAccountById(sessionAccount.id);
 
     if (!account) {
       return res.status(404).send("Account not found.");
@@ -407,6 +414,78 @@ async function updatePassword(req, res) {
   }
 }
 
+/* ****************************************
+ *  Admin Dashboard
+ * ***************************************/
+async function adminDashboard(req, res) {
+  try {
+    const nav = await utilities.getNav();
+    const classifications = await invModel.getClassifications();
+
+    res.render("account/admin", {
+      title: "Admin Dashboard",
+      nav,
+      account: req.session.account || res.locals.accountData,
+      classifications, 
+    });
+  } catch (error) {
+    console.error("Error loading admin dashboard:", error);
+    res.status(500).render("errors/error", {
+      title: "Admin Dashboard Error",
+      message: "Server error loading dashboard.",
+      nav: await utilities.getNav(), 
+    });  
+  }
+}
+
+/* ****************************************
+ *  Update User Role View
+ * ***************************************/
+async function updateUserRoleView(req, res) {
+  try {
+    const { nav, messages } = await getRenderOptions(req);
+    const accountList = await accountModel.getAllAccounts();
+    res.render("account/role-management", {
+      title: "Manage User Roles",
+      nav,
+      messages,
+      accountList,
+    });
+  } catch (error) {
+    console.error("Error rendering role management view:", error);
+    res.status(500).render("errors/error", {
+      title: "Role Management Error",
+      nav: await utilities.getNav(),
+      message: "Could not load user roles.",
+    });
+  }
+}
+
+
+/* ****************************************
+ *  Update User Role Handler
+ * ***************************************/
+async function updateUserRoleHandler(req, res) {
+  const { account_id, account_type } = req.body;
+  console.log("Received form data:", req.body);
+  
+  if (!account_id || !account_type) {
+    req.flash("error", "Missing account information.");
+    return res.redirect("/account/roles");
+  }
+
+  try {
+    await accountModel.updateUserRole(account_id, account_type);
+    req.flash("notice", "User role updated.");
+    res.redirect("/account/roles");
+  } catch (err) {
+    console.error("Error updating user role:", err); // Optional: helpful for debugging
+    req.flash("error", "Error updating user role.");
+    res.redirect("/account/roles");
+  }
+}
+
+
 module.exports = {
   buildLogin,
   buildRegister,
@@ -417,4 +496,8 @@ module.exports = {
   buildUpdate,
   updateAccount,
   updatePassword,
+  adminDashboard,
+  updateUserRoleView,
+  updateUserRoleHandler
+
 };

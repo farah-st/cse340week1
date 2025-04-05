@@ -1,0 +1,38 @@
+<main>
+    <h1>Manage User Roles</h1>
+    <table class="user-roles-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Current Role</th>
+          <th>Change Role</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% accountList.forEach(account => { %>
+          <tr>
+            <td><%= account.account_firstname %> <%= account.account_lastname %></td>
+            <td><%= account.account_email %></td>
+            <td><%= account.account_type %></td>
+            <td>
+              <form action="/account/roles/update" method="post">
+                <select name="account_type" required>
+                  <option value="Client" <%= account.account_type === "Client" ? "selected" : "" %>>Client</option>
+                  <option value="Employee" <%= account.account_type === "Employee" ? "selected" : "" %>>Employee</option>
+                  <option value="Admin" <%= account.account_type === "Admin" ? "selected" : "" %>>Admin</option>
+                </select>
+                <input type="hidden" name="account_id" value="<%= account.account_id %>" />
+            </td>
+            <td>
+                <button type="submit">Update</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </main>
+  
+  

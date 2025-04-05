@@ -100,11 +100,41 @@ async function updatePassword(account_id, hashedPassword) {
   }
 }
 
+/* *****************************
+ *  update User Role
+ * *****************************/
+async function updateUserRole(account_id, newRole) {
+  try {
+    const sql = "UPDATE account SET account_type = $1 WHERE account_id = $2 RETURNING *;";
+    const result = await pool.query(sql, [newRole, account_id]);
+    return result.rows.length > 0; // true if update succeeded
+  } catch (error) {
+    console.error("Error updating user role:", error);
+    throw error;
+  }
+}
+
+/* *****************************
+ *  Get All Accounts
+ * *****************************/
+async function getAllAccounts() {
+  try {
+    const result = await pool.query(
+      "SELECT account_id, account_firstname, account_lastname, account_email, account_type FROM account ORDER BY account_lastname"
+    );
+    return result.rows;
+  } catch (error) {
+    throw new Error("Database error retrieving accounts: " + error.message);
+  }
+}
+
 module.exports = { 
   registerAccount, 
   checkExistingEmail, 
   getAccountByEmail, 
   getAccountById,
   updateAccount,
-  updatePassword
+  updatePassword,
+  updateUserRole,
+  getAllAccounts
 };

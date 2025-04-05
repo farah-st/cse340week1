@@ -234,6 +234,8 @@ Util.checkJWTToken = (req, res, next) => {
  *  Check Login
  * ************************************ */
 Util.checkLogin = (req, res, next) => {
+  console.log("🔐 checkLogin | req.session.account:", req.session.account);
+  console.log("🔐 checkLogin | res.locals.loggedin:", res.locals.loggedin);
   // Accept if either session or JWT restored login state
   if (res.locals.loggedin || req.session.account) {
     return next();
@@ -255,6 +257,32 @@ async function getClassifications() {
       return [];
   }
 }
+
+/* ****************************************
+ *  Check Admin Role
+ * ************************************ */
+Util.checkAdmin = (req, res, next) => {
+  const account = req.session.account || res.locals.accountData;
+  if (account?.account_type === "Admin") {
+    return next();
+  } else {
+    req.flash("notice", "Access restricted to admins only.");
+    return res.redirect("/account/login");
+  }
+};
+
+/* ****************************************
+ *  Middleware to verify Admin
+ **************************************** */
+Util.verifyAdmin = (req, res, next) => {
+  const account = req.session.account || res.locals.accountData;
+  if (account?.account_type === "Admin") {
+    return next();
+  } else {
+    req.flash("notice", "Access restricted to administrators.");
+    return res.redirect("/account/login");
+  }
+};
 
 //module.exports = Util;
 
