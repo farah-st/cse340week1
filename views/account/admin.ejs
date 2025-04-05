@@ -1,6 +1,11 @@
 <main class="dashboard-container">
     <h1 class="dashboard-title">Admin Dashboard</h1>
-    <p class="welcome-message">Welcome, <%= user.first_name %>! You have admin access.</p>
+    <% if (account) { %>
+      <p class="welcome-message">Welcome, <%= account.account_firstname %>! You have admin access.</p>
+    <% } else { %>
+      <p class="error-message">Account data not found.</p>
+    <% } %>
+    
   
     <% if (account.account_type === 'Employee' || account.account_type === 'Admin') { %>
       <div class="inventory-section">
