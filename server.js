@@ -10,7 +10,7 @@ const pgSession = require("connect-pg-simple")(session);
 const path = require("path");
 const utilities = require("./utilities");
 const pool = require("./database/");
-require("dotenv").config(); // ✅ Load environment variables here
+require("dotenv").config(); 
 const app = express(); 
 
 /* ********************************

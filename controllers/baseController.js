@@ -14,14 +14,12 @@ baseController.buildHome = async function (req, res, next) {
     const messages = req.flash(); 
 
     // Check if user is logged in (assuming session contains user data)
-    const loggedInUser = req.session ? req.session.loggedInUser : null;
     console.log("Session Data:", req.session);
 
     res.render("index", {
       title: "Home",
       nav,
-      messages, 
-      loggedInUser, 
+      messages,  
     });
   } catch (error) {
     next(error); 

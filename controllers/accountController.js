@@ -183,28 +183,6 @@ async function accountLogin(req, res) {
       };    
 
       console.log("Session after login:", req.session); 
-
-      // Generate JWT Token
-      // const token = jwt.sign(
-      //   {
-      //     id: accountData.account_id, 
-      //     email: accountData.account_email,
-      //     account_type: accountData.account_type,
-      //   },
-      //   process.env.JWT_SECRET,
-      //   { expiresIn: "1h" }
-      // );
-
-      // console.log("Generated JWT Token:", token); 
-
-      // // Store JWT in cookie
-      // res.cookie("jwt", token, {
-      //   httpOnly: true,
-      //   secure: true, // Change to `true` in production with HTTPS
-      //   sameSite: "Strict",
-      //   maxAge: 60 * 60 * 1000,
-      // });
-      // Generate JWT Token
       const token = jwt.sign(
         {
           id: accountData.account_id, 
@@ -223,9 +201,9 @@ async function accountLogin(req, res) {
 
       res.cookie("jwt", token, {
         httpOnly: true,
-        secure: isProduction, // ✅ only true in production (Render uses HTTPS)
-        sameSite: isProduction ? "lax" : "strict", // ✅ lax avoids issues with HTTPS redirects
-        maxAge: 60 * 60 * 1000, // 1 hour
+        secure: isProduction, 
+        sameSite: isProduction ? "lax" : "strict", 
+        maxAge: 60 * 60 * 1000, 
       });
 
 
@@ -234,7 +212,7 @@ async function accountLogin(req, res) {
 
       // Corrected redirect for non-admin users
       if (accountData.account_type === "Admin") {
-        return res.redirect("/account/");
+        return res.redirect("/account/admin");
       } else {
         return res.redirect("/account/"); 
       }
@@ -425,7 +403,6 @@ async function adminDashboard(req, res) {
     res.render("account/admin", {
       title: "Admin Dashboard",
       nav,
-      account: req.session.account || res.locals.accountData,
       classifications, 
     });
   } catch (error) {

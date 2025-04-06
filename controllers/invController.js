@@ -61,19 +61,20 @@ invCont.renderManagement = utilities.handleErrors(async (req, res) => {
     const classificationList = await utilities.buildClassificationList();
     console.log("Classification list fetched from DB:", classificationList); // Debugging
 
-    if (!req.user) {
+    if (!req.session.account) {
       req.flash("error", "Unauthorized access. Please log in.");
       return res.redirect("/account/login");
-    }
+    }   
 
     // Ensure classification data is passed to the template
     res.render("inventory/management", { 
       title: "Inventory Management", 
       nav,  
       message,
-      classificationSelect: classificationList, // Pass classification list here
-      user: req.user,
+      classificationSelect: classificationList,
+      user: req.session.account, 
     });
+    
   } catch (error) {
     console.error("Error rendering Inventory Management page:", error);
     res.status(500).render("errors/error", { message: "Error loading Inventory Management." });
