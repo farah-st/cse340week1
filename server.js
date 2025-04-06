@@ -60,6 +60,10 @@ app.use(express.urlencoded({ extended: true }));
 // Session Middleware local in prod
 const isProduction = process.env.NODE_ENV === "production";
 
+if (isProduction) {
+  app.set("trust proxy", 1); // needed for secure cookies behind proxies like Render
+}
+
 app.use(
   session({
     store: new pgSession({
@@ -72,13 +76,15 @@ app.use(
     saveUninitialized: false,
     name: "sessionId",
     cookie: {
-      secure: isProduction, // Only use secure cookies on HTTPS (Render)
-      httpOnly: true,       // Keeps cookie inaccessible to JavaScript
-      sameSite: isProduction ? 'lax' : 'strict', // 'lax' works better with login redirects in HTTPS
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      secure: isProduction,
+      httpOnly: true,
+      sameSite: isProduction ? "lax" : "strict",
+      maxAge: 1000 * 60 * 60 * 24 * 7,
     },
   })
 );
+
+console.log("🚀 Environment:", process.env.NODE_ENV);
 
 // Flash Middleware (After session)
 app.use(flash());
